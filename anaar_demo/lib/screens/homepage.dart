@@ -267,7 +267,17 @@ class _HomePageState extends State<HomePage>
       child: Column(
         children: [
           Row(
-            children: [Text("Trending"), Divider()],
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                "Trending",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(child: Divider())
+            ],
           ),
           _buildPostCard(url1),
           _buildPostCard(url2),
@@ -282,9 +292,15 @@ class _HomePageState extends State<HomePage>
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(25),
-      ),
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey,
+                //offset: Offset(1, 1),
+                spreadRadius: 0.8,
+                blurRadius: 2)
+          ]),
       child: TextField(
         decoration: InputDecoration(
           border: InputBorder.none,
@@ -297,6 +313,9 @@ class _HomePageState extends State<HomePage>
   Widget _buildPostCard(List<String> url) {
     return Card(
       margin: EdgeInsets.all(8.0),
+      elevation: 10,
+      borderOnForeground: true,
+      shadowColor: Colors.grey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

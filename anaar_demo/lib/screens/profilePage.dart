@@ -8,11 +8,10 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-  String name = 'Test Text';
-  String phone = '(208) 206-5239';
+  String name = 'vipin';
+  String phone = '989120000';
   String email = 'test.test@gmail.com';
-  String bio =
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+  String bio = 'Saree Retailer .situated in Ahemdabadh.';
   File? _image;
 
   Future<void> _pickImage() async {
@@ -142,7 +141,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
             Expanded(
               child: Text(
                 value,
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: 14,
+                ),
                 maxLines: isMultiline ? null : 1,
                 overflow: isMultiline ? null : TextOverflow.ellipsis,
               ),
