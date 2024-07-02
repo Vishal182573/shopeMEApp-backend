@@ -17,7 +17,7 @@ app.use(json());
 
 app.use("/api/user",userRoutes);
 app.get('/',(req,res)=>{
-    res.json({message:"Server is runnig"});
+    res.json({message:"Server is running"});
 })
 
 app.listen(port,()=>{
