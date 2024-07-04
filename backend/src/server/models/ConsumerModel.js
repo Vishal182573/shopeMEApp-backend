@@ -1,7 +1,11 @@
 import { Schema,model } from "mongoose";
 
 const consumerSchema = new Schema({
-    name:{
+    ownername:{
+        required:true,
+        type:String,
+    },
+    businessname:{
         required:true,
         type:String,
     },
@@ -17,6 +21,10 @@ const consumerSchema = new Schema({
     contact:{
         type:String,
         required:true,
+    },
+    city:{
+        required:true,
+        type:String,
     },
     image:{
         type:String,

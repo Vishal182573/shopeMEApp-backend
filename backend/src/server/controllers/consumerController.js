@@ -8,7 +8,7 @@ dotenv.config();
 
 const consumerRegistration = asyncHandler(async (req, res) => {
   try {
-    const { name, email, password, contact, image, connections } = req.body;
+    const {  ownername,businessname, email, password, contact,city, image, connections } = req.body;
     if (!name || !email || !password || !contact) {
       return res.status(400).json({ message: "Bad request: Missing required fields" });
     }
@@ -22,10 +22,12 @@ const consumerRegistration = asyncHandler(async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newConsumer = new Consumer({
-      name,
+      ownername,
+      businessname,
       email,
       password: hashedPassword,
       contact,
+      city,
       image:image || "",
       connections : connections || [""],
     });
