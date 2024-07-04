@@ -1,6 +1,6 @@
 import { Schema,model } from "mongoose";
 
-const userSchema = new Schema({
+const consumerSchema = new Schema({
     name:{
         required:true,
         type:String,
@@ -14,6 +14,16 @@ const userSchema = new Schema({
         required:true,
         type:String,
     },
+    contact:{
+        type:String,
+        required:true,
+    },
+    image:{
+        type:String,
+    },
+    connections:{
+        type:[String], // it have id of resellers
+    }
 },{timestamps:true});
 
-export default model('User',userSchema);
+export default model('Consumer',consumerSchema);
