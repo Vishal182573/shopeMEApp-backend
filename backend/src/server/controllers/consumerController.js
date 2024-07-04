@@ -9,7 +9,7 @@ dotenv.config();
 const consumerRegistration = asyncHandler(async (req, res) => {
   try {
     const {  ownername,businessname, email, password, contact,city, image, connections } = req.body;
-    if (!name || !email || !password || !contact) {
+    if (!ownername ||!businessname || !email || !password || !contact || !city) {
       return res.status(400).json({ message: "Bad request: Missing required fields" });
     }
 
