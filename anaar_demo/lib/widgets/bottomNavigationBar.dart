@@ -1,7 +1,7 @@
 import 'package:anaar_demo/screens/MessageScreen.dart';
 import 'package:anaar_demo/screens/discoverPage.dart';
 import 'package:anaar_demo/screens/homepage.dart';
-import 'package:anaar_demo/screens/profilePage.dart';
+import 'package:anaar_demo/screens/profiles/ConsumerprofilePage.dart';
 import 'package:flutter/material.dart';
 
 /// Flutter code sample for [NavigationBar].

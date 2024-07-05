@@ -1,4 +1,4 @@
-import 'package:anaar_demo/screens/Auth/Login_screen.dart';
+import 'package:anaar_demo/screens/Auth/Login_reseller.dart';
 import 'package:anaar_demo/widgets/bottomNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

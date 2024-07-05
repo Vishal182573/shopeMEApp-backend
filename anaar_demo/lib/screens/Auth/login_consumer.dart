@@ -2,7 +2,12 @@ import 'package:anaar_demo/screens/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPageConsumer extends StatefulWidget {
+  @override
+  State<LoginPageConsumer> createState() => _LoginPageConsumerState();
+}
+
+class _LoginPageConsumerState extends State<LoginPageConsumer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +21,7 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Log into',
+                    'Log into your Consumer Account',
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 32,

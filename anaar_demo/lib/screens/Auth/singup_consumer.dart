@@ -5,20 +5,18 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class ResellerRegistrationPage extends StatefulWidget {
+class ConsumerRegistrationPage extends StatefulWidget {
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
 }
 
-class _RegistrationPageState extends State<ResellerRegistrationPage> {
+class _RegistrationPageState extends State<ConsumerRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
-  final _ownerNameController = TextEditingController();
-  final _businessNameController = TextEditingController();
+  final _nameController = TextEditingController();
   final _cityController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _addressController = TextEditingController();
   File? _image;
 
   Future<void> _pickImage() async {
@@ -70,9 +68,9 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                   children: [
                     Expanded(
                       child: TextFormField(
-                        controller: _ownerNameController,
+                        controller: _nameController,
                         decoration: InputDecoration(
-                          labelText: 'Ownername',
+                          labelText: 'Username',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
@@ -84,28 +82,14 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                       ),
                     ),
                     SizedBox(width: 16.0),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _businessNameController,
-                        decoration: InputDecoration(
-                          labelText: 'Businessname',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your business name';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
+                    
                   ],
                 ),
                 SizedBox(height: 16.0),
                 TextFormField(
                   controller: _cityController,
                   decoration: InputDecoration(
-                    labelText: 'Username',
+                    labelText: 'cityname',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
@@ -158,32 +142,17 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                     return null;
                   },
                 ),
-                TextFormField(
-                  controller: _addressController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Address';
-                    }
-                    return null;
-                  },
-                ),
                 SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState?.validate() ?? false) {
-                      bool val = await authProvider.resllerregister(
-                          _ownerNameController.text,
-                          _businessNameController.text,
+                      bool val = await authProvider.Consumer_register(
+                          _nameController.text,
+                         
                           _cityController.text,
                           _emailController.text,
                           _phoneNumberController.text,
                           _passwordController.text,
-                          _addressController.text,
                           _image);
 
                       if (val) {
