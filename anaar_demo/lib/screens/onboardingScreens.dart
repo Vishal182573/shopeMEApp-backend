@@ -1,5 +1,7 @@
 import 'package:anaar_demo/controller/onBoardingController.dart';
-import 'package:anaar_demo/screens/Auth/Login_screen.dart';
+import 'package:anaar_demo/screens/Auth/Login_reseller.dart';
+import 'package:anaar_demo/screens/Auth/Signup_reseller.dart';
+import 'package:anaar_demo/screens/Auth/singup_consumer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -147,7 +149,7 @@ class onboardingLoginPage extends StatelessWidget {
             height: 20,
           ),
           ElevatedButton(
-            onPressed: () => Get.to(() => LoginPage()),
+            onPressed: () => Get.to(() => ConsumerRegistrationPage()),
             child: Text(
               "Register as Consumer",
               style: TextStyle(
@@ -165,7 +167,7 @@ class onboardingLoginPage extends StatelessWidget {
             thickness: 0.5,
           ),
           ElevatedButton(
-            onPressed: () => Get.to(() => LoginPage()),
+            onPressed: () => Get.to(() => ResellerRegistrationPage()),
             child: Text(
               "Register as Reseller",
               style: TextStyle(

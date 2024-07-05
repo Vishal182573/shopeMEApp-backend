@@ -1,4 +1,4 @@
-import 'package:anaar_demo/screens/userProfileScreen.dart';
+import 'package:anaar_demo/screens/resellerShowProfile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -172,7 +172,7 @@ class NearbyBusinessCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.to(() => ResellerProfilePage()),
+      onTap: () => Get.to(() =>ResellerShowprofile()),
       child: Container(
         width: 250,
         height: 220,

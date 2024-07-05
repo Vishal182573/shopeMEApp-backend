@@ -1,4 +1,4 @@
-import 'package:anaar_demo/screens/userProfileScreen.dart';
+import 'package:anaar_demo/screens/resellerShowProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +15,7 @@ class Profiletile extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return ListTile(
-      onTap: () => Get.to(() => ResellerProfilePage()),
+      onTap: () => Get.to(() => ResellerShowprofile()),
       leading: CircleAvatar(
         backgroundImage: AssetImage(Imagepath),
       ),

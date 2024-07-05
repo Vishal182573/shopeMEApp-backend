@@ -8,8 +8,8 @@ dotenv.config();
 
 const consumerRegistration = asyncHandler(async (req, res) => {
   try {
-    const {  ownername,businessname, email, password, contact,city, image, connections } = req.body;
-    if (!ownername ||!businessname || !email || !password || !contact || !city) {
+    const {  name, email, password, contact,city, image, connections } = req.body;
+    if (!name ||!businessname || !email || !password || !contact || !city) {
       return res.status(400).json({ message: "Bad request: Missing required fields" });
     }
 
@@ -22,12 +22,12 @@ const consumerRegistration = asyncHandler(async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newConsumer = new Consumer({
-      ownername,
-      businessname,
+      name,
       email,
       password: hashedPassword,
       contact,
       city,
+      type:"consumer",
       image:image || "",
       connections : connections || [""],
     });
@@ -37,6 +37,7 @@ const consumerRegistration = asyncHandler(async (req, res) => {
       consumer: {
         id: savedConsumer._id,
       },
+      "type":"Consumer"
     };
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
@@ -68,7 +69,10 @@ const consumerLogin = asyncHandler(async (req, res) => {
       const payload = {
         consumer: {
           id: consumer._id,
+
         },
+        "type":"consumer"
+
       };
 
       jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" }, (err, token) => {

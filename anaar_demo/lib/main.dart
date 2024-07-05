@@ -1,37 +1,47 @@
-import 'package:anaar_demo/screens/Auth/Login_screen.dart';
+import 'package:anaar_demo/providers/authProvider.dart';
+import 'package:anaar_demo/screens/Auth/Login_reseller.dart';
 import 'package:anaar_demo/screens/Auth/Signup_reseller.dart';
 import 'package:anaar_demo/screens/chatScreen.dart';
 import 'package:anaar_demo/screens/discoverPage.dart';
+import 'package:anaar_demo/screens/dummy_profilePage.dart';
 import 'package:anaar_demo/screens/homepage.dart';
 import 'package:anaar_demo/screens/onboardingScreens.dart';
 import 'package:anaar_demo/screens/requirement_page.dart';
 import 'package:anaar_demo/screens/signup_page.dart';
 import 'package:anaar_demo/screens/splash_screen.dart';
-import 'package:anaar_demo/screens/userProfileScreen.dart';
+import 'package:anaar_demo/screens/resellerShowProfile.dart';
 import 'package:anaar_demo/widgets/bottomNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(
-    MyApp(),
-  );
+   
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+   
+    return ChangeNotifierProvider(
+      create: (context) => AuthProvider()..tryAutoLogin(),
+      child: MaterialApp(
+        title: 'Registration Form',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: Colors.white,
+        ),
+         home: Consumer<AuthProvider>(
+          builder: (context, authProvider, _) {
+            if (authProvider.isAuth) {
+              return NavigationExample();
+            } else {
+              return onboardingScreen();
+            }
+          },
+        ),
       ),
-      home: RegistrationPageForResller(),
     );
   }
 }

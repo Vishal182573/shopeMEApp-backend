@@ -30,6 +30,9 @@ const resellerSchema = new Schema({
     city:{
         type:String,
     },
+    type:{
+        type:String,
+    },
     image:{
         type:String,
     },
