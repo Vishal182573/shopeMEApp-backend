@@ -8,12 +8,12 @@ import 'dart:io';
 
 import 'package:provider/provider.dart';
 
-class UserProfilePage extends StatefulWidget {
+class Consumerprofilepage extends StatefulWidget {
   @override
   _UserProfilePageState createState() => _UserProfilePageState();
 }
 
-class _UserProfilePageState extends State<UserProfilePage> {
+class _UserProfilePageState extends State<Consumerprofilepage> {
   String name = 'vipin';
   String phone = '989120000';
   String email = 'test.test@gmail.com';

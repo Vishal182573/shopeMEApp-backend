@@ -1,5 +1,6 @@
 import 'package:anaar_demo/providers/authProvider.dart';
 import 'package:anaar_demo/screens/homepage.dart';
+import 'package:anaar_demo/widgets/bottomNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -190,7 +191,7 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomePage(),
+                            builder: (context) => NavigationExample(),
                           ),
                         );
                       }
