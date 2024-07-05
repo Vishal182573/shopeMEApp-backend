@@ -37,7 +37,7 @@ const consumerRegistration = asyncHandler(async (req, res) => {
       consumer: {
         id: savedConsumer._id,
       },
-      "type":"Consumer"
+      type:"Consumer"
     };
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
@@ -71,7 +71,7 @@ const consumerLogin = asyncHandler(async (req, res) => {
           id: consumer._id,
 
         },
-        "type":"consumer"
+        type:"consumer"
 
       };
 

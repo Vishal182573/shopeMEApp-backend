@@ -2,7 +2,9 @@ import 'package:anaar_demo/screens/MessageScreen.dart';
 import 'package:anaar_demo/screens/discoverPage.dart';
 import 'package:anaar_demo/screens/homepage.dart';
 import 'package:anaar_demo/screens/profiles/ConsumerprofilePage.dart';
+import 'package:anaar_demo/screens/profiles/ResellerProfilepage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Flutter code sample for [NavigationBar].
 
@@ -15,10 +17,10 @@ class NavigationExample extends StatefulWidget {
 
 class _NavigationExampleState extends State<NavigationExample> {
   int currentPageIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    var usertype = funt();
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
@@ -61,8 +63,14 @@ class _NavigationExampleState extends State<NavigationExample> {
         HomePage(),
         DiscoverPage(),
         Messagescreen(),
-        UserProfilePage()
+        usertype=="reseller"?resellerProfilePage():Consumerprofilepage(),
       ][currentPageIndex],
     );
   }
+}
+
+Future<String?> funt() async {
+  final prefs = await SharedPreferences.getInstance();
+  final String? userType = prefs.getString('userType');
+  return userType;
 }

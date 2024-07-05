@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
    
     return ChangeNotifierProvider(
       create: (context) => AuthProvider()..tryAutoLogin(),
-      child: MaterialApp(
+      child: GetMaterialApp(
         title: 'Registration Form',
         theme: ThemeData(
           primarySwatch: Colors.blue,

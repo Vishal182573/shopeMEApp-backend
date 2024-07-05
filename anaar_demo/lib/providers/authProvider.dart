@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
- String? _token;
+  String? _token;
   String? _userId;
   String? _userType;
   String? get token => _token;
@@ -73,12 +73,15 @@ class AuthProvider with ChangeNotifier {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-
       _token = data['token'];
-      // _userId = data['user']['id'];
+      final payload = decodeJWT(_token!);
+      _userId = payload['reseller']['id'];
+      _userType = payload['type'];
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', _token!);
-      //await prefs.setString('userId', _userId!);
+      await prefs.setString('userId', _userId!);
+      await prefs.setString('userType', _userType!);
+      // await _fetchUserInfo(_userId!);
       notifyListeners();
       return true;
     } else if (response.statusCode == 400) {
@@ -122,7 +125,7 @@ class AuthProvider with ChangeNotifier {
       await prefs.setString('token', _token!);
       await prefs.setString('userId', _userId!);
       await prefs.setString('userType', _userType!);
-     // await _fetchUserInfo(_userId!);
+      // await _fetchUserInfo(_userId!);
       notifyListeners();
       return true;
     } else if (response.statusCode == 400) {

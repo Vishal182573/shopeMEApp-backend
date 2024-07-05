@@ -39,7 +39,7 @@ const resellerRegistration = asyncHandler(async (req, res) => {
       reseller: {
         id: savedReseller._id,
       },
-      "type":"reseller"
+      type:"reseller"
     };
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
@@ -72,7 +72,7 @@ const resellerLogin = asyncHandler(async (req, res) => {
         reseller: {
           id: reseller._id,
         },
-        "type":"reseller"
+        type:"reseller"
       };
 
       jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" }, (err, token) => {
