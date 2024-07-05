@@ -25,7 +25,6 @@ const consumerSchema = new Schema({
     type:{
         type:String,
     },
-
     image:{
         type:String,
     },
