@@ -91,7 +91,7 @@ const consumerLogin = asyncHandler(async (req, res) => {
         if (err) {
           return res.status(500).json({ message: "Token generation failed" });
         }
-        return res.status(200).json({ token, message: "Login successful" });
+        return res.status(200).json({ token, message: "Login successful" ,session: { id: savedConsumer._id, type: "consumer" }});
       });
     } else {
       return res.status(401).json({ message: "Incorrect password" });
