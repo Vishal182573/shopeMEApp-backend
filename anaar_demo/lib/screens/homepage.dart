@@ -1,5 +1,6 @@
 import 'package:anaar_demo/screens/chatScreen.dart';
 import 'package:anaar_demo/screens/requirement_page.dart';
+import 'package:anaar_demo/screens/requiremnetPage/requirementPage.dart';
 import 'package:anaar_demo/widgets/photGrid.dart';
 import 'package:anaar_demo/widgets/profileTile.dart';
 import 'package:flutter/material.dart';
@@ -43,15 +44,12 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage>
-   with SingleTickerProviderStateMixin {
-  
-  
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -231,7 +229,7 @@ class _HomePageState extends State<HomePage>
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () => Get.to(() => RequirementPostScreen()),
         label: Text(
           "Add Requirment",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),

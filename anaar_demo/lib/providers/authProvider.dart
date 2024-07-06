@@ -12,6 +12,10 @@ class AuthProvider with ChangeNotifier {
   String? _userType;
   String? get token => _token;
   bool get isAuth => _token != null;
+  bool _isLoading = false;
+  bool get isLoading {
+    return _isLoading;
+  }
 
   Future<String> _uploadImage(File? _imageFile) async {
     if (_imageFile == null) {
@@ -54,47 +58,62 @@ class AuthProvider with ChangeNotifier {
       String password,
       String address,
       File? image) async {
-    final url = Uri.parse(
-        'https://shopemeapp-backend.onrender.com/api/user/registerReseller');
+    try {
+      final url = Uri.parse(
+          'https://shopemeapp-backend.onrender.com/api/user/registerReseller');
 
-    String imagurl = await _uploadImage(image);
-    var response = await http.post(url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          "ownerName": ownerName,
-          "businessName": businessName,
-          "email": email,
-          "address": address,
-          "password": password,
-          "type": "reseller",
-          "contact": contact,
-          "city": city,
-        }));
+      String imagurl = await _uploadImage(image);
+      var response = await http.post(url,
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            "ownerName": ownerName,
+            "businessName": businessName,
+            "email": email,
+            "address": address,
+            "password": password,
+            "type": "reseller",
+            "contact": contact,
+            "city": city,
+          }));
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      _token = data['token'];
-      final payload = decodeJWT(_token!);
-      _userId = data['session']['id'];
-      _userType = data['session']['type'];
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', _token!);
-      await prefs.setString('userId', _userId!);
-      await prefs.setString('userType', _userType!);
-      // await _fetchUserInfo(_userId!);
-      notifyListeners();
-      return true;
-    } else if (response.statusCode == 400) {
-      print("bad request");
-      return false;
-    } else if (response.statusCode == 401) {
-      throw Exception('user already exists');
-      return false;
-    } else {
-      print(response.statusCode);
-      throw Exception('Failed to register');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        _token = data['token'];
+        final payload = decodeJWT(_token!);
+        _userId = data['session']['id'];
+        _userType = data['session']['type'];
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', _token!);
+        await prefs.setString('userId', _userId!);
+        await prefs.setString('userType', _userType!);
+        // await _fetchUserInfo(_userId!);
+        _isLoading = false;
+        notifyListeners();
+
+        return true;
+      } else if (response.statusCode == 400) {
+        print("bad request");
+         _isLoading = false;
+        notifyListeners();
+        return false;
+      } else if (response.statusCode == 401) {
+        _isLoading = false;
+        notifyListeners();
+        throw Exception('user already exists');
+        
+       // return false;
+      } else {
+        print(response.statusCode);
+         _isLoading = false;
+        notifyListeners();
+        throw Exception('Failed to register');
+        
+      }
+    } catch (e) {
+       _isLoading = false;
+        notifyListeners();
       return false;
     }
   }
@@ -168,7 +187,7 @@ class AuthProvider with ChangeNotifier {
     String password,
   ) async {
     final url = Uri.parse(
-        'https://shopemeapp-backend.onrender.com/api/user/LoginConsumer');
+        'https://shopemeapp-backend.onrender.com/api/user/loginConsumer');
 
     //String imagurl = await _uploadImage(image);
     var response = await http.post(url,
@@ -212,7 +231,7 @@ class AuthProvider with ChangeNotifier {
     String password,
   ) async {
     final url = Uri.parse(
-        'https://shopemeapp-backend.onrender.com/api/user/LoginReseller');
+        'https://shopemeapp-backend.onrender.com/api/user/loginReseller');
 
     //String imagurl = await _uploadImage(image);
     var response = await http.post(url,

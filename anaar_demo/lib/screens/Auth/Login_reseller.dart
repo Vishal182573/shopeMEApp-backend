@@ -1,5 +1,6 @@
 import 'package:anaar_demo/providers/authProvider.dart';
 import 'package:anaar_demo/screens/Auth/Signup_reseller.dart';
+import 'package:anaar_demo/widgets/bottomNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -87,7 +88,20 @@ class _LoginPageResellerState extends State<LoginPageReseller> {
                     Center(
                       child: ElevatedButton(
                         onPressed: () async {
-                          if (_formKey.currentState?.validate() ?? false) {}
+                          if (_formKey.currentState?.validate() ?? false) {
+                            bool val =await authProvider.Reseller_login(
+                                _emailfieldcontroller.text,
+                                _passwordfieldcontroller.text);
+                                 if (val) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NavigationExample(),
+                          ),
+                        );
+                      }
+                          }
+                          
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
