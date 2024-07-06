@@ -1,4 +1,5 @@
 import Reseller from "../models/ResellerModel.js";
+import Consumer from "../models/ConsumerModel.js"
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -29,7 +30,6 @@ const resellerRegistration = asyncHandler(async (req, res) => {
       address,
       contact,
       city:city || "",
-      type:"reseller",
       image:image || "",
       connections: connections || [""],
     });
@@ -38,18 +38,17 @@ const resellerRegistration = asyncHandler(async (req, res) => {
     const payload = {
       reseller: {
         id: savedReseller._id,
-      }
+      },
     };
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) {
         return res.status(500).json({ message: "Token generation failed" });
       }
-      res.status(200).json({ token, message: "Registration successful" ,session:{id: savedReseller._id,type:"reseller"}});
+      res.status(200).json({ token, message: "Registration successful",session:{id: savedReseller._id,type:"reseller"}});
     });
 
   } catch (err) {
-    print(err);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -72,14 +71,13 @@ print("wwwwww");
         reseller: {
           id: reseller._id,
         },
-
       };
 
       jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" }, (err, token) => {
         if (err) {
           return res.status(500).json({ message: "Token generation failed" });
         }
-        return res.status(200).json({ token,session:{id: savedReseller._id,type:"reseller"},message: "Login successful" });
+        return res.status(200).json({ token, message: "Login successful",session:{id: reseller._id,type:"reseller"}});
       });
     } else {
       return res.status(401).json({ message: "Incorrect password" });
@@ -104,4 +102,24 @@ const getReseller = asyncHandler(async (req, res) => {
   }
 });
 
-export { resellerRegistration, resellerLogin, getReseller };
+const usersConnection = asyncHandler(async(req,res)=>{
+  try{
+    const {consumerId,resellerId} = req.body;
+    if(!consumerId || !resellerId) return res.status(400).json({message:"Bad request"});
+    const reseller = await Reseller.findById(resellerId);
+    const consumer = await Consumer.findById(consumerId);
+    if(!reseller || !consumer){
+      return res.status(404).json({message:"User not found"});
+    }else{
+      reseller.connections.push(consumerId);
+      consumer.connections.push(resellerId);
+      await reseller.save();
+      await consumer.save();
+      return res.status(200).json({message:"Users connected sucessfully"});
+    }
+  }catch(err){
+    return res.status(500).json({message:"Internal Server Error"});
+  }
+});
+
+export { resellerRegistration, resellerLogin, getReseller, usersConnection };
