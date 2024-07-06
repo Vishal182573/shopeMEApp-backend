@@ -32,12 +32,12 @@ const consumerRegistration = asyncHandler(async (req, res) => {
       connections : connections || [""],
     });
 
-    const savedConsumer = await newConsumer.save();
+    const savedConsumer = await newConsumer.save().then(print("datasaved"));
     const payload = {
       consumer: {
         id: savedConsumer._id,
       },
-      type:"Consumer"
+      // type:"Consumer"
     };
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
@@ -79,7 +79,9 @@ const consumerLogin = asyncHandler(async (req, res) => {
         if (err) {
           return res.status(500).json({ message: "Token generation failed" });
         }
-        return res.status(200).json({ token, message: "Login successful" });
+        return res.status(200).json({ token,session:{
+          "userID":savedReseller._id,
+          "type":"reseller"}, message: "Login successful" });
       });
     } else {
       return res.status(401).json({ message: "Incorrect password" });

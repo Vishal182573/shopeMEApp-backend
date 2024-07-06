@@ -1,7 +1,9 @@
 import 'package:anaar_demo/providers/authProvider.dart';
+import 'package:anaar_demo/screens/Auth/Login_reseller.dart';
 import 'package:anaar_demo/screens/homepage.dart';
 import 'package:anaar_demo/widgets/bottomNavigationBar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -163,12 +165,12 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                   controller: _addressController,
                   obscureText: true,
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: 'address',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Address';
+                      return 'please enter Address';
                     }
                     return null;
                   },
@@ -199,6 +201,10 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                   },
                   child: Text('Create Account'),
                 ),
+               Row(children: [
+                Text("Already have an account?"),
+                TextButton(onPressed: ()=>Get.to(()=>LoginPageReseller()), child: Text("Login",style: TextStyle(color: Colors.blue),))
+               ],)
               ],
             ),
           ),

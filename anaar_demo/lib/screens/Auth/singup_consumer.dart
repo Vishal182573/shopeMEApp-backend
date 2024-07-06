@@ -1,6 +1,10 @@
 import 'package:anaar_demo/providers/authProvider.dart';
+import 'package:anaar_demo/screens/Auth/login_consumer.dart';
 import 'package:anaar_demo/screens/homepage.dart';
+import 'package:anaar_demo/widgets/bottomNavigationBar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -82,7 +86,6 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
                       ),
                     ),
                     SizedBox(width: 16.0),
-                    
                   ],
                 ),
                 SizedBox(height: 16.0),
@@ -148,7 +151,6 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
                     if (_formKey.currentState?.validate() ?? false) {
                       bool val = await authProvider.Consumer_register(
                           _nameController.text,
-                         
                           _cityController.text,
                           _emailController.text,
                           _phoneNumberController.text,
@@ -159,7 +161,7 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomePage(),
+                            builder: (context) => NavigationExample(),
                           ),
                         );
                       }
@@ -167,6 +169,10 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
                   },
                   child: Text('Create Account'),
                 ),
+                 Row(children: [
+                Text("Already have an account?"),
+                TextButton(onPressed: ()=>Get.to(()=>LoginPageConsumer()), child: Text("Login",style: TextStyle(color: Colors.blue),))
+               ],)
               ],
             ),
           ),

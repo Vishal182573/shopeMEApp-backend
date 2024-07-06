@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -54,7 +55,7 @@ class AuthProvider with ChangeNotifier {
       String address,
       File? image) async {
     final url = Uri.parse(
-        'https://shopemeapp-backend.onrender.com/api/user/resellerRegistration');
+        'https://shopemeapp-backend.onrender.com/api/user/registerReseller');
 
     String imagurl = await _uploadImage(image);
     var response = await http.post(url,
@@ -62,21 +63,22 @@ class AuthProvider with ChangeNotifier {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
-          "ownername": ownerName,
-          "businessname": businessName,
+          "ownerName": ownerName,
+          "businessName": businessName,
           "email": email,
           "address": address,
           "password": password,
+          "type": "reseller",
           "contact": contact,
-          "city": city
+          "city": city,
         }));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       _token = data['token'];
       final payload = decodeJWT(_token!);
-      _userId = payload['reseller']['id'];
-      _userType = payload['type'];
+      _userId = data['session']['id'];
+      _userType = data['session']['type'];
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', _token!);
       await prefs.setString('userId', _userId!);
@@ -112,15 +114,17 @@ class AuthProvider with ChangeNotifier {
           "email": email,
           "password": password,
           "contact": contact,
-          "city": city
+          "city": city,
+          "type": "Consumer"
         }));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       _token = data['token'];
       final payload = decodeJWT(_token!);
-      _userId = payload['consumer']['id'];
-      _userType = payload['type'];
+      _userId = data['session']['id'];
+      _userType = data['session']['type'];
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', _token!);
       await prefs.setString('userId', _userId!);
@@ -158,33 +162,121 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     //return true;
   }
-}
 
-///token decoder
+  Future<bool> Consumer_Login(
+    String email,
+    String password,
+  ) async {
+    final url = Uri.parse(
+        'https://shopemeapp-backend.onrender.com/api/user/LoginConsumer');
 
-Map<String, dynamic> decodeJWT(String token) {
-  final parts = token.split('.');
-  assert(parts.length == 3);
+    //String imagurl = await _uploadImage(image);
+    var response = await http.post(url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "email": email,
+          "password": password,
+        }));
 
-  final payload = _decodeBase64(parts[1]);
-  final payloadMap = json.decode(payload);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      _token = data['token'];
+      final payload = decodeJWT(_token!);
+      _userId = data['session']['id'];
+      _userType = data['session']['type'];
 
-  return payloadMap;
-}
-
-String _decodeBase64(String str) {
-  String output = str.replaceAll('-', '+').replaceAll('_', '/');
-  switch (output.length % 4) {
-    case 0:
-      break;
-    case 2:
-      output += '==';
-      break;
-    case 3:
-      output += '=';
-      break;
-    default:
-      throw Exception('Illegal base64url string!');
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', _token!);
+      await prefs.setString('userId', _userId!);
+      await prefs.setString('userType', _userType!);
+      // await _fetchUserInfo(_userId!);
+      notifyListeners();
+      return true;
+    } else if (response.statusCode == 400) {
+      print("bad request");
+      return false;
+    } else if (response.statusCode == 401) {
+      throw Exception('user already exists');
+      return false;
+    } else {
+      print(response.statusCode);
+      throw Exception('Failed to Login');
+      return false;
+    }
   }
-  return utf8.decode(base64Url.decode(output));
+
+  Future<bool> Reseller_login(
+    String email,
+    String password,
+  ) async {
+    final url = Uri.parse(
+        'https://shopemeapp-backend.onrender.com/api/user/LoginReseller');
+
+    //String imagurl = await _uploadImage(image);
+    var response = await http.post(url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          "email": email,
+          "password": password,
+        }));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      _token = data['token'];
+      final payload = decodeJWT(_token!);
+      _userId = data['session']['id'];
+      _userType = data['session']['type'];
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', _token!);
+      await prefs.setString('userId', _userId!);
+      await prefs.setString('userType', _userType!);
+      // await _fetchUserInfo(_userId!);
+      notifyListeners();
+      return true;
+    } else if (response.statusCode == 400) {
+      print("bad request");
+      return false;
+    } else if (response.statusCode == 401) {
+      throw Exception('user already exists');
+      return false;
+    } else {
+      print(response.statusCode);
+      throw Exception('Failed to Login');
+      return false;
+    }
+  }
+
+  ///token decoder
+
+  Map<String, dynamic> decodeJWT(String token) {
+    final parts = token.split('.');
+    assert(parts.length == 3);
+
+    final payload = _decodeBase64(parts[1]);
+    final payloadMap = json.decode(payload);
+
+    return payloadMap;
+  }
+
+  String _decodeBase64(String str) {
+    String output = str.replaceAll('-', '+').replaceAll('_', '/');
+    switch (output.length % 4) {
+      case 0:
+        break;
+      case 2:
+        output += '==';
+        break;
+      case 3:
+        output += '=';
+        break;
+      default:
+        throw Exception('Illegal base64url string!');
+    }
+    return utf8.decode(base64Url.decode(output));
+  }
 }

@@ -6,8 +6,6 @@ import 'package:anaar_demo/screens/profiles/ResellerProfilepage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Flutter code sample for [NavigationBar].
-
 class NavigationExample extends StatefulWidget {
   const NavigationExample({super.key});
 
@@ -17,10 +15,25 @@ class NavigationExample extends StatefulWidget {
 
 class _NavigationExampleState extends State<NavigationExample> {
   int currentPageIndex = 0;
+  String? userType = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserType();
+  }
+
+  Future<void> _loadUserType() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userType = prefs.getString('userType');
+    });
+    print("$userType.................................");
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    var usertype = funt();
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
@@ -28,10 +41,7 @@ class _NavigationExampleState extends State<NavigationExample> {
             currentPageIndex = index;
           });
         },
-        //indicatorColor: Colors.red,
         selectedIndex: currentPageIndex,
-        //indicatorShape: ShapeBorder,
-
         destinations: const <Widget>[
           NavigationDestination(
             selectedIcon: Icon(Icons.home),
@@ -51,7 +61,6 @@ class _NavigationExampleState extends State<NavigationExample> {
           ),
           NavigationDestination(
             icon: Badge(
-              // label: Text('3'),
               child: Icon(Icons.person),
             ),
             label: 'Profile',
@@ -59,18 +68,11 @@ class _NavigationExampleState extends State<NavigationExample> {
         ],
       ),
       body: <Widget>[
-        /// Home page
         HomePage(),
         DiscoverPage(),
         Messagescreen(),
-        usertype=="reseller"?resellerProfilePage():Consumerprofilepage(),
+        userType == "reseller" ? ResellerProfilePage() : Consumerprofilepage(),
       ][currentPageIndex],
     );
   }
-}
-
-Future<String?> funt() async {
-  final prefs = await SharedPreferences.getInstance();
-  final String? userType = prefs.getString('userType');
-  return userType;
 }
