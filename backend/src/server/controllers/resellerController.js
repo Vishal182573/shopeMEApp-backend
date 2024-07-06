@@ -38,22 +38,14 @@ const resellerRegistration = asyncHandler(async (req, res) => {
     const payload = {
       reseller: {
         id: savedReseller._id,
-        //type:"reseller"
-      },
-     // type:"reseller"
+      }
     };
 
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) {
         return res.status(500).json({ message: "Token generation failed" });
       }
-      res.status(200).json({ token, session:{
-        "userID":savedReseller._id,
-        "type":"reseller",
-
-
-      }
-        ,message: "Registration successful" });
+      res.status(200).json({ token, message: "Registration successful" ,session:{id: savedReseller._id,type:"reseller"}});
     });
 
   } catch (err) {
@@ -87,11 +79,7 @@ const resellerLogin = asyncHandler(async (req, res) => {
         if (err) {
           return res.status(500).json({ message: "Token generation failed" });
         }
-        return res.status(200).json({ token, session:{
-          "userID":savedReseller._id,
-          "type":"reseller",
-  
-        },message: "Login successful" });
+        return res.status(200).json({ token, message: "Login successful" });
       });
     } else {
       return res.status(401).json({ message: "Incorrect password" });
