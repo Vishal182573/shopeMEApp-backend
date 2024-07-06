@@ -1,13 +1,19 @@
+import 'package:anaar_demo/providers/authProvider.dart';
+import 'package:anaar_demo/screens/onboardingScreens.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class UserProfilePage extends StatefulWidget {
+import 'package:provider/provider.dart';
+
+class Consumerprofilepage extends StatefulWidget {
   @override
   _UserProfilePageState createState() => _UserProfilePageState();
 }
 
-class _UserProfilePageState extends State<UserProfilePage> {
+class _UserProfilePageState extends State<Consumerprofilepage> {
   String name = 'vipin';
   String phone = '989120000';
   String email = 'test.test@gmail.com';
@@ -74,6 +80,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -81,6 +88,17 @@ class _UserProfilePageState extends State<UserProfilePage> {
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+              onPressed: () async {
+                authProvider.logout();
+                Get.offAll(() => onboardingLoginPage());
+              },
+              icon: Icon(
+                Icons.logout,
+                color: Colors.white,
+              ))
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),

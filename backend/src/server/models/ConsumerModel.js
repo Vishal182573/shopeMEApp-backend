@@ -18,6 +18,13 @@ const consumerSchema = new Schema({
         type:String,
         required:true,
     },
+    city:{
+        required:true,
+        type:String,
+    },
+    type:{
+        type:String,
+    },
     image:{
         type:String,
     },

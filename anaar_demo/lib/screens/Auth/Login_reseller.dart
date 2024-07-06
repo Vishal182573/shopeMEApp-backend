@@ -1,84 +1,22 @@
-import 'package:anaar_demo/screens/Login_screen.dart';
-import 'package:anaar_demo/widgets/bottomNavigationBar.dart';
+import 'package:anaar_demo/providers/authProvider.dart';
+import 'package:anaar_demo/screens/Auth/Signup_reseller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
-class SignUpPage extends StatefulWidget {
+class LoginPageReseller extends StatefulWidget {
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  State<LoginPageReseller> createState() => _LoginPageResellerState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _LoginPageResellerState extends State<LoginPageReseller> {
   final _formKey = GlobalKey<FormState>();
-
-  // Controllers to get the input values
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your email address';
-    }
-    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-    if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email address';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your password';
-    }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-    return null;
-  }
-
-  String? _validateConfirmPassword(String? value) {
-    if (value != _passwordController.text) {
-      return 'Passwords do not match';
-    }
-    return null;
-  }
-
-  String? _validateName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your name';
-    }
-    return null;
-  }
-
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      // If all fields are valid, proceed with the sign-up logic
-      // You can access the form values using the controllers
-      final name = _nameController.text;
-      final email = _emailController.text;
-      final password = _passwordController.text;
-
-      // Add your sign-up logic here
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sign-up successful')),
-      );
-    }
-  }
+  final _emailfieldcontroller = TextEditingController();
+  final _passwordfieldcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -92,7 +30,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Create',
+                      'Log into your Reseller Account',
                       style: TextStyle(
                         color: Colors.red,
                         fontSize: 32,
@@ -109,46 +47,48 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     SizedBox(height: 40),
                     TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Enter your name',
-                        border: UnderlineInputBorder(),
-                      ),
-                      validator: _validateName,
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: _emailController,
+                      controller: _emailfieldcontroller,
                       decoration: InputDecoration(
                         labelText: 'Email address',
                         border: UnderlineInputBorder(),
                       ),
-                      validator: _validateEmail,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter Email ID';
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(height: 20),
                     TextFormField(
-                      controller: _passwordController,
+                      controller: _passwordfieldcontroller,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         border: UnderlineInputBorder(),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Password';
+                        }
+                        return null;
+                      },
                       obscureText: true,
-                      validator: _validatePassword,
                     ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: _confirmPasswordController,
-                      decoration: InputDecoration(
-                        labelText: 'Confirm password',
-                        border: UnderlineInputBorder(),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          // Add your forgot password logic here
+                        },
+                        child: Text('Forgot Password?'),
                       ),
-                      obscureText: true,
-                      validator: _validateConfirmPassword,
                     ),
                     SizedBox(height: 20),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () => Get.to(() => NavigationExample()),
+                        onPressed: () async {
+                          if (_formKey.currentState?.validate() ?? false) {}
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                           padding: EdgeInsets.symmetric(
@@ -158,7 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                         child: Text(
-                          'SIGN UP',
+                          'LOG IN',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
@@ -169,7 +109,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     SizedBox(height: 20),
                     Center(
                       child: Text(
-                        'or sign up with',
+                        'or log in with',
                         style: TextStyle(
                           color: Colors.grey,
                         ),
@@ -197,16 +137,17 @@ class _SignUpPageState extends State<SignUpPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Already have an account? ',
+                            'Don’t have an account? ',
                             style: TextStyle(
                               color: Colors.red,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          InkWell(
-                            onTap: () => Get.to(() => LoginPage()),
+                          GestureDetector(
+                            onTap: () =>
+                                Get.to(() => ResellerRegistrationPage()),
                             child: Text(
-                              'Login',
+                              'Sign Up',
                               style: TextStyle(
                                 color: Colors.blue,
                                 //fontWeight: FontWeight.bold,

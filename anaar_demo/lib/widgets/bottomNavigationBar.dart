@@ -1,10 +1,10 @@
 import 'package:anaar_demo/screens/MessageScreen.dart';
 import 'package:anaar_demo/screens/discoverPage.dart';
 import 'package:anaar_demo/screens/homepage.dart';
-import 'package:anaar_demo/screens/profilePage.dart';
+import 'package:anaar_demo/screens/profiles/ConsumerprofilePage.dart';
+import 'package:anaar_demo/screens/profiles/ResellerProfilepage.dart';
 import 'package:flutter/material.dart';
-
-/// Flutter code sample for [NavigationBar].
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NavigationExample extends StatefulWidget {
   const NavigationExample({super.key});
@@ -15,6 +15,21 @@ class NavigationExample extends StatefulWidget {
 
 class _NavigationExampleState extends State<NavigationExample> {
   int currentPageIndex = 0;
+  String? userType = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserType();
+  }
+
+  Future<void> _loadUserType() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userType = prefs.getString('userType');
+    });
+    print("$userType.................................");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +41,7 @@ class _NavigationExampleState extends State<NavigationExample> {
             currentPageIndex = index;
           });
         },
-        //indicatorColor: Colors.red,
         selectedIndex: currentPageIndex,
-        //indicatorShape: ShapeBorder,
-
         destinations: const <Widget>[
           NavigationDestination(
             selectedIcon: Icon(Icons.home),
@@ -49,7 +61,6 @@ class _NavigationExampleState extends State<NavigationExample> {
           ),
           NavigationDestination(
             icon: Badge(
-              // label: Text('3'),
               child: Icon(Icons.person),
             ),
             label: 'Profile',
@@ -57,11 +68,10 @@ class _NavigationExampleState extends State<NavigationExample> {
         ],
       ),
       body: <Widget>[
-        /// Home page
         HomePage(),
         DiscoverPage(),
         Messagescreen(),
-        UserProfilePage()
+        userType == "reseller" ? ResellerProfilePage() : Consumerprofilepage(),
       ][currentPageIndex],
     );
   }

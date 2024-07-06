@@ -1,8 +1,15 @@
-import 'package:anaar_demo/screens/signup_page.dart';
+import 'package:anaar_demo/screens/Auth/singup_consumer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPageConsumer extends StatefulWidget {
+  @override
+  State<LoginPageConsumer> createState() => _LoginPageConsumerState();
+}
+
+class _LoginPageConsumerState extends State<LoginPageConsumer> {
+  final _emailfieldcontroller = TextEditingController();
+  final _passwordfieldcontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +23,7 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Log into',
+                    'Log into your Consumer Account',
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 32,
@@ -33,18 +40,32 @@ class LoginPage extends StatelessWidget {
                   ),
                   SizedBox(height: 40),
                   TextFormField(
+                    controller: _emailfieldcontroller,
                     decoration: InputDecoration(
                       labelText: 'Email address',
                       border: UnderlineInputBorder(),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter Email ID';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 20),
                   TextFormField(
+                    controller: _passwordfieldcontroller,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       border: UnderlineInputBorder(),
                     ),
                     obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter Password';
+                      }
+                      return null;
+                    },
                   ),
                   Align(
                     alignment: Alignment.centerRight,
@@ -58,7 +79,7 @@ class LoginPage extends StatelessWidget {
                   SizedBox(height: 20),
                   Center(
                     child: ElevatedButton(
-                      onPressed: () => Get.to(() => SignUpPage()),
+                      onPressed: () => Get.to(() async {}),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         padding:
@@ -114,7 +135,7 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => Get.to(() => SignUpPage()),
+                          onTap: () => Get.to(() => ConsumerRegistrationPage()),
                           child: Text(
                             'Sign Up',
                             style: TextStyle(
