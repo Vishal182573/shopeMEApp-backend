@@ -5,7 +5,9 @@ import asyncHandler from "express-async-handler";
 const uploadPost = asyncHandler(async (req, res) => {
     try {
         const { userid, description, category, likes, comments, images } = req.body;
-        if (!userid || !category) return res.status(400).json({ message: "Bad Request" });
+        if (!userid || !category) return res.status(400).json({ 
+            
+            message: "Bad Request" });
         const newPost = new Post({
             userid,
             description: description || "",
