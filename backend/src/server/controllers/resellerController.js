@@ -30,6 +30,7 @@ const resellerRegistration = asyncHandler(async (req, res) => {
       address,
       contact,
       city:city || "",
+      type:"reseller",
       image:image || "",
       connections: connections || [""],
     });
@@ -64,7 +65,6 @@ const resellerLogin = asyncHandler(async (req, res) => {
     if (!reseller) {
       return res.status(404).json({ message: "Reseller not found" });
     }
-print("wwwwww");
     const isMatch = await bcrypt.compare(password, reseller.password);
     if (isMatch) {
       const payload = {

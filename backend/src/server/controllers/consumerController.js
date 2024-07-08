@@ -26,6 +26,7 @@ const consumerRegistration = asyncHandler(async (req, res) => {
       email,
       password: hashedPassword,
       contact,
+      type:"consumer",
       image:image || "",
       connections : connections || [""],
     });

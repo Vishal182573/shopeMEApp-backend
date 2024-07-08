@@ -5,9 +5,8 @@ import asyncHandler from "express-async-handler";
 const uploadPost = asyncHandler(async (req, res) => {
     try {
         const { userid, description, category, likes, comments, images } = req.body;
-        if (!userid || !category) return res.status(400).json({ 
-            
-            message: "Bad Request" });
+        if (!userid || !category) return res.status(400).json({ message: "Bad Request" });
+
         const newPost = new Post({
             userid,
             description: description || "",
@@ -26,9 +25,49 @@ const uploadPost = asyncHandler(async (req, res) => {
 // Get trending posts (ordered by number of likes and comments)
 const trendingPost = asyncHandler(async (req, res) => {
     try {
-        const posts = await Post.find();
-        posts.sort((a, b) => (b.likes.length + b.comments.length) - (a.likes.length + a.comments.length));
-        res.status(200).json(posts);
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        const trendingPosts = await Post.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { 'likes.createdAt': { $gte: sevenDaysAgo } },
+                        { 'comments.createdAt': { $gte: sevenDaysAgo } }
+                    ]
+                }
+            },
+            {
+                $addFields: {
+                    recentLikesCount: {
+                        $size: {
+                            $filter: {
+                                input: '$likes',
+                                as: 'like',
+                                cond: { $gte: ['$$like.createdAt', sevenDaysAgo] }
+                            }
+                        }
+                    },
+                    recentCommentsCount: {
+                        $size: {
+                            $filter: {
+                                input: '$comments',
+                                as: 'comment',
+                                cond: { $gte: ['$$comment.createdAt', sevenDaysAgo] }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                $sort: {
+                    recentLikesCount: -1,
+                    recentCommentsCount: -1
+                }
+            }
+        ]);
+
+        res.status(200).json(trendingPosts);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching trending posts', details: error.message });
     }
@@ -55,8 +94,9 @@ const likePost = asyncHandler(async (req, res) => {
         const post = await Post.findById(postid);
         if (!post) return res.status(404).json({ message: "Post not found" });
 
-        if (!post.likes.includes(userid)) {
-            post.likes.push(userid);
+        const existingLike = post.likes.find(like => like.userId === userid);
+        if (!existingLike) {
+            post.likes.push({ userId: userid, createdAt: new Date() });
             await post.save();
         }
 
@@ -69,13 +109,13 @@ const likePost = asyncHandler(async (req, res) => {
 // Comment on a post
 const commentPost = asyncHandler(async (req, res) => {
     try {
-        const { postid, comment } = req.body;
-        if (!postid || !comment) return res.status(400).json({ message: "Bad Request" });
+        const { postid, userid, comment } = req.body;
+        if (!postid || !userid || !comment) return res.status(400).json({ message: "Bad Request" });
 
         const post = await Post.findById(postid);
         if (!post) return res.status(404).json({ message: "Post not found" });
 
-        post.comments.push(comment);
+        post.comments.push({ userId: userid, comment, createdAt: new Date() });
         await post.save();
 
         res.status(200).json(post);
@@ -84,14 +124,15 @@ const commentPost = asyncHandler(async (req, res) => {
     }
 });
 
-const getAllPosts = asyncHandler(async(req,res)=>{
-    try{
+// Get all posts
+const getAllPosts = asyncHandler(async (req, res) => {
+    try {
         const posts = await Post.find({});
         return res.status(200).json(posts);
-    }catch(err){
-        return res.status(500).json({message:"Internal server error"});
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error" });
     }
-})
+});
 
 export {
     uploadPost,

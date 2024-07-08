@@ -1,26 +1,44 @@
-import { Schema,model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const postSchema = new Schema({
-    userid:{
-        type:String,
-        required:true,
+    userid: {
+        type: String,
+        required: true,
     },
-    description:{
-        type:String,
+    description: {
+        type: String,
     },
-    likes:{
-        type:[String], // contains user id who like that particular post
+    likes: [{
+        userId: {
+            type: String,
+            required: true,
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now,
+        }
+    }],
+    category: {
+        type: String,
+        required: true,
     },
-    category:{
-        type:String,
-        required:true,
-    },
-    comments:{
-        type:[String]
-    },
-    images:{ // store images from image routes one by one then store store url of each here
-        type:[String],
+    comments: [{
+        userId: {
+            type: String,
+            required: true,
+        },
+        comment: {
+            type: String,
+            required: true,
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now,
+        }
+    }],
+    images: {
+        type: [String],
     }
-},{timestamps:true});
+}, { timestamps: true });
 
-export default model('Post',postSchema);
+export default model('Post', postSchema);
