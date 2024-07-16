@@ -1,4 +1,4 @@
-import Chat from "../models/chatModel.js";
+import Chat from "../models/ChatModel.js";
 import asyncHandler from "express-async-handler";
 
 const addChat = asyncHandler(async (req, res) => {
