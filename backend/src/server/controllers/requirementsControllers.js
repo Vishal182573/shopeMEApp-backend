@@ -5,6 +5,7 @@ const postRequirements = asyncHandler(async (req, res) => {
   try {
     const {
       userId,
+      userType,
       productName,
       category,
       quantity,
@@ -13,12 +14,13 @@ const postRequirements = asyncHandler(async (req, res) => {
       images,
     } = req.body;
 
-    if (!userId || !productName || !category || !quantity || !totalPrice) {
+    if (!userId || !userType ||  !productName || !category || !quantity || !totalPrice) {
       return res.status(400).json({ message: "Bad request: Missing required fields" });
     }
 
     const requirement = new Requirement({
       userId,
+      userType,
       productName,
       category,
       quantity,
@@ -50,7 +52,6 @@ const getRequirementByCategory = asyncHandler(async (req, res) => {
     if (!category) {
       return res.status(400).json({ message: "Bad request: Category needed" });
     }
-
     const requirements = await Requirement.find({ category });
     return res.status(200).json(requirements);
 

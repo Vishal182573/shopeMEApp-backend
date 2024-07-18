@@ -5,6 +5,9 @@ const postSchema = new Schema({
         type: String,
         required: true,
     },
+    userType:{
+        type:String,
+    },
     description: {
         type: String,
     },
@@ -12,6 +15,9 @@ const postSchema = new Schema({
         userId: {
             type: String,
             required: true,
+        },
+        userType:{
+            type:String,
         },
         createdAt: {
             type: Date,
@@ -26,6 +32,9 @@ const postSchema = new Schema({
         userId: {
             type: String,
             required: true,
+        },
+        userType:{
+            type:String,
         },
         comment: {
             type: String,

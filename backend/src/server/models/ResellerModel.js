@@ -36,6 +36,9 @@ const resellerSchema = new Schema({
     image:{
         type:String,
     },
+    bgImage:{
+        type:String,
+    },
     connections:{
         type:[String] // it contains ids of consumers
     }

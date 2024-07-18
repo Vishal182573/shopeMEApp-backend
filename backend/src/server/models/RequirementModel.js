@@ -5,6 +5,9 @@ const requirementSchema = new Schema({
         type:String,
         required:true,
     },
+    userType:{
+        type:String,
+    },
     productName:{
         type:String,
         required:true,
@@ -21,7 +24,7 @@ const requirementSchema = new Schema({
         type:Number,
         required:true,
     },
-    details:String,
+    details:String,            
     images:{
         type:[String],
     }

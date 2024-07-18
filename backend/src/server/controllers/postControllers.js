@@ -4,11 +4,12 @@ import asyncHandler from "express-async-handler";
 // Upload a new post
 const uploadPost = asyncHandler(async (req, res) => {
     try {
-        const { userid, description, category, likes, comments, images } = req.body;
-        if (!userid || !category) return res.status(400).json({ message: "Bad Request" });
+        const { userid, userType, description, category, likes, comments, images } = req.body;
+        if (!userid || !category || !userType) return res.status(400).json({ message: "Bad Request" });
 
         const newPost = new Post({
             userid,
+            userType,
             description: description || "",
             category: category || "",
             likes: likes || [],
@@ -88,15 +89,15 @@ const getPostByCategory = asyncHandler(async (req, res) => {
 // Like a post
 const likePost = asyncHandler(async (req, res) => {
     try {
-        const { postid, userid } = req.body;
-        if (!postid || !userid) return res.status(400).json({ message: "Bad Request" });
+        const { postid, userid,userType} = req.body;
+        if (!postid || !userid || !userType) return res.status(400).json({ message: "Bad Request" });
 
         const post = await Post.findById(postid);
         if (!post) return res.status(404).json({ message: "Post not found" });
 
         const existingLike = post.likes.find(like => like.userId === userid);
         if (!existingLike) {
-            post.likes.push({ userId: userid, createdAt: new Date() });
+            post.likes.push({ userId: userid,userType, createdAt: new Date() });
             await post.save();
         }
 
@@ -109,13 +110,13 @@ const likePost = asyncHandler(async (req, res) => {
 // Comment on a post
 const commentPost = asyncHandler(async (req, res) => {
     try {
-        const { postid, userid, comment } = req.body;
-        if (!postid || !userid || !comment) return res.status(400).json({ message: "Bad Request" });
+        const { postid, userid,userType, comment } = req.body;
+        if (!postid || !userid || !userType || !comment) return res.status(400).json({ message: "Bad Request" });
 
         const post = await Post.findById(postid);
         if (!post) return res.status(404).json({ message: "Post not found" });
 
-        post.comments.push({ userId: userid, comment, createdAt: new Date() });
+        post.comments.push({ userId: userid,userType, comment, createdAt: new Date() });
         await post.save();
 
         res.status(200).json(post);
@@ -134,11 +135,26 @@ const getAllPosts = asyncHandler(async (req, res) => {
     }
 });
 
+const getPostsByUserId = asyncHandler(async(req,res)=>{
+    try{
+        const {userId} = req.query;
+        if(!userId) return res.status(400).json({message:"UserId required"});
+        const posts = await Post.find({userid:userId});
+        if(!posts){
+          return res.status(404).json({message:"Post not found"});  
+        }
+        return res.status(200).json(posts);
+    }catch(err){
+        return res.status(500).json({message:"Internal Server Error"});
+    }
+})
+
 export {
     uploadPost,
     trendingPost,
     getPostByCategory,
     likePost,
     commentPost,
+    getPostsByUserId,
     getAllPosts,
 };
