@@ -4,13 +4,15 @@ import asyncHandler from "express-async-handler";
 // Upload a new catalog
 const uploadCatalog = asyncHandler(async (req, res) => {
     try {
-        const {userId,catalog,category} = req.body;
-        if (!userId || !catalog || !category) return res.status(400).json({ message: "Bad Request" });
+        const {userId,category,description,price,images} = req.body;
+        if (!userId || !description || !price || !images || !category) return res.status(400).json({ message: "Bad Request" });
 
         const newCatalog = new Catalog({
             userId,
-            catalog,
             category,
+            description,
+            price,
+            images
         });
         const savedCatalog = await newCatalog.save();
         res.status(200).json(savedCatalog);
@@ -29,6 +31,8 @@ const getAllCatalog= asyncHandler(async (req, res) => {
     }
 });
 
+
+
 // Get posts by category
 const getCatalogsByCategory = asyncHandler(async (req, res) => {
     try {
@@ -38,6 +42,20 @@ const getCatalogsByCategory = asyncHandler(async (req, res) => {
         res.status(200).json(catalogs);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching posts by category', details: error.message });
+    }
+});
+
+const getCatalogByUserId = asyncHandler(async(req,res)=>{
+    try{
+        const {userId} = req.query;
+        if(!userId) return res.status(400).json({message:"UserId required"});
+        const catalogs = await Catalog.find({userid:userId});
+        if(!catalogs){
+          return res.status(404).json({message:"Post not found"});  
+        }
+        return res.status(200).json(posts);
+    }catch(err){
+        return res.status(500).json({message:"Internal Server Error"});
     }
 });
 
@@ -66,4 +84,5 @@ export{
     deleteCatalog,
     getAllCatalog,
     getCatalogsByCategory,
+    getCatalogByUserId,
 }

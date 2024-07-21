@@ -23,6 +23,25 @@ const uploadPost = asyncHandler(async (req, res) => {
     }
 });
 
+const deletePost = asyncHandler(async (req, res) => {
+    try {
+      const { postId } = req.query;
+      if (!postId) return res.status(400).json({ message: "Bad request: Missing postId" });
+  
+      const post = await Post.findById(postId);
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+  
+      await Post.deleteOne({ _id: postId });
+      return res.status(200).json({ message: "Post deleted successfully" });
+      
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+
 // Get trending posts (ordered by number of likes and comments)
 const trendingPost = asyncHandler(async (req, res) => {
     try {
@@ -147,7 +166,7 @@ const getPostsByUserId = asyncHandler(async(req,res)=>{
     }catch(err){
         return res.status(500).json({message:"Internal Server Error"});
     }
-})
+});
 
 export {
     uploadPost,
@@ -157,4 +176,5 @@ export {
     commentPost,
     getPostsByUserId,
     getAllPosts,
+    deletePost,
 };

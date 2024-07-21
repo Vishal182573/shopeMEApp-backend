@@ -8,29 +8,29 @@ dotenv.config();
 
 const consumerRegistration = asyncHandler(async (req, res) => {
   try {
-    const { name, email, password, contact, image, connections } = req.body;
-    if (!name || !email || !password || !contact) {
+    const { name, email, password, contact,city, image, connections } = req.body;
+    if (!name || !email || !password || !contact || !city) {
       return res.status(400).json({ message: "Bad request: Missing required fields" });
     }
-
     const existingConsumer = await Consumer.findOne({ email });
     if (existingConsumer) {
       return res.status(401).json({ message: "Consumer already exists" });
     }
-
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
+    
     const newConsumer = new Consumer({
       name,
       email,
       password: hashedPassword,
       contact,
+      city,
       type:"consumer",
       image:image || "",
       connections : connections || [""],
     });
-
+    
     const savedConsumer = await newConsumer.save();
     const payload = {
       consumer: {
@@ -99,4 +99,34 @@ const getConsumer = asyncHandler(async (req, res) => {
   }
 });
 
-export { consumerRegistration, consumerLogin, getConsumer };
+const updateConsumer = asyncHandler(async (req, res) => {
+  try {
+    const { name, email, password, contact, city, image, connections } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ message: "Bad request: Missing required email" });
+    }
+
+    const consumer = await Consumer.findOne({ email });
+    if (!consumer) {
+      return res.status(404).json({ message: "Consumer not found" });
+    }
+
+    // Only update the fields that are provided in the request body
+    if (name) consumer.name = name;
+    if (password) consumer.password = password;
+    if (contact) consumer.contact = contact;
+    if (city) consumer.city = city;
+    if (image) consumer.image = image;
+    if (connections) consumer.connections = connections;
+
+    const updatedConsumer = await consumer.save();
+
+    return res.status(200).json(updatedConsumer);
+
+  } catch (err) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+export { consumerRegistration, consumerLogin, getConsumer,updateConsumer };
