@@ -11,7 +11,7 @@ const router = Router();
 
 router.post("/postRequirement",auth,postRequirements);
 
-router.get("/getAllRequirements",auth,showAllRequirements);
+router.get("/getAllRequirements",showAllRequirements);
 router.get("/getRequirementsByCategory",auth,getRequirementByCategory),
 router.get("/deleteRequirement",auth,deleteRequirement);
 

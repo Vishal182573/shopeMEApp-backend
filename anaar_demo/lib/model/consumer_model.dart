@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 
 class ConsumerModel {
-  final String id;
-  final String name;
-  final String businessName;
-  final String city;
-  final String email;
-  final String contact;
-  final String image; 
-  final String type;
+  final String? id;
+  final String? name;
+  final String? businessName;
+  final String? city;
+  final String? email;
+  final String? contact;
+  final String? image; 
+  final String? type;
 
   ConsumerModel({
     required this.id,

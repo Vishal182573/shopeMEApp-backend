@@ -19,7 +19,7 @@ router.post("/connect",usersConnection);
 router.post("/updateConsumer",auth,updateConsumer);
 router.post("/updateReseller",auth,updateReseller);
 
-router.get("/getConsumer",auth,getConsumer);
-router.get("/getReseller",auth,getReseller);
+router.get("/getConsumer",getConsumer);
+router.get("/getReseller",getReseller);
 
 export default router;

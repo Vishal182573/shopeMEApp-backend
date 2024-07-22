@@ -4,9 +4,9 @@ import auth from "../middleware/authMiddleware.js"
 
 const router = express.Router();
 
-router.get('/trending',auth, trendingPost);
+router.get('/trending', trendingPost);
 router.get('/category',auth, getPostByCategory);
-router.get('/getAllPost',auth,getAllPosts);
+router.get('/getAllPost',getAllPosts);
 router.get('/getPostByUserId',auth,getPostsByUserId);
 router.get('/deletePost',auth,deletePost)
 

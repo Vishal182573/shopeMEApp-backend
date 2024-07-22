@@ -1,8 +1,30 @@
-import 'package:anaar_demo/screens/chatScreen.dart';
+import 'package:anaar_demo/model/consumer_model.dart';
+import 'package:anaar_demo/model/userModel.dart';
+import 'package:anaar_demo/providers/commonuserdataprovider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:anaar_demo/model/Requirement_model.dart';
+import 'package:anaar_demo/providers/RequirementProvider.dart';
+import 'package:anaar_demo/providers/userProvider.dart';
+import 'package:anaar_demo/screens/chatScreen.dart';
 
-class RequirementsPage extends StatelessWidget {
+class RequirementsPage extends StatefulWidget {
+  @override
+  State<RequirementsPage> createState() => _RequirementsPageState();
+}
+
+class _RequirementsPageState extends State<RequirementsPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<RequirementcardProvider>(context, listen: false)
+          .fetchreqcards();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,83 +38,75 @@ class RequirementsPage extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
-        padding: EdgeInsets.all(16.0),
-        children: [
-          OrderCard(
-            ProfilImage: "assets/images/tv3.jpg",
-            businessName: 'Vijay Electronics',
-            businessType: 'Manufacturers',
-            location: 'Delhi',
-            postedTime: '2 days ago',
-            productName: 'LG TV',
-            category: 'Electronic',
-            quantity: '15 Pcs',
-            totalPrice: '₹10,50,000/-',
-            moreDetails:
-                'We are an Electronic items resellers. We need 15 pcs of LG TV. Any authenticated dealer can connect with us for more further enquiries.',
-            images: [
-              'assets/images/tv1.jpg',
-              'assets/images/tv3.jpg',
-              'assets/images/tv2.jpg',
-            ],
-          ),
-          OrderCard(
-            ProfilImage: "assets/images/pents.jpeg",
-            businessName: 'Laxmi Textiles',
-            businessType: 'Manufacturers',
-            location: 'Delhi',
-            postedTime: '2 days ago',
-            productName: 'Product Name',
-            category: 'Textile',
-            quantity: '200',
-            totalPrice: '1,00,000',
-            moreDetails:
-                'We are a clothig /Textile company .we need varansi saree with high quality.',
-            images: [
-              'assets/images/saree 4.jpeg',
-              'assets/images/saree2.jpeg',
-              'assets/images/saree 3.jpeg',
-            ],
-          ),
-        ],
+      body: FutureBuilder(
+        future: Provider.of<RequirementcardProvider>(context, listen: false)
+            .fetchreqcards(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('An error occurred: ${snapshot.error}'));
+          } else {
+            return Consumer<RequirementcardProvider>(
+              builder: (ctx, reqcardProvider, child) {
+                if (reqcardProvider.reqcards == null ||
+                    reqcardProvider.reqcards.isEmpty) {
+                  return Center(child: Text('No requirements available'));
+                } else {
+                  // final validRequirements = reqcardProvider.reqcards
+                  //     .where(
+                  //         (req) => req.userId != null && req.userId!.isNotEmpty)
+                  //     .toList();
+
+                  return ListView.builder(
+                    physics: ScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemCount: reqcardProvider.reqcards.length,
+                    itemBuilder: (context, index) {
+                      return OrderCard(
+                          requirement: reqcardProvider.reqcards[index]);
+                    },
+                  );
+                }
+              },
+            );
+          }
+        },
       ),
     );
   }
 }
 
 class OrderCard extends StatelessWidget {
-  final String businessName;
-  final String businessType;
-  final String location;
-  final String postedTime;
-  final String productName;
-  final String category;
-  final String quantity;
-  final String totalPrice;
-  final String moreDetails;
-  final String ProfilImage;
-  final List<String> images;
+  final Requirement requirement;
 
-  const OrderCard({
-    required this.businessName,
-    required this.businessType,
-    required this.location,
-    required this.postedTime,
-    required this.productName,
-    required this.category,
-    required this.quantity,
-    required this.totalPrice,
-    required this.moreDetails,
-    required this.images,
-    required this.ProfilImage,
-  });
+  OrderCard({required this.requirement});
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<Usermodel?>(
+      future: Provider.of<UserProvider>(context, listen: false)
+          .fetchUserinfo(requirement.userId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return ShimmerLoadingCard();
+        } else if (snapshot.hasError) {
+          return Text("Error occurred: ${snapshot.error}");
+        } else if (snapshot.data == null) {
+          return Text("No user data available");
+        } else {
+          final userModel = snapshot.data!;
+          return _buildCard(context, requirement, userModel);
+        }
+      },
+    );
+  }
+
+  Widget _buildCard(
+      BuildContext context, Requirement requirement, Usermodel user) {
     return Card(
       elevation: 10,
-      margin: EdgeInsets.only(bottom: 16.0),
+      margin: EdgeInsets.all(8.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -100,10 +114,9 @@ class OrderCard extends StatelessWidget {
           children: [
             ListTile(
               leading: CircleAvatar(
-                backgroundImage: AssetImage(ProfilImage),
+                backgroundImage: NetworkImage(user.image ?? ''),
               ),
-              title: Text(businessName),
-              subtitle: Text('$businessType • $location'),
+              title: Text(user.businessName ?? ''),
               trailing: TextButton(
                 onPressed: () {},
                 child: Text(
@@ -116,15 +129,15 @@ class OrderCard extends StatelessWidget {
             Text('Product Details:',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 8.0),
-            Text('Product Name: $productName'),
-            Text('Category: $category'),
-            Text('QTY: $quantity'),
-            Text('Total Price: $totalPrice'),
+            Text("Product Name: ${requirement.productName}"),
+            Text('Category: ${requirement.category}'),
+            Text('QTY: ${requirement.quantity}'),
+            Text('Total Price: ${requirement.totalPrice}'),
             SizedBox(height: 8.0),
             Text('More Details:',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 8.0),
-            Text(moreDetails),
+            Text(requirement.details ?? ''),
             SizedBox(height: 8.0),
             Text('Attached Images:',
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -132,12 +145,18 @@ class OrderCard extends StatelessWidget {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: images.map((image) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Image.asset(image, width: 100, height: 100),
-                  );
-                }).toList(),
+                children: requirement.images?.map((image) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Image.network(
+                          image!,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    }).toList() ??
+                    [],
               ),
             ),
             SizedBox(height: 8.0),
@@ -154,18 +173,61 @@ class OrderCard extends StatelessWidget {
                     backgroundColor: Colors.blue,
                   ),
                   onPressed: () => Get.to(ChatScreen()),
-                  icon: Icon(
-                    Icons.chat,
-                    color: Colors.white,
-                  ),
-                  label: Text(
-                    'Chat',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  icon: Icon(Icons.chat, color: Colors.white),
+                  label: Text('Chat', style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class ShimmerLoadingCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 10,
+      margin: EdgeInsets.all(8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListTile(
+                leading: CircleAvatar(radius: 30),
+                title: Container(height: 16, color: Colors.white),
+                trailing: Container(width: 60, height: 24, color: Colors.white),
+              ),
+              SizedBox(height: 8.0),
+              Container(height: 16, width: 120, color: Colors.white),
+              SizedBox(height: 8.0),
+              Container(
+                  height: 16, width: double.infinity, color: Colors.white),
+              SizedBox(height: 4.0),
+              Container(
+                  height: 16, width: double.infinity, color: Colors.white),
+              SizedBox(height: 4.0),
+              Container(
+                  height: 16, width: double.infinity, color: Colors.white),
+              SizedBox(height: 8.0),
+              Container(
+                  height: 100, width: double.infinity, color: Colors.white),
+              SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(width: 100, height: 36, color: Colors.white),
+                  Container(width: 100, height: 36, color: Colors.white),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

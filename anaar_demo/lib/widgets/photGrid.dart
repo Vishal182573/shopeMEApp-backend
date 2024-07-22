@@ -18,7 +18,7 @@ class PhotoGrid extends StatelessWidget {
       itemCount: imageUrls.length,
       itemBuilder: (context, index) => Container(
         child: Image(
-          image: AssetImage(imageUrls[index]),
+          image: NetworkImage(imageUrls[index]),
           fit: BoxFit.contain,
         ),
         height: 40,

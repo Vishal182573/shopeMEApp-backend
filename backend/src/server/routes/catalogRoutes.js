@@ -4,11 +4,11 @@ import auth from "../middleware/authMiddleware.js"
 
 const router = express.Router();
 
-router.post('/uploadCatalog',auth,uploadCatalog);
+router.post('/uploadCatalog',uploadCatalog);
 
 router.get('/deleteCatalog',auth,deleteCatalog);
 router.get('/getCatalogsByCategory',auth,getCatalogsByCategory);
 router.get('/getAllCatalogs',auth,getAllCatalog);
-router.get('/getAllByUserId',auth,getCatalogByUserId)
+router.get('/getAllByUserId',auth,getCatalogByUserId);
 
 export default router;

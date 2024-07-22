@@ -86,39 +86,54 @@ class _LoginPageResellerState extends State<LoginPageReseller> {
                     ),
                     SizedBox(height: 20),
                     Center(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            bool val =await authProvider.Reseller_login(
-                                _emailfieldcontroller.text,
-                                _passwordfieldcontroller.text);
-                                 if (val) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NavigationExample(),
-                          ),
-                        );
-                      }
-                          }
-                          
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: Text(
-                          'LOG IN',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                      child: authProvider.isLoading
+                          ? CircularProgressIndicator()
+                          : ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState?.validate() ??
+                                    false) {
+                                  bool val = await authProvider.Reseller_login(
+                                      _emailfieldcontroller.text,
+                                      _passwordfieldcontroller.text);
+                                  if (val) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            NavigationExample(),
+                                      ),
+                                    );
+                                  } else {
+                                    ///................alert dialogbox...............
+                                    showDialog<String>(
+                                      barrierDismissible: true,
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: const Text('Login failed'),
+                                        content: const Text(
+                                            'Check Email and password again'),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text(
+                                'LOG IN',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                     ),
                     SizedBox(height: 20),
                     Center(
