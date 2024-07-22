@@ -4,7 +4,7 @@ import auth from "../middleware/authMiddleware.js"
 
 const router = express.Router();
 
-router.post('/uploadCatalog',uploadCatalog);
+router.post('/uploadCatalog',auth,uploadCatalog);
 
 router.get('/deleteCatalog',auth,deleteCatalog);
 router.get('/getCatalogsByCategory',auth,getCatalogsByCategory);

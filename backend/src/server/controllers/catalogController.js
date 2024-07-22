@@ -4,11 +4,12 @@ import asyncHandler from "express-async-handler";
 // Upload a new catalog
 const uploadCatalog = asyncHandler(async (req, res) => {
     try {
-        const {userId,category,description,price,images} = req.body;
-        if (!userId || !description || !price || !images || !category) return res.status(400).json({ message: "Bad Request" });
+        const {userId,productName,category,description,price,images} = req.body;
+        if (!userId || !productName || !description || !price || !images || !category) return res.status(400).json({ message: "Bad Request" });
 
         const newCatalog = new Catalog({
             userId,
+            productName,
             category,
             description,
             price,
@@ -49,11 +50,11 @@ const getCatalogByUserId = asyncHandler(async(req,res)=>{
     try{
         const {userId} = req.query;
         if(!userId) return res.status(400).json({message:"UserId required"});
-        const catalogs = await Catalog.find({userid:userId});
+        const catalogs = await Catalog.find({userId});
         if(!catalogs){
           return res.status(404).json({message:"Post not found"});  
         }
-        return res.status(200).json(posts);
+        return res.status(200).json(catalogs);
     }catch(err){
         return res.status(500).json({message:"Internal Server Error"});
     }

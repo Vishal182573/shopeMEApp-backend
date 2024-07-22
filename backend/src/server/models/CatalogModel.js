@@ -5,6 +5,9 @@ const catalogSchema = new Schema({
         type:String,
         required:true,
     },
+    productName:{
+        type:String,
+    },
     category:{
         type:String,
     },
