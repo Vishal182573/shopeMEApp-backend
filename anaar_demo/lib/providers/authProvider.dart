@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,7 @@ class AuthProvider with ChangeNotifier {
   String? _token;
   String? _userId;
   String? _userType;
+  String? get userid => _userId;
   String? get token => _token;
   bool get isAuth => _token != null;
   bool _isLoading = false;
@@ -95,25 +97,24 @@ class AuthProvider with ChangeNotifier {
         return true;
       } else if (response.statusCode == 400) {
         print("bad request");
-         _isLoading = false;
+        _isLoading = false;
         notifyListeners();
         return false;
       } else if (response.statusCode == 401) {
         _isLoading = false;
         notifyListeners();
         throw Exception('user already exists');
-        
-       // return false;
+
+        // return false;
       } else {
         print(response.statusCode);
-         _isLoading = false;
+        _isLoading = false;
         notifyListeners();
         throw Exception('Failed to register');
-        
       }
     } catch (e) {
-       _isLoading = false;
-        notifyListeners();
+      _isLoading = false;
+      notifyListeners();
       return false;
     }
   }
@@ -164,12 +165,24 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  // Future<void> tryAutoLogin() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   if (!prefs.containsKey('token')) return;
+
+  //   _token = prefs.getString('token');
+  //   // _userId = prefs.getString('userId');
+  //   notifyListeners();
+  // }
   Future<void> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('token')) return;
 
     _token = prefs.getString('token');
-    // _userId = prefs.getString('userId');
+    _userId = prefs.getString('userId');
+    _userType = prefs.getString('userType');
+
+    // Optionally, verify the token with your backend here
+
     notifyListeners();
   }
 
@@ -234,6 +247,8 @@ class AuthProvider with ChangeNotifier {
         'https://shopemeapp-backend.onrender.com/api/user/loginReseller');
 
     //String imagurl = await _uploadImage(image);
+    _isLoading = true;
+    notifyListeners();
     var response = await http.post(url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -242,7 +257,8 @@ class AuthProvider with ChangeNotifier {
           "email": email,
           "password": password,
         }));
-
+    _isLoading = false;
+    notifyListeners();
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       _token = data['token'];
@@ -255,17 +271,21 @@ class AuthProvider with ChangeNotifier {
       await prefs.setString('userId', _userId!);
       await prefs.setString('userType', _userType!);
       // await _fetchUserInfo(_userId!);
+      print("................login successfull................");
       notifyListeners();
       return true;
     } else if (response.statusCode == 400) {
+      print("................login failed................");
       print("bad request");
       return false;
     } else if (response.statusCode == 401) {
-      throw Exception('user already exists');
+      //throw Exception('user already exists');
+      print("................login failed................");
       return false;
     } else {
       print(response.statusCode);
-      throw Exception('Failed to Login');
+      print("................login failed................");
+      //throw Exception('Failed to Login');
       return false;
     }
   }

@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/model/Post_model.dart';
 import 'package:anaar_demo/model/postcard_model.dart';
+import 'package:anaar_demo/providers/authProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -9,17 +12,24 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PostProvider with ChangeNotifier {
   List<Post> _posts = [];
 
   List<Post> get posts => _posts;
+  bool _isLoading = false;
+  bool get isLoading {
+    return _isLoading;
+  }
 
   Future<void> uploadPost(Post post) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final url = 'https://shopemeapp-backend.onrender.com/api/post/upload';
+    _isLoading = true;
+    notifyListeners();
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -28,9 +38,11 @@ class PostProvider with ChangeNotifier {
       },
       body: json.encode(post.toJson()),
     );
-
+    _isLoading = false;
+    notifyListeners();
     if (response.statusCode == 200) {
       _posts.add(post);
+      print("successfully uploaded post");
       notifyListeners();
     } else {
       print(response.statusCode);
@@ -67,6 +79,8 @@ class PostcardService {
   static Future<List<Postcard>> fetchPostcards() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+    
+   
     print(token);
     print('badmosshiiiiiiiiii.............');
     final response = await http.get(
@@ -77,12 +91,13 @@ class PostcardService {
     );
 
     if (response.statusCode == 200) {
-      print("sucessssssssssssssssssssssssssssssssssssssssssss");
+      print("..................Got the postcard data successfully.........");
       List jsonResponse = json.decode(response.body);
       return jsonResponse
           .map((postcard) => Postcard.fromJson(postcard))
           .toList();
     } else {
+      print('${response.body}');
       throw Exception('Failed to load postcards');
     }
   }
@@ -105,42 +120,39 @@ class PostcardProvider with ChangeNotifier {
 
 //....................for posting likes............................
 
-//   Future<void> likePost(
-//     String? postId,
-//   ) async {
-//     final prefs = await SharedPreferences.getInstance();
-//     final token = prefs.getString('token');
-//     String? userId = await Helperfunction.getUserId();
-//     print(postId);
-//     print(userId);
-//     try {
-//       final response = await http.post(
-//         Uri.parse('https://shopemeapp-backend.onrender.com/api/post/like'),
-//         headers: {
-//           'Authorization': 'Bearer $token',
-//           'Content-Type': 'application/json'
-//         },
-//         body: json.encode({
-//           'postid': postId,
-//           'userid': userId,
-//         }),
-//       );
-//       print("like krne aya hu.....");
-//       if (response.statusCode == 200) {
-//         final index = _postcards.indexWhere((post) => post.sId == postId);
-//         if (index != -1) {
-//           _postcards[index].likes?.add(Likes(userId: userId));
-//           print("like ho giya");
-//           notifyListeners();
-//         }
-//       } else {
-//         print("${response.statusCode}...${response.body}");
-//       }
-//     } catch (error) {
-//       throw (error);
-//     }
-//   }
-// }
+  // Future<void> likePost(
+  //   String? postId,
+  // ) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
+  //   String? userId = await Helperfunction.getUserId();
+  //   print(postId);
+  //   print(userId);
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('https://shopemeapp-backend.onrender.com/api/post/like'),
+  //       headers: {
+  //         'Authorization': 'Bearer $token',
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: json.encode(
+  //           {'postid': postId, 'userid': userId, 'userType': 'reseller'}),
+  //     );
+  //     print("like krne aya hu.....");
+  //     if (response.statusCode == 200) {
+  //       final index = _postcards.indexWhere((post) => post.sId == postId);
+  //       if (index != -1) {
+  //         _postcards[index].likes?.add(Likes(userId: userId));
+  //         print("..........like ho giya.........");
+  //         notifyListeners();
+  //       }
+  //     } else {
+  //       print("${response.statusCode}...${response.body}");
+  //     }
+  //   } catch (error) {
+  //     throw (error);
+  //   }
+  // }
 
   void _optimisticallyToggleLike(String postId, String? userId) {
     final postIndex = _postcards.indexWhere((post) => post.sId == postId);
@@ -171,8 +183,13 @@ class PostcardProvider with ChangeNotifier {
         body: json.encode({
           'postid': postId,
           'userid': userId,
+          'userType': 'reseller'
         }),
       );
+      if (response.statusCode == 200) {
+        print(
+            ".................................liked successsfully...........");
+      }
 
       if (response.statusCode != 200) {
         _optimisticallyToggleLike(postId, userId); // Revert on failure
@@ -182,6 +199,8 @@ class PostcardProvider with ChangeNotifier {
       throw (error);
     }
   }
+
+///////...........................for adding comments...........................
 
   Future<void> addComment(String? postId, Comments newComment) async {
     final prefs = await SharedPreferences.getInstance();
@@ -213,6 +232,37 @@ class PostcardProvider with ChangeNotifier {
         }
       } else {
         print("${response.statusCode}...${response.body}");
+      }
+    } catch (error) {
+      throw (error);
+    }
+  }
+
+// //..................................get post by userID....................
+
+  Future<List<Postcard>> getPostByuserId(String? userid) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    print('${userid}..................yaha fetch function me aya hai');
+
+    try {
+      final url =
+          'https://shopemeapp-backend.onrender.com/api/post/getPostByUserId?userId=$userid';
+      final response = await http.get(
+        Uri.parse('$url'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print("..................Got the postcard for the user..........");
+        List jsonResponse = json.decode(response.body);
+        return jsonResponse
+            .map((postcard) => Postcard.fromJson(postcard))
+            .toList();
+      } else {
+        print('${response.body}');
+        throw Exception('Failed to load postcards');
       }
     } catch (error) {
       throw (error);

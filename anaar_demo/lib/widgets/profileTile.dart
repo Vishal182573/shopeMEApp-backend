@@ -17,7 +17,7 @@ class Profiletile extends StatelessWidget {
     return ListTile(
       onTap: () => Get.to(() => ResellerShowprofile()),
       leading: CircleAvatar(
-        backgroundImage: AssetImage(Imagepath),
+        backgroundImage: NetworkImage(Imagepath),
       ),
       title: Text(ProfileName),
       subtitle: Row(

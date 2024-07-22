@@ -94,13 +94,14 @@ class RequiremntCardService {
     );
 
     if (response.statusCode == 200) {
-      print("got the requirements...........");
+      print(">>>>>>>>>>>>>>>>>>>>>got the requirements...........");
       print(response.body.toString());
       List jsonResponse = json.decode(response.body);
 
       return jsonResponse.map((item) => Requirement.fromJson(item)).toList();
     } else {
-      throw Exception('Failed to load requiremnetcard');
+      throw Exception(
+          '${response.statusCode}${response.body}{Failed to load requiremnetcard');
     }
   }
 }

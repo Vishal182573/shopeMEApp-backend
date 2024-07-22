@@ -19,6 +19,7 @@ class UploadPostScreen extends StatefulWidget {
 class _UploadPostScreenState extends State<UploadPostScreen> {
   final _formKey = GlobalKey<FormState>();
   String? userId;
+  String? userType;
   //final  _userid = TextEditingController();
   final _description = TextEditingController();
   final _category = TextEditingController();
@@ -42,22 +43,24 @@ class _UploadPostScreenState extends State<UploadPostScreen> {
   Future<void> getuserId() async {
     final prefs = await SharedPreferences.getInstance();
     userId = prefs.getString('userId');
+    userType = prefs.getString('userType');
   }
 
   void _uploadPost() async {
     // String? userId = await Helperfunction.getUserId();
     print('$userId++++++++++++++++++++++++++');
+    print('$userType++++++++++++++++');
     print(_category.text);
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       Post post = Post(
-        userid: userId,
-        description: _description.text,
-        category: _category.text,
-        likes: [],
-        comments: [],
-        images: [],
-      );
+          userid: userId,
+          description: _description.text,
+          category: _category.text,
+          likes: [],
+          comments: [],
+          images: [],
+          userType: userType);
 
       Provider.of<PostProvider>(context, listen: false)
           .uploadPostWithImages(post, _images)
@@ -80,74 +83,77 @@ class _UploadPostScreenState extends State<UploadPostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<PostProvider>(context);
     return Scaffold(
       appBar: AppBar(title: Text('Upload Post')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _description,
-                decoration: InputDecoration(labelText: 'Description'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'please enter description';
-                  }
-                  return null;
-                },
+        child:  Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _description,
+                      decoration: InputDecoration(labelText: 'Description'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'please enter description';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _category,
+                      decoration: InputDecoration(labelText: 'Category'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter category';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _pickImage,
+                      child: Text('Pick Images'),
+                    ),
+                    SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: _images.map((image) {
+                        return Stack(
+                          children: [
+                            Image.file(image,
+                                width: 100, height: 100, fit: BoxFit.cover),
+                            Positioned(
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _images.remove(image);
+                                  });
+                                },
+                                child: Container(
+                                  color: Colors.black54,
+                                  child: Icon(Icons.close, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 20),
+             authProvider.isLoading
+            ? CircularProgressIndicator()
+            :       ElevatedButton(
+                      onPressed: _uploadPost,
+                      child: Text('Upload Post'),
+                    ),
+                  ],
+                ),
               ),
-              TextFormField(
-                controller: _category,
-                decoration: InputDecoration(labelText: 'Category'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter category';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _pickImage,
-                child: Text('Pick Images'),
-              ),
-              SizedBox(height: 10),
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: _images.map((image) {
-                  return Stack(
-                    children: [
-                      Image.file(image,
-                          width: 100, height: 100, fit: BoxFit.cover),
-                      Positioned(
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _images.remove(image);
-                            });
-                          },
-                          child: Container(
-                            color: Colors.black54,
-                            child: Icon(Icons.close, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _uploadPost,
-                child: Text('Upload Post'),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

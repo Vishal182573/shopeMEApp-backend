@@ -111,6 +111,7 @@ class Postcard {
   String? userid;
   String? description;
   String? category;
+  String? userType;
   List<String>? images;
   List<Likes>? likes;
   List<Comments>? comments;
@@ -125,6 +126,7 @@ class Postcard {
     this.category,
     this.images,
     this.likes,
+    this.userType,
     this.comments,
     this.createdAt,
     this.updatedAt,
@@ -139,6 +141,7 @@ class Postcard {
     images = json['images'] != null ? List<String>.from(json['images']) : null;
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    userType = json['userType'];
     iV = json['__v'];
 
     if (json['likes'] != null) {
@@ -163,6 +166,7 @@ class Postcard {
     data['description'] = this.description;
     data['category'] = this.category;
     data['images'] = this.images;
+    data['userType'] = this.userType;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['__v'] = this.iV;

@@ -15,7 +15,7 @@ router.post("/registerReseller",resellerRegistration);
 router.post("/loginReseller",resellerLogin);
 router.post("/connect",usersConnection);
 
-router.get("/getConsumer",auth,getConsumer);
-router.get("/getReseller",auth,getReseller);
+router.get("/getConsumer",getConsumer);
+router.get("/getReseller",getReseller);
 
 export default router;

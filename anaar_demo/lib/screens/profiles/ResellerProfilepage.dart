@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
 import 'package:anaar_demo/screens/onboardingScreens.dart';
+import 'package:anaar_demo/screens/reseller/uploadPostScreen.dart';
+import 'package:anaar_demo/widgets/Post_Grib_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,7 +19,7 @@ class ResellerProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ResellerProfilePage> {
   String? backgroundImagePath;
-
+  String? userid;
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -32,14 +35,22 @@ class _ProfilePageState extends State<ResellerProfilePage> {
   void initState() {
     super.initState();
     // Ensure fetchUserData is called
-    Provider.of<UserProvider>(context, listen: false).fetchUserData().catchError((error) {
+    Provider.of<UserProvider>(context, listen: false)
+        .fetchUserData()
+        .catchError((error) {
       print('Error fetching user data: $error');
     });
+    getuser();
+  }
+
+  void getuser() async {
+    userid = await Helperfunction.getUserId();
   }
 
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
+    print('${userid}+++++++++++++++++++++++++++++++++++++++++++++');
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -57,7 +68,8 @@ class _ProfilePageState extends State<ResellerProfilePage> {
         ],
       ),
       body: FutureBuilder(
-        future: Provider.of<UserProvider>(context, listen: false).fetchUserData(),
+        future:
+            Provider.of<UserProvider>(context, listen: false).fetchUserData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Shimmer.fromColors(
@@ -66,7 +78,8 @@ class _ProfilePageState extends State<ResellerProfilePage> {
               child: ListView.builder(
                 itemCount: 5,
                 itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -128,14 +141,16 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                               height: 200,
                               width: double.infinity,
                               child: backgroundImagePath != null
-                                  ? Image.file(File(backgroundImagePath!), fit: BoxFit.cover)
+                                  ? Image.file(File(backgroundImagePath!),
+                                      fit: BoxFit.cover)
                                   : Container(color: Colors.blue),
                             ),
                             Positioned(
                               right: 10,
                               top: 10,
                               child: IconButton(
-                                icon: Icon(Icons.camera_alt, color: Colors.white),
+                                icon:
+                                    Icon(Icons.camera_alt, color: Colors.white),
                                 onPressed: _pickImage,
                               ),
                             ),
@@ -152,7 +167,8 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                         ),
                         ListTile(
                           leading: CircleAvatar(
-                            backgroundImage: AssetImage('assets/profile_pic.jpg'),
+                            backgroundImage:
+                                NetworkImage(userProvider.reseller!.image),
                           ),
                           title: Text(userProvider.reseller!.businessName),
                           subtitle: Text(userProvider.reseller!.city),
@@ -161,9 +177,30 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                           padding: EdgeInsets.all(8.0),
                           child: Text('17 Connections • 2 Products'),
                         ),
-                        ElevatedButton(
-                          child: Text('Add Products'),
-                          onPressed: () {},
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    WidgetStateProperty.all(Colors.blue),
+                              ),
+                              child: Text(
+                                'Add Catelog',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              onPressed: () {},
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    WidgetStateProperty.all(Colors.red),
+                              ),
+                              child: Text('Add Post',
+                                  style: TextStyle(color: Colors.white)),
+                              onPressed: () => Get.to(() => UploadPostScreen()),
+                            ),
+                          ],
                         ),
                         DefaultTabController(
                           length: 3,
@@ -171,42 +208,25 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                             children: [
                               TabBar(
                                 tabs: [
-                                  Tab(text: 'About'),
+                                  Tab(text: 'Post'),
                                   Tab(text: 'Catalog'),
-                                  Tab(text: 'Posts'),
+                                  Tab(text: 'About us'),
                                 ],
                               ),
                               Container(
                                 height: 200, // Adjust as needed
                                 child: TabBarView(
                                   children: [
+                                    Post_Grid(
+                                      userid: userid,
+                                    ),
                                     Center(child: Text('About content')),
                                     Center(child: Text('Catalog content')),
-                                    Center(child: Text('Posts content')),
                                   ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        ListTile(
-                          leading: CircleAvatar(
-                            child: Icon(Icons.person),
-                          ),
-                          title: Text('Owner is Aardra.j'),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
-                              child: Text('My Catalog'),
-                              onPressed: () {},
-                            ),
-                            ElevatedButton(
-                              child: Text('Add New'),
-                              onPressed: () {},
-                            ),
-                          ],
                         ),
                       ],
                     ),

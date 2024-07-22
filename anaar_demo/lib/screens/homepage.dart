@@ -1,4 +1,7 @@
+import 'package:anaar_demo/model/userModel.dart';
 import 'package:anaar_demo/providers/commonuserdataprovider.dart';
+import 'package:anaar_demo/screens/FeedSection.dart';
+import 'package:anaar_demo/screens/TrendingPage.dart';
 import 'package:anaar_demo/screens/requiremnetPage/requirementPage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +23,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String? logedinuserId;
 
@@ -48,6 +52,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'ShopME',
           style: TextStyle(
@@ -62,14 +67,17 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             Tab(text: 'Requirements'),
             Tab(text: 'Trending'),
           ],
-          labelColor: Colors.blue,
+          labelColor: Colors.red,
           unselectedLabelColor: Colors.grey,
+          indicatorColor: Colors.red,
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildFeedTab(),
+          Feedsection(
+            loginuse: logedinuserId,
+          ),
           _buildRequirementsTab(),
           _buildTrendingTab(),
         ],
@@ -89,206 +97,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _buildFeedTab() {
-    return Consumer<PostcardProvider>(
-      builder: (ctx, postcardProvider, _) {
-        if (postcardProvider.isLoading) {
-          return _buildShimmerLoading();
-        } else if (postcardProvider.postcards.isEmpty) {
-          return Center(child: Text('No data available'));
-        } else {
-          return ListView.builder(
-            itemCount: postcardProvider.postcards.length,
-            itemBuilder: (context, index) {
-              return _buildPostCard(postcardProvider.postcards[index]);
-            },
-          );
-        }
-      },
-    );
-  }
-
-  Widget _buildShimmerLoading() {
-    return ListView.builder(
-      itemCount: 6,
-      itemBuilder: (context, index) {
-        return Card(
-          margin: EdgeInsets.all(8.0),
-          child: Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.white,
-                  ),
-                  title: Container(
-                    color: Colors.white,
-                    height: 10.0,
-                    width: double.infinity,
-                  ),
-                  subtitle: Container(
-                    color: Colors.white,
-                    height: 10.0,
-                    width: double.infinity,
-                  ),
-                ),
-                Container(
-                  color: Colors.white,
-                  height: 150.0,
-                  width: double.infinity,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Container(
-                        color: Colors.white,
-                        height: 10.0,
-                        width: 50.0,
-                      ),
-                      Container(
-                        color: Colors.white,
-                        height: 10.0,
-                        width: 50.0,
-                      ),
-                      Container(
-                        color: Colors.white,
-                        height: 10.0,
-                        width: 50.0,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Widget _buildRequirementsTab() {
     return RequirementsPage();
   }
 
   Widget _buildTrendingTab() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                "Trending",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(width: 10),
-              Expanded(child: Divider()),
-            ],
-          ),
-          Consumer<PostcardProvider>(
-            builder: (context, provider, child) {
-              if (provider.isLoading) {
-                return _buildShimmerLoading();
-              }
-              return Column(
-                children: provider.postcards
-                    .map((postCard) => _buildPostCard(postCard))
-                    .toList(),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPostCard(Postcard postCard) {
-    return FutureBuilder(
-      future: Provider.of<CommenUserProvider>(context, listen: false).fetchUserData(postCard.userid,),
-      builder: (context, userSnapshot) {
-        if (userSnapshot.connectionState == ConnectionState.waiting) {
-          return _buildShimmerLoading();
-        } else if (userSnapshot.error != null) {
-          print('Error: ${userSnapshot.error}');
-          return Center(child: Text('An error occurred in fetching userdetail!'));
-        } else {
-          return Consumer<UserProvider>(builder: (ctx, userProvider, child) {
-            if (userProvider.reseller == null) {
-              return Center(child: Text('No user data available'));
-            } else {
-              return Card(
-                margin: EdgeInsets.all(8.0),
-                elevation: 10,
-                borderOnForeground: true,
-                shadowColor: Colors.grey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Profiletile(
-                      Location: userProvider.reseller!.city,
-                      ProfileName: userProvider.reseller!.businessName,
-                      Imagepath: userProvider.reseller!.image,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        postCard.description ?? 'description',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Container(
-                      height: 250,
-                      child: PhotoGrid(
-                        imageUrls: postCard.images ?? [],
-                        onImageClicked: (i) => print('Image $i was clicked!'),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          LikeButton(
-                            postId: postCard.sId!,
-                            likes: postCard.likes,
-                            loggedinuser: logedinuserId,
-                          ),
-                          TextButton(
-                            onPressed: () => Get.to(() => CommentScreen(
-                              postcard: postCard,
-                              loggedinuserid: logedinuserId,
-                            )),
-                            child: Text('Comments'),
-                          ),
-                          TextButton(
-                            onPressed: () => Get.to(() => ChatScreen(recipientId: postCard.userid)),
-                            child: Row(
-                              children: [
-                                Icon(Icons.chat, color: Colors.white),
-                                SizedBox(width: 10),
-                                Text(
-                                  "Chat",
-                                  style: TextStyle(color: Colors.white, fontSize: 15),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-          });
-        }
-      },
-    );
+    return Trendingpage();
   }
 }

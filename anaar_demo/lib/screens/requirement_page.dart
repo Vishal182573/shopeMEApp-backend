@@ -1,4 +1,5 @@
 import 'package:anaar_demo/model/consumer_model.dart';
+import 'package:anaar_demo/model/userModel.dart';
 import 'package:anaar_demo/providers/commonuserdataprovider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -52,15 +53,18 @@ class _RequirementsPageState extends State<RequirementsPage> {
                     reqcardProvider.reqcards.isEmpty) {
                   return Center(child: Text('No requirements available'));
                 } else {
-                  final validRequirements = reqcardProvider.reqcards
-                      .where(
-                          (req) => req.userId != null && req.userId!.isNotEmpty)
-                      .toList();
+                  // final validRequirements = reqcardProvider.reqcards
+                  //     .where(
+                  //         (req) => req.userId != null && req.userId!.isNotEmpty)
+                  //     .toList();
 
                   return ListView.builder(
-                    itemCount: validRequirements.length,
+                    physics: ScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemCount: reqcardProvider.reqcards.length,
                     itemBuilder: (context, index) {
-                      return OrderCard(requirement: validRequirements[index]);
+                      return OrderCard(
+                          requirement: reqcardProvider.reqcards[index]);
                     },
                   );
                 }
@@ -80,23 +84,26 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<ConsumerModel?>(
-      future: Provider.of<CommenUserProvider>(context, listen: false)
-          .fetchUserData(requirement.userId, requirement.userType),
+    return FutureBuilder<Usermodel?>(
+      future: Provider.of<UserProvider>(context, listen: false)
+          .fetchUserinfo(requirement.userId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return ShimmerLoadingCard();
-        } else if (snapshot.hasError || !snapshot.hasData) {
-          return SizedBox.shrink();
+        } else if (snapshot.hasError) {
+          return Text("Error occurred: ${snapshot.error}");
+        } else if (snapshot.data == null) {
+          return Text("No user data available");
         } else {
-          final userData = snapshot.data!;
-          return _buildCard(context, userData);
+          final userModel = snapshot.data!;
+          return _buildCard(context, requirement, userModel);
         }
       },
     );
   }
 
-  Widget _buildCard(BuildContext context, ConsumerModel userData) {
+  Widget _buildCard(
+      BuildContext context, Requirement requirement, Usermodel user) {
     return Card(
       elevation: 10,
       margin: EdgeInsets.all(8.0),
@@ -107,9 +114,9 @@ class OrderCard extends StatelessWidget {
           children: [
             ListTile(
               leading: CircleAvatar(
-                backgroundImage: NetworkImage(userData.image ?? ''),
+                backgroundImage: NetworkImage(user.image ?? ''),
               ),
-              title: Text(userData.businessName ?? ''),
+              title: Text(user.businessName ?? ''),
               trailing: TextButton(
                 onPressed: () {},
                 child: Text(

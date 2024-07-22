@@ -1,4 +1,5 @@
 import 'package:anaar_demo/providers/postProvider.dart';
+import 'package:anaar_demo/widgets/commentTile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:anaar_demo/model/postcard_model.dart';
@@ -43,9 +44,9 @@ class _CommentScreenState extends State<CommentScreen> {
                     itemCount: _comments.length,
                     itemBuilder: (ctx, index) {
                       final comment = _comments[index];
-                      return ListTile(
-                        title: Text(comment.userId ?? ''),
-                        subtitle: Text(comment.comment ?? ''),
+                      return Commenttile(
+                        comment.userId ?? '',
+                        Comment: comment.comment ?? '',
                       );
                     },
                   ),

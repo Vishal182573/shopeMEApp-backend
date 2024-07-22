@@ -2,6 +2,7 @@ class Post {
   String? userid;
   String description;
   String category;
+  String? userType;
   List<String> likes;
   List<String> comments;
   List<String?> images;
@@ -13,6 +14,7 @@ class Post {
     required this.likes,
     required this.comments,
     required this.images,
+    this.userType
   });
 
   Map<String, dynamic> toJson() {
@@ -23,6 +25,7 @@ class Post {
       'likes': likes,
       'coents': comments,
       'images': images,
+      'userType':userType,
     };
   }
 
@@ -31,6 +34,7 @@ class Post {
       userid: json['userid'],
       description: json['description'],
       category: json['category'],
+      userType: json['userType'],
       likes: List<String>.from(json['likes']),
       comments: List<String>.from(json['comments']),
       images: List<String>.from(json['images']),
