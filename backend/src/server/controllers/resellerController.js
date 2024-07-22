@@ -9,7 +9,7 @@ dotenv.config();
 
 const resellerRegistration = asyncHandler(async (req, res) => {
   try {
-    const { ownerName, businessName, email, password, address, contact, city, image, connections } = req.body;
+    const { ownerName, businessName, email, password, address, contact, city, image, bgImage,connections } = req.body;
     if (!ownerName || !businessName || !email || !password || !address || !contact) {
       return res.status(400).json({ message: "Bad request: Missing required fields" });
     }
@@ -32,6 +32,7 @@ const resellerRegistration = asyncHandler(async (req, res) => {
       city:city || "",
       type:"reseller",
       image:image || "",
+      bgImage: bgImage || "",
       connections: connections || [""],
     });
 
@@ -102,6 +103,39 @@ const getReseller = asyncHandler(async (req, res) => {
   }
 });
 
+const updateReseller = asyncHandler(async (req, res) => {
+  try {
+    const { ownerName, businessName, email, password, address, contact, city, image, bgImage, connections } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ message: "Bad request: Missing required email" });
+    }
+
+    const reseller = await Reseller.findOne({ email });
+    if (!reseller) {
+      return res.status(404).json({ message: "Reseller not found" });
+    }
+
+    // Only update the fields that are provided in the request body
+    if (ownerName) reseller.ownerName = ownerName;
+    if (businessName) reseller.businessName = businessName;
+    if (password) reseller.password = password;
+    if (address) reseller.address = address;
+    if (contact) reseller.contact = contact;
+    if (city) reseller.city = city;
+    if (image) reseller.image = image;
+    if (bgImage) reseller.bgImage = bgImage;
+    if (connections) reseller.connections = connections;
+
+    const updatedReseller = await reseller.save();
+
+    return res.status(200).json(updatedReseller);
+
+  } catch (err) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 const usersConnection = asyncHandler(async(req,res)=>{
   try{
     const {consumerId,resellerId} = req.body;
@@ -122,4 +156,4 @@ const usersConnection = asyncHandler(async(req,res)=>{
   }
 });
 
-export { resellerRegistration, resellerLogin, getReseller, usersConnection };
+export { resellerRegistration, resellerLogin, getReseller, usersConnection,updateReseller };

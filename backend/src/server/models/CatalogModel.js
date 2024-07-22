@@ -1,17 +1,5 @@
 import { Schema,model } from "mongoose";
 
-const catalog = new Schema({
-   image:{
-    type:String,
-   },
-   description:{
-    type:String,
-   },
-   price:{
-    type:String,
-   }
-},{timestamps:true});
-
 const catalogSchema = new Schema({
     userId:{
         type:String,
@@ -20,8 +8,14 @@ const catalogSchema = new Schema({
     category:{
         type:String,
     },
-    catalog:{
-        type:[catalog]
+    description:{
+        type:String,
+    },
+    price:{
+        type:String,
+    },
+    images:{
+        type:[String],
     }
 },{timestamps:true});
 
