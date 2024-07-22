@@ -16,6 +16,7 @@ class UserProvider with ChangeNotifier {
     if (token == null) {
       return;
     }
+  
     print(token);
     final userId = prefs.getString('userId');
     print(userId);

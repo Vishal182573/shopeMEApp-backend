@@ -1,61 +1,37 @@
-import 'package:anaar_demo/screens/chatScreen.dart';
-import 'package:anaar_demo/screens/requirement_page.dart';
+import 'package:anaar_demo/providers/commonuserdataprovider.dart';
 import 'package:anaar_demo/screens/requiremnetPage/requirementPage.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+import 'package:anaar_demo/helperfunction/helperfunction.dart';
+import 'package:anaar_demo/model/postcard_model.dart';
+import 'package:anaar_demo/providers/postProvider.dart';
+import 'package:anaar_demo/providers/userProvider.dart';
+import 'package:anaar_demo/screens/chatScreen.dart';
+import 'package:anaar_demo/screens/commentsection.dart';
+import 'package:anaar_demo/screens/requirement_page.dart';
+import 'package:anaar_demo/widgets/Likebutton.dart';
 import 'package:anaar_demo/widgets/photGrid.dart';
 import 'package:anaar_demo/widgets/profileTile.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-List<String> url1 = [
-  "assets/images/saree 1.jpeg",
-  "assets/images/saree2.jpeg",
-  "assets/images/sareev 5.jpeg",
-  "assets/images/saree 3.jpeg"
-];
-List<String> url2 = [
-  "assets/images/fur4.jpg",
-  "assets/images/fur3.jpg",
-  "assets/images/fur2.jpg",
-  "assets/images/fur1.jpg"
-];
-List<String> url3 = [
-  "assets/images/decor 2.jpg",
-  "assets/images/decor 3.jpg",
-  "assets/images/decor1.jpg",
-  "assets/images/decor4.jpg"
-];
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ShopME',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: HomePage(),
-    );
-  }
-}
+import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  String? logedinuserId;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<PostcardProvider>(context, listen: false).fetchPostcards();
+    });
+    getuser();
   }
 
   @override
@@ -64,28 +40,14 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
+  void getuser() async {
+    logedinuserId = await Helperfunction.getUserId();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<String> categories = [
-      'clothing',
-      'Electronic',
-      'Medication',
-      'others'
-    ];
-    String selectedCategory = 'clothing';
-
     return Scaffold(
       appBar: AppBar(
-        leading: Builder(
-          builder: (context) {
-            return IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
         title: Text(
           'ShopME',
           style: TextStyle(
@@ -93,58 +55,6 @@ class _HomePageState extends State<HomePage>
         ),
         backgroundColor: Colors.white,
         elevation: 0,
-        actions: [
-          DropdownButton<String>(
-            value: selectedCategory,
-            icon: Icon(Icons.arrow_drop_down,
-                color: const Color.fromARGB(255, 115, 115, 115)),
-            underline: Container(),
-            onChanged: (String? newValue) {
-              selectedCategory = newValue!;
-            },
-            items: categories.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value,
-                    style: TextStyle(
-                      color: Colors.grey,
-                    )),
-              );
-            }).toList(),
-          ),
-          IconButton(
-            icon: Stack(
-              children: [
-                Icon(Icons.notifications, color: Colors.grey),
-                Positioned(
-                  right: 0,
-                  child: Container(
-                    padding: EdgeInsets.all(1),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    constraints: BoxConstraints(
-                      minWidth: 12,
-                      minHeight: 12,
-                    ),
-                    child: Text(
-                      '1',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 8,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {
-              // Handle notifications tap
-            },
-          ),
-        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: [
@@ -154,70 +64,6 @@ class _HomePageState extends State<HomePage>
           ],
           labelColor: Colors.blue,
           unselectedLabelColor: Colors.grey,
-        ),
-      ),
-      drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.red,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Profile',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Center(
-                    child: CircleAvatar(
-                      child: Icon(Icons.person),
-                      radius: 40,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.settings,
-                color: Colors.grey,
-              ),
-              title: const Text('Settings'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.mail,
-                color: Colors.grey,
-              ),
-              title: const Text('Support'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.error,
-                color: Colors.grey,
-              ),
-              title: const Text('About Us'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
-          ],
         ),
       ),
       body: TabBarView(
@@ -231,7 +77,7 @@ class _HomePageState extends State<HomePage>
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Get.to(() => RequirementPostScreen()),
         label: Text(
-          "Add Requirment",
+          "Add Requirement",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.red,
@@ -240,22 +86,88 @@ class _HomePageState extends State<HomePage>
           color: Colors.white,
         ),
       ),
-      // bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
   Widget _buildFeedTab() {
-    return SingleChildScrollView(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildShareProduct(),
-            _buildPostCard(url1),
-            _buildPostCard(url2),
-            _buildPostCard(url3),
-          ],
-        ),
-      ),
+    return Consumer<PostcardProvider>(
+      builder: (ctx, postcardProvider, _) {
+        if (postcardProvider.isLoading) {
+          return _buildShimmerLoading();
+        } else if (postcardProvider.postcards.isEmpty) {
+          return Center(child: Text('No data available'));
+        } else {
+          return ListView.builder(
+            itemCount: postcardProvider.postcards.length,
+            itemBuilder: (context, index) {
+              return _buildPostCard(postcardProvider.postcards[index]);
+            },
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildShimmerLoading() {
+    return ListView.builder(
+      itemCount: 6,
+      itemBuilder: (context, index) {
+        return Card(
+          margin: EdgeInsets.all(8.0),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.white,
+                  ),
+                  title: Container(
+                    color: Colors.white,
+                    height: 10.0,
+                    width: double.infinity,
+                  ),
+                  subtitle: Container(
+                    color: Colors.white,
+                    height: 10.0,
+                    width: double.infinity,
+                  ),
+                ),
+                Container(
+                  color: Colors.white,
+                  height: 150.0,
+                  width: double.infinity,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        color: Colors.white,
+                        height: 10.0,
+                        width: 50.0,
+                      ),
+                      Container(
+                        color: Colors.white,
+                        height: 10.0,
+                        width: 50.0,
+                      ),
+                      Container(
+                        color: Colors.white,
+                        height: 10.0,
+                        width: 50.0,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -274,164 +186,109 @@ class _HomePageState extends State<HomePage>
                 "Trending",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                width: 10,
-              ),
-              Expanded(child: Divider())
+              SizedBox(width: 10),
+              Expanded(child: Divider()),
             ],
           ),
-          _buildPostCard(url1),
-          _buildPostCard(url2),
-          _buildPostCard(url3)
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShareProduct() {
-    return Container(
-      margin: EdgeInsets.all(10),
-      padding: EdgeInsets.symmetric(horizontal: 15),
-      decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(25),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey,
-                //offset: Offset(1, 1),
-                spreadRadius: 0.8,
-                blurRadius: 2)
-          ]),
-      child: TextField(
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: 'Share your Product.....',
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPostCard(List<String> url) {
-    return Card(
-      margin: EdgeInsets.all(8.0),
-      elevation: 10,
-      borderOnForeground: true,
-      shadowColor: Colors.grey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Profiletile(
-              Location: "Delhi",
-              ProfileName: "vijay Sarees",
-              Imagepath: "assets/images/manufacturer 1.jpeg"),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Premium sarees on the affordable prices with a range of variety. Best deal in the market.',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          SizedBox(height: 8),
-          Container(
-            height: 250,
-            child: PhotoGrid(
-              imageUrls: url,
-              onImageClicked: (i) => print('Image $i was clicked!'),
-              // onExpandClicked: () => print('Expand Image was clicked'),
-              //maxImages: 4,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.favorite_border, color: Colors.red),
-                  onPressed: () {},
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text('Comments'),
-                ),
-                TextButton(
-                  onPressed: () => Get.to(() => ChatScreen()),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.chat,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Chat",
-                        style: TextStyle(color: Colors.white, fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  style: TextButton.styleFrom(backgroundColor: Colors.blue),
-                )
-              ],
-            ),
+          Consumer<PostcardProvider>(
+            builder: (context, provider, child) {
+              if (provider.isLoading) {
+                return _buildShimmerLoading();
+              }
+              return Column(
+                children: provider.postcards
+                    .map((postCard) => _buildPostCard(postCard))
+                    .toList(),
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Discover'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.notifications), label: 'Notification'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-      ],
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.grey,
-      type: BottomNavigationBarType.fixed,
-    );
-  }
-}
-
-const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-
-class DropdownButtonExample extends StatefulWidget {
-  const DropdownButtonExample({super.key});
-
-  @override
-  State<DropdownButtonExample> createState() => _DropdownButtonExampleState();
-}
-
-class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String dropdownValue = list.first;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
-      ),
-      onChanged: (String? value) {
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value!;
-        });
+  Widget _buildPostCard(Postcard postCard) {
+    return FutureBuilder(
+      future: Provider.of<CommenUserProvider>(context, listen: false).fetchUserData(postCard.userid,),
+      builder: (context, userSnapshot) {
+        if (userSnapshot.connectionState == ConnectionState.waiting) {
+          return _buildShimmerLoading();
+        } else if (userSnapshot.error != null) {
+          print('Error: ${userSnapshot.error}');
+          return Center(child: Text('An error occurred in fetching userdetail!'));
+        } else {
+          return Consumer<UserProvider>(builder: (ctx, userProvider, child) {
+            if (userProvider.reseller == null) {
+              return Center(child: Text('No user data available'));
+            } else {
+              return Card(
+                margin: EdgeInsets.all(8.0),
+                elevation: 10,
+                borderOnForeground: true,
+                shadowColor: Colors.grey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Profiletile(
+                      Location: userProvider.reseller!.city,
+                      ProfileName: userProvider.reseller!.businessName,
+                      Imagepath: userProvider.reseller!.image,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        postCard.description ?? 'description',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      height: 250,
+                      child: PhotoGrid(
+                        imageUrls: postCard.images ?? [],
+                        onImageClicked: (i) => print('Image $i was clicked!'),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          LikeButton(
+                            postId: postCard.sId!,
+                            likes: postCard.likes,
+                            loggedinuser: logedinuserId,
+                          ),
+                          TextButton(
+                            onPressed: () => Get.to(() => CommentScreen(
+                              postcard: postCard,
+                              loggedinuserid: logedinuserId,
+                            )),
+                            child: Text('Comments'),
+                          ),
+                          TextButton(
+                            onPressed: () => Get.to(() => ChatScreen(recipientId: postCard.userid)),
+                            child: Row(
+                              children: [
+                                Icon(Icons.chat, color: Colors.white),
+                                SizedBox(width: 10),
+                                Text(
+                                  "Chat",
+                                  style: TextStyle(color: Colors.white, fontSize: 15),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          });
+        }
       },
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
     );
   }
 }
