@@ -15,6 +15,7 @@ class Messagescreen extends StatelessWidget {
           "No Messages Yet!!",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
+
       ),
     );
   }

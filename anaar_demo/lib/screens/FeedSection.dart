@@ -18,10 +18,11 @@ class Feedsection extends StatefulWidget {
   @override
   _FeedsectionState createState() => _FeedsectionState();
 }
-
+class 
 class _FeedsectionState extends State<Feedsection> {
   @override
   void initState() {
+    
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<PostcardProvider>(context, listen: false).fetchPostcards();

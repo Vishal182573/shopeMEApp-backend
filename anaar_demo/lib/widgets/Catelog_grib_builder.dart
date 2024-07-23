@@ -1,20 +1,22 @@
 import 'dart:math';
+import 'package:anaar_demo/model/catelogMode.dart';
 import 'package:anaar_demo/model/postcard_model.dart';
+import 'package:anaar_demo/providers/catelogProvider.dart';
 import 'package:anaar_demo/providers/postProvider.dart';
 import 'package:anaar_demo/screens/TrendingPage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Post_Grid extends StatefulWidget {
+class Catelog_Grid extends StatefulWidget {
   String? userid;
 
-  Post_Grid({this.userid});
+  Catelog_Grid({this.userid});
 
   @override
-  State<Post_Grid> createState() => _Post_GridState();
+  State<Catelog_Grid> createState() => _Post_GridState();
 }
 
-class _Post_GridState extends State<Post_Grid> {
+class _Post_GridState extends State<Catelog_Grid> {
   @override
   void initState() {
     // TODO: implement initState
@@ -28,8 +30,8 @@ class _Post_GridState extends State<Post_Grid> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return FutureBuilder<List<Postcard>>(
-        future: Provider.of<PostcardProvider>(context, listen: false)
+    return FutureBuilder<List<Catelogmodel>>(
+        future: Provider.of<CatelogProvider>(context, listen: false)
             .getPostByuserId(widget.userid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -38,27 +40,27 @@ class _Post_GridState extends State<Post_Grid> {
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text("Failed to get posts"),
+              child: Text("Error in fetching catelog"),
             );
           } else {
-            final postcardlist = snapshot.data!;
-            final imageUrls = postcardlist
+            final catelogcardlist = snapshot.data!;
+            final imageUrls = catelogcardlist
                 .map((post) =>
                     post.images?.isNotEmpty == true ? post.images![0] : '')
                 .toList();
             return GridView.builder(
-              itemCount: postcardlist.length,
+              itemCount: catelogcardlist.length,
               itemBuilder: (context, index) => Container(
                 height: 20,
                 width: 20,
-                color: Colors.amber,
+                //color: Colors.amber,
                 child: Stack(children: [
                   Expanded(
                     child: Container(
                       color: Colors.red,
                       child: Image(
                         image: NetworkImage(imageUrls[index] ?? ''),
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                       ),
                       //color: Colors.blue,
                     ),

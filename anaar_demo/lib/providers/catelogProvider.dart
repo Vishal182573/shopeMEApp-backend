@@ -18,7 +18,8 @@ class CatelogProvider extends ChangeNotifier {
   Future<void> uploadCatelog(Catelogmodel catelog) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    final url = 'https://shopemeapp-backend.onrender.com/api/catalog/uploadCatalog';
+    final url =
+        'https://shopemeapp-backend.onrender.com/api/catalog/uploadCatalog';
     _isLoading = true;
     notifyListeners();
     final response = await http.post(
@@ -43,7 +44,7 @@ class CatelogProvider extends ChangeNotifier {
   }
 
   Future<void> uploadCatelogWithImages(
-      Catelogmodel catelogModel, List<File> images,Catalog catlog) async {
+      Catelogmodel catelogModel, List<File> images) async {
     try {
       List<String?> imageUrls = [];
       for (var image in images) {
@@ -51,13 +52,43 @@ class CatelogProvider extends ChangeNotifier {
 
         imageUrls.add(imageUrl);
       }
-     // List<Catalog>? ct = catelog.catalog;
-      
+      // List<Catalog>? ct = catelog.catalog;
+      catelogModel.images = imageUrls;
       // post.images = imageUrls;
       print(imageUrls[0]);
       await uploadCatelog(catelogModel);
     } catch (error) {
       throw error;
+    }
+  }
+
+//..............................getcatelog by userid.......................
+  Future<List<Catelogmodel>> getPostByuserId(String? userid) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    print('${userid}..................yaha fetch function me aya hai catelog');
+
+    try {
+      final url =
+          'https://shopemeapp-backend.onrender.com/api/catalog/getAllByUserId?userId=$userid';
+      final response = await http.get(
+        Uri.parse('$url'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        print("..................Got the Catelog for the user..........");
+        List jsonResponse = json.decode(response.body);
+        return jsonResponse
+            .map((postcard) => Catelogmodel.fromJson(postcard))
+            .toList();
+      } else {
+        print('${response.body}');
+        throw Exception('Failed to load catelog');
+      }
+    } catch (error) {
+      throw (error);
     }
   }
 }

@@ -22,7 +22,9 @@ class LikeButton extends StatelessWidget {
             IconButton(
               icon: Icon(
                 isLiked ? Icons.favorite : Icons.favorite_border,
-                color: isLiked ? Colors.red : null,
+                color: likes!.any((like) => like.userId == loggedinuser)
+                    ? Colors.red
+                    : Colors.yellow,
               ),
               onPressed: () async {
                 postcardProvider.likePost(postId, loggedinuser);

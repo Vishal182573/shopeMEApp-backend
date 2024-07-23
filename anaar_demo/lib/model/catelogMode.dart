@@ -1,84 +1,49 @@
 class Catelogmodel {
-  String? sId;
   String? userId;
+  String? productName;
   String? category;
-  List<Catalog>? catalog;
+  String? description;
+  String? price;
+  List<String?> images;
   String? createdAt;
   String? updatedAt;
   int? iV;
 
   Catelogmodel(
-      {this.sId,
-      this.userId,
-      this.category,
-      this.catalog,
+      {required this.productName,
+      required this.userId,
+      required this.category,
+      required this.images,
+      required this.description,
+      required this.price,
       this.createdAt,
       this.updatedAt,
       this.iV});
 
-  Catelogmodel.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    userId = json['userId'];
-    category = json['category'];
-    if (json['catalog'] != null) {
-      catalog = <Catalog>[];
-      json['catalog'].forEach((v) {
-        catalog!.add(new Catalog.fromJson(v));
-      });
-    }
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    iV = json['__v'];
+  factory Catelogmodel.fromJson(Map<String, dynamic> json) {
+    return Catelogmodel(
+        productName: json['productName'],
+        userId: json['userId'],
+        category: json['category'],
+        images: List<String>.from(json['images']),
+        description: json['description'],
+        price: json['price']);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
+    //data['_id'] = this.sId;
+    data['productName'] = this.productName;
     data['userId'] = this.userId;
     data['category'] = this.category;
-    if (this.catalog != null) {
-      data['catalog'] = this.catalog!.map((v) => v.toJson()).toList();
-    }
+    data['images'] = this.images;
+    data['price'] = this.price;
+    data['description'] = this.description;
+    data['productName'] = this.productName;
+
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['__v'] = this.iV;
-    return data;
-  }
-}
-
-class Catalog {
-  String? image;
-  String? description;
-  String? price;
-  String? sId;
-  String? createdAt;
-  String? updatedAt;
-
-  Catalog(
-      {this.image,
-      this.description,
-      this.price,
-      this.sId,
-      this.createdAt,
-      this.updatedAt});
-
-  Catalog.fromJson(Map<String, dynamic> json) {
-    image = json['image'];
-    description = json['description'];
-    price = json['price'];
-    sId = json['_id'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['image'] = this.image;
-    data['description'] = this.description;
-    data['price'] = this.price;
-    data['_id'] = this.sId;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
     return data;
   }
 }

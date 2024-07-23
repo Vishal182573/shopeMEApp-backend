@@ -1,28 +1,12 @@
 import 'dart:io';
 
 import 'package:anaar_demo/model/catelogMode.dart';
+import 'package:anaar_demo/providers/catelogProvider.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: CatelogUploadScreen(),
-    );
-  }
-}
-
+import 'package:provider/provider.dart';
 
 // class UploadPostScreen extends StatefulWidget {
 //   // String? userId;
@@ -176,33 +160,44 @@ class MyApp extends StatelessWidget {
 // }
 
 class CatelogUploadScreen extends StatefulWidget {
+  String? userid;
+  CatelogUploadScreen({required this.userid});
   @override
   _CatelogUploadScreenState createState() => _CatelogUploadScreenState();
 }
 
 class _CatelogUploadScreenState extends State<CatelogUploadScreen> {
-  TextEditingController _productName=TextEditingController();
-  TextEditingController _category=TextEditingController();
-TextEditingController _price=TextEditingController();
-TextEditingController _description=TextEditingController();
+  TextEditingController _productName = TextEditingController();
+  TextEditingController _category = TextEditingController();
+  TextEditingController _price = TextEditingController();
+  TextEditingController _description = TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
   List<File> _imageFiles = [];
 
-void _uploadcatelog(){
-final productName=_productName.text;
-final category=_category.text;
-final price=_price.text;
-final descp=_description.text;
+  void _uploadcatelog() {
+    final productName = _productName.text;
+    final category = _category.text;
+    final price = _price.text;
+    final descp = _description.text;
 
-Catalog cat=Catalog(
-
-);
-  
-
-
-}
-
+    Catelogmodel cateog = Catelogmodel(
+      productName: productName??'',
+      userId: widget.userid??'',
+      category: category??'',
+      images: [],
+      description: descp??'',
+      price: price??'',
+    );
+    Provider.of<CatelogProvider>(context, listen: false)
+          .uploadCatelogWithImages(cateog, _imageFiles)
+          .then((_) {
+        Navigator.of(context).pop();
+      }).catchError((error) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(error.toString())));
+      });
+  }
 
   Future<void> _pickImage() async {
     final XFile? pickedFile =
@@ -267,7 +262,8 @@ Catalog cat=Catalog(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextFormField(controller: _productName,
+                  TextFormField(
+                    controller: _productName,
                     decoration: InputDecoration(
                       labelText: 'Product Name',
                       enabledBorder:
@@ -283,7 +279,8 @@ Catalog cat=Catalog(
                     },
                   ),
                   SizedBox(height: 10),
-                  TextFormField(controller: _category,
+                  TextFormField(
+                    controller: _category,
                     decoration: InputDecoration(
                       labelText: 'Category',
                       enabledBorder:
@@ -299,7 +296,8 @@ Catalog cat=Catalog(
                     },
                   ),
                   SizedBox(height: 10),
-                  TextFormField(controller: _price,
+                  TextFormField(
+                    controller: _price,
                     decoration: InputDecoration(
                       labelText: 'Price',
                       enabledBorder:
@@ -346,7 +344,7 @@ Catalog cat=Catalog(
         ),
       ),
       bottomNavigationBar: GestureDetector(
-        onTap: (){},
+        onTap: () {},
         child: Container(
           height: 40,
           color: Colors.blue,

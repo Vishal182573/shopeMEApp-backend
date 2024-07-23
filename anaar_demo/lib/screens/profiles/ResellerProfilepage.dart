@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
 import 'package:anaar_demo/screens/onboardingScreens.dart';
+import 'package:anaar_demo/screens/reseller/edit_resellerProfile.dart';
+import 'package:anaar_demo/screens/reseller/uploadCatelogScreen.dart';
 import 'package:anaar_demo/screens/reseller/uploadPostScreen.dart';
+import 'package:anaar_demo/widgets/Catelog_grib_builder.dart';
 import 'package:anaar_demo/widgets/Post_Grib_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -149,8 +152,11 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                               right: 10,
                               top: 10,
                               child: IconButton(
-                                icon:
-                                    Icon(Icons.camera_alt, color: Colors.white),
+                                icon: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
+                                  // size: 20,
+                                ),
                                 onPressed: _pickImage,
                               ),
                             ),
@@ -167,11 +173,26 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                         ),
                         ListTile(
                           leading: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(userProvider.reseller!.image),
+                            backgroundImage: NetworkImage(
+                                userProvider.reseller!.image ?? ''),
                           ),
                           title: Text(userProvider.reseller!.businessName),
                           subtitle: Text(userProvider.reseller!.city),
+                          trailing: IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () => Get.to(() => EditResellerprofile(
+                                  ownername: userProvider.reseller!.ownerName,
+                                  adress: userProvider.reseller!.address,
+                                  businessname:
+                                      userProvider.reseller!.businessName,
+                                  city: userProvider.reseller!.city,
+                                  phoneno_: userProvider.reseller!.contact,
+                                  connections:
+                                      userProvider.reseller!.connections,
+                                  email: userProvider.reseller!.email ?? '',
+                                  password: userProvider.reseller!.password,
+                                )),
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.all(8.0),
@@ -189,7 +210,8 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                                 'Add Catelog',
                                 style: TextStyle(color: Colors.white),
                               ),
-                              onPressed: () {},
+                              onPressed: () => Get.to(
+                                  () => CatelogUploadScreen(userid: userid)),
                             ),
                             ElevatedButton(
                               style: ButtonStyle(
@@ -220,7 +242,9 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                                     Post_Grid(
                                       userid: userid,
                                     ),
-                                    Center(child: Text('About content')),
+                                    Catelog_Grid(
+                                      userid: userid,
+                                    ),
                                     Center(child: Text('Catalog content')),
                                   ],
                                 ),

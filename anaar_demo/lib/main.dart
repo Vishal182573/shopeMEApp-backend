@@ -1,6 +1,7 @@
 import 'package:anaar_demo/providers/RequirementProvider.dart';
 import 'package:anaar_demo/providers/TrendingProvider.dart';
 import 'package:anaar_demo/providers/authProvider.dart';
+import 'package:anaar_demo/providers/catelogProvider.dart';
 import 'package:anaar_demo/providers/commentProvider.dart';
 import 'package:anaar_demo/providers/commonuserdataprovider.dart';
 import 'package:anaar_demo/providers/postProvider.dart';
@@ -38,7 +39,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => PostcardProvider()),
         ChangeNotifierProvider(create: (context) => RequirementcardProvider()),
         ChangeNotifierProvider(create: (context) => PostProvider()),
-        ChangeNotifierProvider(create: (context) => Trendingprovider())
+        ChangeNotifierProvider(create: (context) => Trendingprovider()),
+        ChangeNotifierProvider(create: (context) => CatelogProvider())
       ],
       child: GetMaterialApp(
         title: 'Registration Form',
@@ -52,7 +54,10 @@ class MyApp extends StatelessWidget {
             if (authProvider.isAuth) {
               return NavigationExample();
             } else {
+            
               return onboardingScreen();
+
+            
             }
           },
         ),
