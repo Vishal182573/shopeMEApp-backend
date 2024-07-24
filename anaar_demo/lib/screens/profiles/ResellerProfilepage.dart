@@ -143,36 +143,16 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                             Container(
                               height: 200,
                               width: double.infinity,
-                              child: backgroundImagePath != null
-                                  ? Image.file(File(backgroundImagePath!),
-                                      fit: BoxFit.cover)
+                              child: userProvider.reseller!.bgImage!=null
+                                  ? Image(image:NetworkImage(userProvider.reseller!.bgImage??'',),fit:BoxFit.cover)
                                   : Container(color: Colors.blue),
                             ),
-                            Positioned(
-                              right: 10,
-                              top: 10,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.camera_alt,
-                                  color: Colors.white,
-                                  // size: 20,
-                                ),
-                                onPressed: _pickImage,
-                              ),
-                            ),
-                            Positioned(
-                              right: 10,
-                              bottom: 10,
-                              child: ElevatedButton.icon(
-                                icon: Icon(Icons.share),
-                                label: Text('Share'),
-                                onPressed: () {},
-                              ),
-                            ),
+                            
+                            
                           ],
                         ),
                         ListTile(
-                          leading: CircleAvatar(
+                          leading: CircleAvatar(radius:40,
                             backgroundImage: NetworkImage(
                                 userProvider.reseller!.image ?? ''),
                           ),

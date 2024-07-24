@@ -18,7 +18,7 @@ class Feedsection extends StatefulWidget {
   @override
   _FeedsectionState createState() => _FeedsectionState();
 }
-class 
+
 class _FeedsectionState extends State<Feedsection> {
   @override
   void initState() {

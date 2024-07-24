@@ -134,7 +134,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                       child: forgroundimage != null
                           ? Expanded(
                               child: Image(
-                              image: FileImage(_image??''),
+                              image: FileImage(forgroundimage!),
                               fit: BoxFit.cover,
                             ))
                           : null,
