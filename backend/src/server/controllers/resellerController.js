@@ -154,6 +154,12 @@ const usersConnection = asyncHandler(async(req,res)=>{
   }catch(err){
     return res.status(500).json({message:"Internal Server Error"});
   }
-});
+
+}
+
+
+
+
+);
 
 export { resellerRegistration, resellerLogin, getReseller, usersConnection,updateReseller };

@@ -1,37 +1,83 @@
-import express,{json} from "express"
-import cors from "cors"
+import express, { json } from "express";
+import cors from "cors";
 import dbconnect from "./config/dbConnect.js";
-import userRoutes from "./routes/userRoutes.js"
-import imageUploader from "./routes/uploadimageRoute.js"
-import requirementRoutes from "./routes/requirementRoutes.js"
-import postRoutes from "./routes/postRoutes.js"
-import ChatRoutes from "./routes/chatRoutes.js"
-import CatalogRoutes from "./routes/catalogRoutes.js"
+import userRoutes from "./routes/userRoutes.js";
+import imageUploader from "./routes/uploadimageRoute.js";
+import requirementRoutes from "./routes/requirementRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
+import ChatRoutes from "./routes/chatRoutes.js";
+import CatalogRoutes from "./routes/catalogRoutes.js";
+import { Server } from "socket.io";
 
+import http from 'http';
+import Chat from './models/ChatModel.js';
 
 const app = express();
-const port =  process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 dbconnect();
 
-app.use(cors({
-    origin:["*"],
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Adjust this according to your client's URL
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
-}))
-app.use(json());
+    credentials: true
+  }
+});
+
+app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/',(req,res)=>{
-    res.json({message:"Server is running"});
-})
-app.use("/api/user",userRoutes); // this endpoint have routes for 2 types of user :- (consumer and reseller) registration for both will be done on different routes and for for user object of both user using their object id , getUser routes is available thier for eacn user
-app.use("/api/requirement",requirementRoutes); // this contain posting a requirement , deleting a requirement usings the the id of requirement model, get all requirements just a get request, get requirements using their category.
-app.use("/api/image",imageUploader); // for saving the images first upload the image on cloudinary using this route , this route will return an url for the image , save this image with the model Like requirement model and send request for saving the model 
-app.use("/api/post",postRoutes);
-app.use("/api/chat",ChatRoutes);
-app.use("/api/catalog",CatalogRoutes);
+io.on('connection', (socket) => {
+  console.log('A user connected');
 
-app.listen(port,()=>{
-  console.log(`server running on port ${port}`);
-})
+  socket.on('join chat', (chatId) => {
+    console.log(`User joined chat: ${chatId}`);
+    socket.join(chatId);
+  });
+
+  socket.on('send message', async ({ chatId, userId, message }) => {
+    console.log(`Received message in chat ${chatId} from user ${userId}: ${message}`);
+    try {
+      const chat = await Chat.findById(chatId);
+      if (!chat) {
+        console.error('Chat not found');
+        return;
+      }
+
+      chat.messages.push({
+        userId: userId,
+        message: message,
+      });
+
+      await chat.save();
+      console.log('Message saved to database');
+
+      io.to(chatId).emit('new message', { userId, message });
+      console.log('Message broadcasted to chat room');
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
+
+app.get('/', (req, res) => {
+  res.json({ message: "Server is running" });
+});
+
+app.use("/api/user", userRoutes);
+app.use("/api/requirement", requirementRoutes);
+app.use("/api/image", imageUploader);
+app.use("/api/post", postRoutes);
+app.use("/api/chat", ChatRoutes);
+app.use("/api/catalog", CatalogRoutes);
+
+server.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
