@@ -1,11 +1,11 @@
 import { Router } from "express";
 import {
         resellerRegistration,resellerLogin,getReseller,usersConnection,
-        updateReseller
+        updateReseller,resellerToReseller,consumerToReseller
 } from "../controllers/resellerController.js"
 import {
         consumerRegistration,consumerLogin,getConsumer,
-        updateConsumer
+        updateConsumer,consumerToConsumer,resellerToConsumer
 } from "../controllers/consumerController.js"
 import auth from "../middleware/authMiddleware.js"
 
@@ -15,7 +15,10 @@ router.post("/registerConsumer",consumerRegistration);
 router.post("/loginConsumer",consumerLogin);
 router.post("/registerReseller",resellerRegistration);
 router.post("/loginReseller",resellerLogin);
-router.post("/connect",usersConnection);
+router.post("/resellerToReseller",resellerToReseller);
+router.post("/consumerToReseller",consumerToReseller);
+router.post("/consumerToConsumer",consumerToConsumer);
+router.post("/resellerToConsumer",resellerToConsumer);
 router.post("/updateConsumer",auth,updateConsumer);
 router.post("/updateReseller",auth,updateReseller);
 

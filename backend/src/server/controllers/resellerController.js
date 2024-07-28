@@ -33,7 +33,7 @@ const resellerRegistration = asyncHandler(async (req, res) => {
       type:"reseller",
       image:image || "",
       bgImage: bgImage || "",
-      connections: connections || [""],
+      connections: connections || [],
     });
 
     const savedReseller = await newReseller.save();
@@ -136,30 +136,46 @@ const updateReseller = asyncHandler(async (req, res) => {
   }
 });
 
-const usersConnection = asyncHandler(async(req,res)=>{
-  try{
-    const {consumerId,resellerId} = req.body;
-    if(!consumerId || !resellerId) return res.status(400).json({message:"Bad request"});
+const consumerToReseller = asyncHandler(async (req, res) => {
+  try {
+    const { consumerId, resellerId } = req.body;
+    if (!consumerId || !resellerId) return res.status(400).json({ message: "Bad request" });
+
     const reseller = await Reseller.findById(resellerId);
     const consumer = await Consumer.findById(consumerId);
-    if(!reseller || !consumer){
-      return res.status(404).json({message:"User not found"});
-    }else{
-      reseller.connections.push(consumerId);
-      consumer.connections.push(resellerId);
+    if (!reseller || !consumer) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      reseller.connections.push({ id: consumerId, type: 'consumer' });
+      consumer.connections.push({ id: resellerId, type: 'reseller' });
       await reseller.save();
       await consumer.save();
-      return res.status(200).json({message:"Users connected sucessfully"});
+      return res.status(200).json({ message: "Users connected successfully" });
     }
-  }catch(err){
-    return res.status(500).json({message:"Internal Server Error"});
+  } catch (err) {
+    return res.status(500).json({ message: "Internal Server Error" });
   }
+});
 
-}
+const resellerToReseller = asyncHandler(async (req, res) => {
+  try {
+    const { resellerId1, resellerId2 } = req.body;
+    if (!resellerId1 || !resellerId2) return res.status(400).json({ message: "Bad request" });
 
+    const reseller1 = await Reseller.findById(resellerId1);
+    const reseller2 = await Reseller.findById(resellerId2);
+    if (!reseller1 || !reseller2) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      reseller1.connections.push({ id: resellerId2, type: 'reseller' });
+      reseller2.connections.push({ id: resellerId1, type: 'reseller' });
+      await reseller1.save();
+      await reseller2.save();
+      return res.status(200).json({ message: "Users connected successfully" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
-
-
-);
-
-export { resellerRegistration, resellerLogin, getReseller, usersConnection,updateReseller };
+export { resellerRegistration, resellerLogin, getReseller, resellerToReseller,consumerToReseller,updateReseller };
