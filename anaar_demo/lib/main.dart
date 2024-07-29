@@ -2,6 +2,7 @@ import 'package:anaar_demo/providers/RequirementProvider.dart';
 import 'package:anaar_demo/providers/TrendingProvider.dart';
 import 'package:anaar_demo/providers/authProvider.dart';
 import 'package:anaar_demo/providers/catelogProvider.dart';
+import 'package:anaar_demo/providers/chat_provider.dart';
 import 'package:anaar_demo/providers/commentProvider.dart';
 import 'package:anaar_demo/providers/commonuserdataprovider.dart';
 import 'package:anaar_demo/providers/postProvider.dart';
@@ -40,7 +41,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => RequirementcardProvider()),
         ChangeNotifierProvider(create: (context) => PostProvider()),
         ChangeNotifierProvider(create: (context) => Trendingprovider()),
-        ChangeNotifierProvider(create: (context) => CatelogProvider())
+        ChangeNotifierProvider(create: (context) => CatelogProvider()),
+        ChangeNotifierProvider(create: (context) => ChatProvider()),
+        
       ],
       child: GetMaterialApp(
         title: 'Registration Form',

@@ -25,17 +25,48 @@ class _TrendingpageState extends State<Trendingpage> {
       Provider.of<Trendingprovider>(context, listen: false).fetchPostcards();
     });
   }
-
-  @override
+                                                                                                                           
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     body: Consumer<Trendingprovider>(
+  //       builder: (context, trendprovider, child) {
+  //         if (trendprovider.isLoading) {
+  //           return Center(child: _buildShimmerLoading());
+  //         } else if (trendprovider.postcards.isEmpty) {
+  //           return Center(child: Text("No trending posts available"));
+  //         } else {
+  //           return ListView.builder(
+  //             itemCount: trendprovider.postcards.length,
+  //             itemBuilder: (context, index) {
+  //               return PostCardWidget(
+  //                 posttt: trendprovider.postcards[index],
+  //               );
+  //             },
+  //           );
+  //         }
+  //       },
+  //     ),
+  //   );
+  // }
+@override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer<Trendingprovider>(
+    // TODO: implement build
+    return FutureBuilder(future: Provider.of<Trendingprovider>(context, listen: false).fetchPostcards() , 
+    builder: (context,snapshot){
+        if(snapshot.connectionState==ConnectionState.waiting){
+          return Center(child: CircularProgressIndicator(),);
+        }
+        else if(snapshot.hasError){
+          return Text("Error occured");
+          
+        }
+        else{
+return Consumer<Trendingprovider>(
         builder: (context, trendprovider, child) {
           if (trendprovider.isLoading) {
-            return Center(child: CircularProgressIndicator());
-          } else if (trendprovider.postcards.isEmpty) {
-            return Center(child: Text("No trending posts available"));
-          } else {
+            return Center(child: _buildShimmerLoading());
+          }else {
             return ListView.builder(
               itemCount: trendprovider.postcards.length,
               itemBuilder: (context, index) {
@@ -46,9 +77,13 @@ class _TrendingpageState extends State<Trendingpage> {
             );
           }
         },
-      ),
-    );
+      );
+
+        }
+
+    });
   }
+
 }
 
 class PostCardWidget extends StatefulWidget {
@@ -73,60 +108,7 @@ class _PostCardWidgetState extends State<PostCardWidget> {
     setState(() {}); // Update the state once the user ID is fetched
   }
 
-  Widget _buildShimmerLoading() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.white,
-            ),
-            title: Container(
-              color: Colors.white,
-              height: 10.0,
-              width: double.infinity,
-            ),
-            subtitle: Container(
-              color: Colors.white,
-              height: 10.0,
-              width: double.infinity,
-            ),
-          ),
-          Container(
-            color: Colors.white,
-            height: 150.0,
-            width: double.infinity,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  color: Colors.white,
-                  height: 10.0,
-                  width: 50.0,
-                ),
-                Container(
-                  color: Colors.white,
-                  height: 10.0,
-                  width: 50.0,
-                ),
-                Container(
-                  color: Colors.white,
-                  height: 10.0,
-                  width: 50.0,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +129,7 @@ class _PostCardWidgetState extends State<PostCardWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Profiletile(
+                Profiletile(usermodel: userModel,
                   Location: userModel.city ?? '',
                   ProfileName: userModel.businessName ?? '',
                   Imagepath: userModel.image ?? '',
@@ -206,6 +188,69 @@ class _PostCardWidgetState extends State<PostCardWidget> {
           );
         }
       },
+    );
+  }
+}
+class _buildShimmerLoading extends StatefulWidget{
+  @override
+  State<_buildShimmerLoading> createState() => _buildShimmerLoadingState();
+}
+
+class _buildShimmerLoadingState extends State<_buildShimmerLoading> {
+@override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.white,
+            ),
+            title: Container(
+              color: Colors.white,
+              height: 10.0,
+              width: double.infinity,
+            ),
+            subtitle: Container(
+              color: Colors.white,
+              height: 10.0,
+              width: double.infinity,
+            ),
+          ),
+          Container(
+            color: Colors.white,
+            height: 150.0,
+            width: double.infinity,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  color: Colors.white,
+                  height: 10.0,
+                  width: 50.0,
+                ),
+                Container(
+                  color: Colors.white,
+                  height: 10.0,
+                  width: 50.0,
+                ),
+                Container(
+                  color: Colors.white,
+                  height: 10.0,
+                  width: 50.0,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

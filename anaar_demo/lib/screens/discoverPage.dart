@@ -172,7 +172,7 @@ class NearbyBusinessCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.to(() =>ResellerShowprofile()),
+      // onTap: () => Get.to(() =>ResellerShowprofile()),
       child: Container(
         width: 250,
         height: 220,

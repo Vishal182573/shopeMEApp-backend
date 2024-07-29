@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:anaar_demo/helperfunction/helperfunction.dart';
+import 'package:anaar_demo/providers/postProvider.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
 import 'package:anaar_demo/screens/onboardingScreens.dart';
 import 'package:anaar_demo/screens/reseller/edit_resellerProfile.dart';
@@ -43,6 +44,9 @@ class _ProfilePageState extends State<ResellerProfilePage> {
         .catchError((error) {
       print('Error fetching user data: $error');
     });
+
+
+
     getuser();
   }
 
@@ -56,10 +60,8 @@ class _ProfilePageState extends State<ResellerProfilePage> {
     print('${userid}+++++++++++++++++++++++++++++++++++++++++++++');
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {},
-        ),
+        backgroundColor: Colors.red,
+      title: Text("Profile",style: TextStyle(color: Colors.white),),
         actions: [
           IconButton(
             icon: Icon(Icons.logout),

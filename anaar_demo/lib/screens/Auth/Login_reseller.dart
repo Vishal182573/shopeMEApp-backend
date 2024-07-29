@@ -103,6 +103,9 @@ class _LoginPageResellerState extends State<LoginPageReseller> {
                                             NavigationExample(),
                                       ),
                                     );
+
+
+//Get.offAll(()=>NavigationExample());
                                   } else {
                                     ///................alert dialogbox...............
                                     showDialog<String>(

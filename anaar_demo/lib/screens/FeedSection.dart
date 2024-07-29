@@ -2,6 +2,7 @@ import 'package:anaar_demo/model/postcard_model.dart';
 import 'package:anaar_demo/model/userModel.dart';
 import 'package:anaar_demo/providers/postProvider.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
+import 'package:anaar_demo/screens/chatScreen.dart';
 import 'package:anaar_demo/screens/commentsection.dart';
 import 'package:anaar_demo/widgets/Likebutton.dart';
 import 'package:anaar_demo/widgets/photGrid.dart';
@@ -29,10 +30,46 @@ class _FeedsectionState extends State<Feedsection> {
     });
   }
 
-  @override
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Consumer<PostcardProvider>(
+//         builder: (context, postcardProvider, child) {
+//           if (postcardProvider.isLoading) {
+//             return buildshimmer();
+//           } else if (postcardProvider.postcards.isEmpty) {
+//             return Center(child: Text("No posts available"));
+//           } else {
+//             return ListView.builder(
+//               itemCount: postcardProvider.postcards.length,
+//               itemBuilder: (context, index) {
+//                 return builpostCard(
+//                   postcar: postcardProvider.postcards[index],
+//                   logedinuserId: widget.loginuse,
+//                 );
+//               },
+//             );
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
+
+@override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer<PostcardProvider>(
+    // TODO: implement build
+    return FutureBuilder(future: Provider.of<PostcardProvider>(context, listen: false).fetchPostcards(),
+     builder: (context,snapshot){
+    if(snapshot.connectionState==ConnectionState.waiting){
+      return Center(child: CircularProgressIndicator(),);
+    }
+    else if(snapshot.hasError){
+          return Text("An occurred error!!");
+    }
+    else{
+return 
+Consumer<PostcardProvider>(
         builder: (context, postcardProvider, child) {
           if (postcardProvider.isLoading) {
             return buildshimmer();
@@ -50,10 +87,14 @@ class _FeedsectionState extends State<Feedsection> {
             );
           }
         },
-      ),
-    );
+      );
+
+    }
+
+     });
   }
 }
+
 
 class builpostCard extends StatelessWidget {
   final Postcard postcar;
@@ -81,7 +122,7 @@ class builpostCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Profiletile(
+                Profiletile(usermodel: userModel,
                   Location: userModel.city ?? '',
                   ProfileName: userModel.businessName ?? '',
                   Imagepath: userModel.image ?? '',
@@ -119,7 +160,8 @@ class builpostCard extends StatelessWidget {
                         child: Text('Comments'),
                       ),
                       TextButton(
-                        onPressed: () => Get.to(() => Container()),
+                        onPressed: () => Get.to(() => ChatScreen(loggedInUserId:logedinuserId??''
+                        , postOwnerId: postCard.userid??'',user:userModel ,)),
                         child: Row(
                           children: [
                             Icon(Icons.chat, color: Colors.blue),

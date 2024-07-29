@@ -18,16 +18,18 @@ class _Post_GridState extends State<Post_Grid> {
   @override
   void initState() {
     // TODO: implement initState
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<PostcardProvider>(context, listen: false)
           .getPostByuserId(widget.userid);
     });
+      
   }
 
   // final List<String> imageUrls;
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    // TODO: i 
+    //mplement build
     return FutureBuilder<List<Postcard>>(
         future: Provider.of<PostcardProvider>(context, listen: false)
             .getPostByuserId(widget.userid),

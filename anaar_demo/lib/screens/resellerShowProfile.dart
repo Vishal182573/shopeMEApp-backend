@@ -1,6 +1,16 @@
+import 'package:anaar_demo/model/userModel.dart';
+import 'package:anaar_demo/widgets/Post_Grib_builder.dart';
 import 'package:flutter/material.dart';
 
-class ResellerShowprofile extends StatelessWidget {
+class ResellerShowprofile extends StatefulWidget {
+Usermodel usermodel;
+ResellerShowprofile({required this.usermodel});
+
+  @override
+  State<ResellerShowprofile> createState() => _ResellerShowprofileState();
+}
+
+class _ResellerShowprofileState extends State<ResellerShowprofile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +32,10 @@ class ResellerShowprofile extends StatelessWidget {
             left: 140,
             child: CircleAvatar(
               radius: 50,
-              backgroundColor: Colors.yellow[200],
-              child: Text('RV',
-                  style: TextStyle(fontSize: 30, color: Colors.black)),
+             // backgroundColor: Colors.yellow[200],
+             backgroundImage: NetworkImage(widget.usermodel.image??'',),
+              // child: Text('RV',
+              //     style: TextStyle(fontSize: 30, color: Colors.black)),
             ),
           ),
         ]),
@@ -39,10 +50,7 @@ class ResellerShowprofile extends StatelessWidget {
         Container(
           height: 200,
           width: double.infinity,
-          child: Image.asset(
-            'assets/images/manufacturer 2.jpeg',
-            fit: BoxFit.cover,
-          ),
+          child:Image.network(widget.usermodel.bgImage??"",fit: BoxFit.cover,)
         ),
       ],
     );
@@ -53,7 +61,7 @@ class ResellerShowprofile extends StatelessWidget {
       padding: EdgeInsets.only(top: 60, bottom: 20),
       child: Column(
         children: [
-          Text('Vijay sarees',
+          Text(widget.usermodel.businessName??'',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           Text('Manufacturers . Delhi', style: TextStyle(color: Colors.grey)),
         ],
@@ -126,16 +134,8 @@ class ResellerShowprofile extends StatelessWidget {
   }
 
   Widget _buildProductGrid() {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      children: [
-        _buildProductItem('assets/images/sareev 5.jpeg'),
-        _buildProductItem('assets/images/saree2.jpeg'),
-        _buildProductItem('assets/images/saree 1.jpeg'),
-        _buildProductItem('assets/images/saree 3.jpeg'),
-      ],
+    return Post_Grid(
+      userid: widget.usermodel.id,
     );
   }
 

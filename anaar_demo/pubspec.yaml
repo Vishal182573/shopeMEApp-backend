@@ -44,6 +44,9 @@ dependencies:
   flutter_secure_storage: ^9.2.2
   shimmer: ^3.0.0
   card_swiper: ^3.0.1
+  web_socket_channel: ^3.0.1
+  sqflite: ^2.3.3+1
+  socket_io_client: ^2.0.3+1
 
 flutter_launcher_icons:
   android: "launcher_icon"

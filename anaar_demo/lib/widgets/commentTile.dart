@@ -31,7 +31,7 @@ class Commenttile extends StatelessWidget {
           } else {
             final usermodel = snapshot.data;
             return ListTile(
-              onTap: () => Get.to(() => ResellerShowprofile()),
+             // onTap: () => Get.to(() => ResellerShowprofile()),
               leading: CircleAvatar(
                 backgroundImage: NetworkImage(usermodel?.image ?? ''),
               ),

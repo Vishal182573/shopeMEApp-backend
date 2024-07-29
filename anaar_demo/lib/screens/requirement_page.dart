@@ -172,7 +172,10 @@ class OrderCard extends StatelessWidget {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.blue,
                   ),
-                  onPressed: () => Get.to(ChatScreen()),
+
+                  //navigate to chatscreen
+              
+                  onPressed: () => Get.to(()),
                   icon: Icon(Icons.chat, color: Colors.white),
                   label: Text('Chat', style: TextStyle(color: Colors.white)),
                 ),

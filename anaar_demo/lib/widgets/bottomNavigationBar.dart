@@ -16,6 +16,7 @@ class NavigationExample extends StatefulWidget {
 class _NavigationExampleState extends State<NavigationExample> {
   int currentPageIndex = 0;
   String? userType = '';
+  String? userId;
 
   @override
   void initState() {
@@ -27,6 +28,7 @@ class _NavigationExampleState extends State<NavigationExample> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       userType = prefs.getString('userType');
+      userId = prefs.getString('userId');
     });
     print("$userType.................................");
   }
@@ -70,7 +72,7 @@ class _NavigationExampleState extends State<NavigationExample> {
       body: <Widget>[
         HomePage(),
         DiscoverPage(),
-        Messagescreen(),
+        MessageListScreen(),
         userType == "reseller" ? ResellerProfilePage() : Consumerprofilepage(),
       ][currentPageIndex],
     );

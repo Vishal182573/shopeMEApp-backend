@@ -9,6 +9,7 @@ Usermodel UsermodelFromJson(String str) => Usermodel.fromJson(json.decode(str));
 String UsermodelToJson(Usermodel data) => json.encode(data.toJson());
 
 class Usermodel {
+
     String? id;
     //String? ownerName;
     String? businessName;
@@ -16,6 +17,7 @@ class Usermodel {
   //  String? password;
    // String? address;
  //   String? contact;
+    String? bgImage;
     String? city;
     String? type;
     String? image;
@@ -25,6 +27,7 @@ class Usermodel {
     int? v;
 
     Usermodel({
+      this.bgImage,
         required this.id,
        // required this.ownerName,
         required this.businessName,
@@ -32,13 +35,13 @@ class Usermodel {
         //required this.password,
         //required this.address,
         //required this.contact,
-        required this.city,
-        required this.type,
-        required this.image,
+         this.city,
+         this.type,
+         this.image,
         required this.connections,
         //required this.createdAt,
         ///required this.updatedAt,
-        required this.v,
+         this.v,
     });
 
     factory Usermodel.fromJson(Map<String, dynamic> json) => Usermodel(
@@ -49,6 +52,7 @@ class Usermodel {
         //password: json["password"]??'',
         //address: json["address"]??'',
         //contact: json["contact"]??'',
+        bgImage: json["bgImage"]??'',
         city: json["city"]??'',
         type: json["type"]??'',
         image: json["image"]??'',
@@ -73,5 +77,6 @@ class Usermodel {
         //"createdAt": createdAt.toIso8601String(),
         //"updatedAt": updatedAt.toIso8601String(),
         "__v": v,
+        "bgImage":bgImage,
     };
 }
