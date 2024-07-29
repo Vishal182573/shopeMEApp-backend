@@ -40,7 +40,14 @@ const resellerSchema = new Schema({
         type:String,
     },
     connections:{
-        type:[String] // it contains ids of consumers
+        id: {
+            type: String,
+            required: true,
+        },
+        type: {
+            type: String,
+            required: true,
+        },
     }
 },{timestamps:true});
 

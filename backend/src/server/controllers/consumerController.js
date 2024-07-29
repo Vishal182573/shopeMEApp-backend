@@ -1,4 +1,5 @@
 import Consumer from "../models/ConsumerModel.js";
+import Reseller from "../models/ResellerModel.js"
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -28,7 +29,7 @@ const consumerRegistration = asyncHandler(async (req, res) => {
       city,
       type:"consumer",
       image:image || "",
-      connections : connections || [""],
+      connections : connections || [],
     });
     
     const savedConsumer = await newConsumer.save();
@@ -129,4 +130,48 @@ const updateConsumer = asyncHandler(async (req, res) => {
   }
 });
 
-export { consumerRegistration, consumerLogin, getConsumer,updateConsumer };
+// Controller to connect a reseller to a consumer
+const resellerToConsumer = asyncHandler(async (req, res) => {
+  try {
+    const { resellerId, consumerId } = req.body;
+    if (!resellerId || !consumerId) return res.status(400).json({ message: "Bad request" });
+
+    const reseller = await Reseller.findById(resellerId);
+    const consumer = await Consumer.findById(consumerId);
+    if (!reseller || !consumer) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      reseller.connections.push({ id: consumerId, type: 'consumer' });
+      consumer.connections.push({ id: resellerId, type: 'reseller' });
+      await reseller.save();
+      await consumer.save();
+      return res.status(200).json({ message: "Users connected successfully" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// Controller to connect a consumer to another consumer
+const consumerToConsumer = asyncHandler(async (req, res) => {
+  try {
+    const { consumerId1, consumerId2 } = req.body;
+    if (!consumerId1 || !consumerId2) return res.status(400).json({ message: "Bad request" });
+
+    const consumer1 = await Consumer.findById(consumerId1);
+    const consumer2 = await Consumer.findById(consumerId2);
+    if (!consumer1 || !consumer2) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      consumer1.connections.push({ id: consumerId2, type: 'consumer' });
+      consumer2.connections.push({ id: consumerId1, type: 'consumer' });
+      await consumer1.save();
+      await consumer2.save();
+      return res.status(200).json({ message: "Users connected successfully" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+export { consumerRegistration, consumerLogin, getConsumer,updateConsumer,consumerToConsumer,resellerToConsumer };
