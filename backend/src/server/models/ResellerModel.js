@@ -39,6 +39,9 @@ const resellerSchema = new Schema({
     bgImage:{
         type:String,
     },
+    aboutus:{
+        type:String,
+    },
     connections:{
         id: {
             type: String,

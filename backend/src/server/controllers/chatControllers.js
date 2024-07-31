@@ -84,6 +84,7 @@ import express from 'express';
 import  cors from 'cors';
 import Chat  from '../models/ChatModel.js';
 import Reseller from "../models/ResellerModel.js";
+import Consumer from "../models/ConsumerModel.js"
 //import User from './models/UserModel.js';
 import asyncHandler from "express-async-handler";
 import mongoose from 'mongoose';
@@ -164,6 +165,58 @@ const isValidObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id);
 };
 
+// const chatPreviews = asyncHandler(async (req, res) => {
+//   try {
+//     const { id } = req.query;
+
+//     if (!id) {
+//       return res.status(400).json({ message: "Bad request: ID is necessary" });
+//     }
+
+
+//     const chats = await Chat.find({
+//       $or: [{ userId1: id }, { userId2: id }]
+//     }).sort({ updatedAt: -1 });
+
+//     const chatPreviews = await Promise.all(chats.map(async (chat) => {
+//       console.log('Processing chat:', chat);  // Added for debugging
+//       const otherUserId = chat.userId1 === id ? chat.userId2 : chat.userId1;
+
+//       if (!isValidObjectId(otherUserId)) {
+//         console.error('Invalid otherUserId:', otherUserId);  // Added for debugging
+//         return null;
+//       }
+
+//       const otherUser = await Reseller.findById(otherUserId)??;
+//       const lastMessage = chat.messages[chat.messages.length - 1];
+//       const unreadCount = chat.messages.filter(m => m.userId !== id && !m.read).length;
+
+//       return {
+//         chatId: chat._id,
+//         otherUserId: otherUserId,
+//         otherUserName: otherUser ? otherUser.businessName : 'Unknown User',
+//         lastMessage: lastMessage ? lastMessage.message : '',
+//         timestamp: lastMessage ? lastMessage.timestamp : chat.updatedAt,
+//         image: otherUser ? otherUser.image : '',
+//         unreadCount: unreadCount 
+//       };
+//     }));
+
+//     // Filter out any null values from invalid user IDs
+//     const filteredChatPreviews = chatPreviews.filter(preview => preview !== null);
+
+//     res.json(filteredChatPreviews);
+//   } catch (err) {
+//     console.error("Error in getChatPreviews:", err);
+//     res.status(500).json({ message: "Internal Server Error", error: err.message });
+//   }
+// });
+// const PORT = process.env.PORT || 3000;
+// server.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
+
+
 const chatPreviews = asyncHandler(async (req, res) => {
   try {
     const { id } = req.query;
@@ -172,6 +225,9 @@ const chatPreviews = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: "Bad request: ID is necessary" });
     }
 
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ message: "Bad request: Invalid ID format" });
+    }
 
     const chats = await Chat.find({
       $or: [{ userId1: id }, { userId2: id }]
@@ -186,34 +242,44 @@ const chatPreviews = asyncHandler(async (req, res) => {
         return null;
       }
 
-      const otherUser = await Reseller.findById(otherUserId);
+      // Try to find the other user as a Reseller
+      let otherUser = await Reseller.findById(otherUserId);
+      let userType = 'Reseller';
+
+      // If not found, try to find the other user as a Consumer
+      if (!otherUser) {
+        otherUser = await Consumer.findById(otherUserId);
+        userType = 'Consumer';
+      }
+
+      // If still not found, log an error and skip this chat preview
+      if (!otherUser) {
+        console.error(`User not found for otherUserId: ${otherUserId}`);
+        return null;
+      }
+
       const lastMessage = chat.messages[chat.messages.length - 1];
       const unreadCount = chat.messages.filter(m => m.userId !== id && !m.read).length;
 
       return {
         chatId: chat._id,
         otherUserId: otherUserId,
-        otherUserName: otherUser ? otherUser.businessName : 'Unknown User',
+        otherUserName: userType === 'Reseller' ? otherUser.businessName : otherUser.name, // Adjust field based on user type
         lastMessage: lastMessage ? lastMessage.message : '',
         timestamp: lastMessage ? lastMessage.timestamp : chat.updatedAt,
-        image: otherUser ? otherUser.image : '',
+        image: otherUser.image || '',
         unreadCount: unreadCount 
       };
     }));
 
-    // Filter out any null values from invalid user IDs
-    const filteredChatPreviews = chatPreviews.filter(preview => preview !== null);
-
-    res.json(filteredChatPreviews);
-  } catch (err) {
-    console.error("Error in getChatPreviews:", err);
-    res.status(500).json({ message: "Internal Server Error", error: err.message });
+    res.status(200).json(chatPreviews.filter(preview => preview !== null));
+  } catch (error) {
+    console.error('Error in chatPreviews:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
-// const PORT = process.env.PORT || 3000;
-// server.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
+
+
 
 
 const markMessagesAsRead = asyncHandler(async (req, res) => {

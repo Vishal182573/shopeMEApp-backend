@@ -28,6 +28,9 @@ const consumerSchema = new Schema({
     image: {
         type: String,
     },
+    bio: {
+        type: String,
+    },
     connections: [{
         id: {
             type: String,

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-        resellerRegistration,resellerLogin,getReseller,usersConnection,
+        resellerRegistration,resellerLogin,getReseller,
         updateReseller,resellerToReseller,consumerToReseller
 } from "../controllers/resellerController.js"
 import {
