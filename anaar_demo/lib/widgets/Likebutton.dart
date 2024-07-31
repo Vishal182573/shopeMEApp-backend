@@ -14,15 +14,15 @@ class LikeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<PostcardProvider>(
-      builder: (ctx, postcardProvider, child) {
-        bool isLiked = likes!.any((like) => like.userId == loggedinuser);
+      builder: (ctx, postcardProvider, child) { 
+       final    isLiked = likes!.any((like) => like.userId == loggedinuser);
 
         return Row(
           children: [
             IconButton(
               icon: Icon(
                 isLiked ? Icons.favorite : Icons.favorite_border,
-                color: likes!.any((like) => like.userId == loggedinuser)
+                color: isLiked
                     ? Colors.red
                     : Colors.yellow,
               ),

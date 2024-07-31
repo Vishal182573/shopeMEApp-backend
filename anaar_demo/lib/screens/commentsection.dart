@@ -47,6 +47,9 @@ class _CommentScreenState extends State<CommentScreen> {
                       return Commenttile(
                         comment.userId ?? '',
                         Comment: comment.comment ?? '',
+                        commentdate: DateTime.parse(comment.createdAt??''),
+                      
+
                       );
                     },
                   ),

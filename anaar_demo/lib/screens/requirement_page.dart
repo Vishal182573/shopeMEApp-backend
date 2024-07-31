@@ -1,6 +1,8 @@
+import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/model/consumer_model.dart';
 import 'package:anaar_demo/model/userModel.dart';
 import 'package:anaar_demo/providers/commonuserdataprovider.dart';
+import 'package:anaar_demo/widgets/GalleryPhotoViewer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
@@ -11,11 +13,14 @@ import 'package:anaar_demo/providers/userProvider.dart';
 import 'package:anaar_demo/screens/chatScreen.dart';
 
 class RequirementsPage extends StatefulWidget {
+  
+  
   @override
   State<RequirementsPage> createState() => _RequirementsPageState();
 }
 
 class _RequirementsPageState extends State<RequirementsPage> {
+  String? loggedInUserId;
   @override
   void initState() {
     super.initState();
@@ -23,6 +28,10 @@ class _RequirementsPageState extends State<RequirementsPage> {
       Provider.of<RequirementcardProvider>(context, listen: false)
           .fetchreqcards();
     });
+    getlogginuserid();
+  }
+  void getlogginuserid()async{
+      loggedInUserId=await Helperfunction.getUserId();
   }
 
   @override
@@ -64,7 +73,9 @@ class _RequirementsPageState extends State<RequirementsPage> {
                     itemCount: reqcardProvider.reqcards.length,
                     itemBuilder: (context, index) {
                       return OrderCard(
-                          requirement: reqcardProvider.reqcards[index]);
+                          requirement: reqcardProvider.reqcards[index],
+                          loggedinuserid: loggedInUserId,
+                          );
                     },
                   );
                 }
@@ -79,8 +90,9 @@ class _RequirementsPageState extends State<RequirementsPage> {
 
 class OrderCard extends StatelessWidget {
   final Requirement requirement;
+  final loggedinuserid;
 
-  OrderCard({required this.requirement});
+  OrderCard({required this.requirement,required this.loggedinuserid});
 
   @override
   Widget build(BuildContext context) {
@@ -148,11 +160,14 @@ class OrderCard extends StatelessWidget {
                 children: requirement.images?.map((image) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 8.0),
-                        child: Image.network(
-                          image!,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
+                        child: GestureDetector(
+                          onTap: ()=> _openPhotoViewer(context,requirement.images.indexOf(image)),
+                          child: Image.network(
+                            image!,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       );
                     }).toList() ??
@@ -175,7 +190,8 @@ class OrderCard extends StatelessWidget {
 
                   //navigate to chatscreen
               
-                  onPressed: () => Get.to(()),
+                  onPressed:() => Get.to(() => ChatScreen(loggedInUserId:loggedinuserid
+                        , postOwnerId: requirement.userId??'',user:user ,)),
                   icon: Icon(Icons.chat, color: Colors.white),
                   label: Text('Chat', style: TextStyle(color: Colors.white)),
                 ),
@@ -185,6 +201,24 @@ class OrderCard extends StatelessWidget {
         ),
       ),
     );
+
+
+    
+  }
+
+  
+  void _openPhotoViewer(BuildContext context, int initialIndex) {
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => PhotoViewer(
+    //       imageUrls: imageUrls,
+    //       initialIndex: initialIndex,
+    //     ),
+    //   ),
+    // );
+
+    Get.to(()=>PhotoViewer(imageUrls: requirement.images, initialIndex: initialIndex));
   }
 }
 

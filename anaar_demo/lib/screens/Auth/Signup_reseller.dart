@@ -23,7 +23,7 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
   final _passwordController = TextEditingController();
   final _addressController = TextEditingController();
   File? _image;
-
+  bool _obscureText = true;
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -35,10 +35,18 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
     }
   }
 
-  Future<void> _singup(BuildContext context) async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+     void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+
+
+
+  Future<bool> _singup(BuildContext context) async {
+ 
+   
     final email = _emailController.text;
     final password = _passwordController.text;
     final owernername = _ownerNameController.text;
@@ -46,10 +54,11 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
     final contact = _phoneNumberController.text;
     final businessname = _businessNameController.text;
     final city = _cityController.text;
-    final image = _image;
+    var image = _image;
+  
 
     try {
-      await Provider.of<AuthProvider>(context, listen: false).resllerregister(
+    bool val=  await Provider.of<AuthProvider>(context, listen: false).resllerregister(
         owernername,
         businessname,
         city,
@@ -59,8 +68,10 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
         address,
         image,
       );
-      Get.offAll(() => NavigationExample());
+      return val;
+    
     } catch (error) {
+    
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -76,6 +87,7 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
           ],
         ),
       );
+      return false;
     }
   }
 
@@ -143,7 +155,7 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your business name';
+                                  return 'Please Enter  Business name';
                                 }
                                 return null;
                               },
@@ -155,12 +167,12 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                       TextFormField(
                         controller: _cityController,
                         decoration: InputDecoration(
-                          labelText: 'Username',
+                          labelText: 'City',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your city name';
+                            return 'Please Enter City';
                           }
                           return null;
                         },
@@ -196,11 +208,21 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                       SizedBox(height: 16.0),
                       TextFormField(
                         controller: _passwordController,
-                        obscureText: true,
+                        obscureText: _obscureText,
                         decoration: InputDecoration(
                           labelText: 'Password',
                           border: OutlineInputBorder(),
+                        suffixIcon: IconButton(onPressed: (){_toggle();}, icon:  Icon(
+              // Based on passwordVisible state choose the icon
+              _obscureText
+               ? Icons.visibility
+               : Icons.visibility_off,
+               color: Theme.of(context).primaryColorDark,
+               ),)
+                        
                         ),
+
+                        
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter a password';
@@ -208,9 +230,10 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                           return null;
                         },
                       ),
+                      SizedBox(height: 16,),
                       TextFormField(
                         controller: _addressController,
-                        obscureText: true,
+                       // obscureText: true,
                         decoration: InputDecoration(
                           labelText: 'address',
                           border: OutlineInputBorder(),
@@ -223,11 +246,47 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                         },
                       ),
                       SizedBox(height: 16.0),
+                     
+                     authProvider.isLoading?CircularProgressIndicator():
                       ElevatedButton(
-                        onPressed: () {
-                          _singup(context);
-                        },
-                        child: Text('Create Account'),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        // onPressed: () {
+                        //   _singup(context);
+                        // },
+                        onPressed: ()
+                        async {
+                                if (_formKey.currentState?.validate() ??
+                                    false) {
+                                  bool val = await _singup(context);
+                                  if (val) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            NavigationExample(),
+                                      ),
+                                    );
+
+
+//Get.offAll(()=>NavigationExample());
+                                  } else {
+                                    ///................alert dialogbox...............
+                                    showDialog<String>(
+                                      barrierDismissible: true,
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: const Text('Login failed'),
+                                        content: const Text(
+                                            'Check Email and password again'),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        
+
+                        child: Text('Create Account',style: TextStyle(color: Colors.white),),
                       ),
                       Row(
                         children: [

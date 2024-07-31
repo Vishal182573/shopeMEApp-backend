@@ -3,16 +3,18 @@ import 'package:anaar_demo/providers/userProvider.dart';
 import 'package:anaar_demo/screens/resellerShowProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Commenttile extends StatelessWidget {
   String userid;
   //final String ProfileName;
   final String Comment;
-
+  final DateTime commentdate;
   Commenttile(
     this.userid, {
     required this.Comment,
+    required this.commentdate,
   });
 
   @override
@@ -42,6 +44,7 @@ class Commenttile extends StatelessWidget {
                   SizedBox(width: 10),
                 ],
               ),
+              trailing: Text(DateFormat('d MMM y').format(commentdate)),
             );
           }
         });

@@ -148,8 +148,8 @@ class _MessageListScreenState extends State<MessageListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Messages'),
+      appBar: AppBar(automaticallyImplyLeading: false,
+        title: Text('Messages',style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.red,
       ),
       body: FutureBuilder<List<ChatPreview>>(

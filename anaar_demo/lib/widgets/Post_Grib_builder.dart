@@ -1,14 +1,18 @@
 import 'dart:math';
 import 'package:anaar_demo/model/postcard_model.dart';
 import 'package:anaar_demo/providers/postProvider.dart';
+import 'package:anaar_demo/providers/userProvider.dart';
 import 'package:anaar_demo/screens/TrendingPage.dart';
+import 'package:anaar_demo/screens/reseller/ViewPost.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class Post_Grid extends StatefulWidget {
   String? userid;
+  UserProvider? userProvider;
 
-  Post_Grid({this.userid});
+  Post_Grid({this.userid, this.userProvider});
 
   @override
   State<Post_Grid> createState() => _Post_GridState();
@@ -40,9 +44,16 @@ class _Post_GridState extends State<Post_Grid> {
             );
           } else if (snapshot.hasError) {
             return Center(
+              
               child: Text("Failed to get posts"),
             );
-          } else {
+          
+          } 
+          else if(snapshot.data!.isEmpty){
+              return Center(child: Text('No post found '),);
+          }
+          
+          else {
             final postcardlist = snapshot.data!;
             final imageUrls = postcardlist
                 .map((post) =>
@@ -50,22 +61,34 @@ class _Post_GridState extends State<Post_Grid> {
                 .toList();
             return GridView.builder(
               itemCount: postcardlist.length,
-              itemBuilder: (context, index) => Container(
-                height: 20,
-                width: 20,
-                color: Colors.amber,
-                child: Stack(children: [
-                  Expanded(
-                    child: Container(
-                      color: Colors.red,
-                      child: Image(
-                        image: NetworkImage(imageUrls[index] ?? ''),
-                        fit: BoxFit.fill,
+              itemBuilder: (context, index) => GestureDetector(
+                onTap: (){Get.to(()=>Viewpost(
+                  userProvider: widget.userProvider,
+                  postcard: postcardlist[index]));},
+                child: Container(
+                  height: 20,
+                  width: 20,
+                 // color: Colors.amber,
+                  child: Stack(children: [
+                    Expanded(
+                      child: Container(
+                        color: Colors.red,
+                        child: Image(
+                          image: NetworkImage(imageUrls[index] ?? ''),
+                          fit: BoxFit.cover,
+                        ),
+                        //color: Colors.blue,
                       ),
-                      //color: Colors.blue,
                     ),
-                  ),
-                ]),
+                      Positioned(
+                        bottom: 0,
+                         right: 10,
+                        child: Icon(Icons.image_outlined,color: Colors.black,))
+                  
+                
+                
+                  ]),
+                ),
               ),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,

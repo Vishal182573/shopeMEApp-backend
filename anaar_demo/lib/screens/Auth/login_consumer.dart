@@ -28,17 +28,11 @@ class _LoginPageConsumerState extends State<LoginPageConsumer> {
     } catch (error) {
       showDialog(
         context: context,
+        barrierDismissible: true,
         builder: (ctx) => AlertDialog(
           title: Text('An Error Occurred!'),
           content: Text(error.toString()),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text('Okay'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
-          ],
+        
         ),
       );
     }
@@ -115,7 +109,9 @@ class _LoginPageConsumerState extends State<LoginPageConsumer> {
                     ),
                     SizedBox(height: 20),
                     Center(
-                      child: ElevatedButton(
+                      child: 
+                      authProvider.isLoading?CircularProgressIndicator():
+                      ElevatedButton(
                         onPressed: () {
                           _login(context);
                         },

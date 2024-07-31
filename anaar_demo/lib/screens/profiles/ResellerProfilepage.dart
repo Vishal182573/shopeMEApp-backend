@@ -65,10 +65,33 @@ class _ProfilePageState extends State<ResellerProfilePage> {
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () async {
-              authProvider.logout();
-              Get.offAll(() => onboardingLoginPage());
-            },
+            // onPressed: () async {
+            //   authProvider.logout();
+            //   Get.offAll(() => onboardingLoginPage());
+            // }
+         onPressed: ()=> showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Log out'),
+          content: const Text('Do you want to logout?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: ()async {
+                 authProvider.logout();
+               Get.offAll(() => onboardingLoginPage());
+
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ),
+               
+
           ),
         ],
       ),
@@ -145,9 +168,11 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                             Container(
                               height: 200,
                               width: double.infinity,
-                              child: userProvider.reseller!.bgImage!=null
-                                  ? Image(image:NetworkImage(userProvider.reseller!.bgImage??'',),fit:BoxFit.cover)
-                                  : Container(color: Colors.blue),
+                              color: Colors.grey,
+                              child: userProvider.reseller!.bgImage!=''
+                                  ? 
+                                  Image(image:NetworkImage(userProvider.reseller!.bgImage!,),fit:BoxFit.cover)
+                                  : Expanded(child: Container(color: Colors.grey)),
                             ),
                             
                             
@@ -158,8 +183,14 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                             backgroundImage: NetworkImage(
                                 userProvider.reseller!.image ?? ''),
                           ),
-                          title: Text(userProvider.reseller!.businessName),
-                          subtitle: Text(userProvider.reseller!.city),
+                          title: Text(userProvider.reseller!.businessName,style: 
+                          TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w400),),
+                          subtitle: Row(
+                            children: [
+                              Text("Location.",style: TextStyle(color: Colors.black),),SizedBox(width: 10,),
+                              Text(userProvider.reseller!.city),
+                            ],
+                          ),
                           trailing: IconButton(
                             icon: Icon(Icons.edit),
                             onPressed: () => Get.to(() => EditResellerprofile(
@@ -178,7 +209,12 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Text('17 Connections • 2 Products'),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('${userProvider.reseller!.connections.length} Connections • 2 Products'),
+                            ],
+                          ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -223,11 +259,13 @@ class _ProfilePageState extends State<ResellerProfilePage> {
                                   children: [
                                     Post_Grid(
                                       userid: userid,
+                                      userProvider: userProvider,
+                                      
                                     ),
                                     Catelog_Grid(
                                       userid: userid,
                                     ),
-                                    Center(child: Text('Catalog content')),
+                                    Center(child: Text('About us')),
                                   ],
                                 ),
                               ),

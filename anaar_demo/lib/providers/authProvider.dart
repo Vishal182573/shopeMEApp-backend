@@ -61,10 +61,13 @@ class AuthProvider with ChangeNotifier {
       String address,
       File? image) async {
     try {
+      _isLoading=true;
+      notifyListeners();
       final url = Uri.parse(
           'https://shopemeapp-backend.onrender.com/api/user/registerReseller');
-
+ 
       String imagurl = await _uploadImage(image);
+      print("baina image  ke yha aa rha hai........");
       var response = await http.post(url,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
@@ -78,7 +81,10 @@ class AuthProvider with ChangeNotifier {
             "type": "reseller",
             "contact": contact,
             "city": city,
+            "image":imagurl,
           }));
+            _isLoading = false;
+        notifyListeners();
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -91,8 +97,7 @@ class AuthProvider with ChangeNotifier {
         await prefs.setString('userId', _userId!);
         await prefs.setString('userType', _userType!);
         // await _fetchUserInfo(_userId!);
-        _isLoading = false;
-        notifyListeners();
+      
 
         return true;
       } else if (response.statusCode == 400) {
@@ -103,17 +108,19 @@ class AuthProvider with ChangeNotifier {
       } else if (response.statusCode == 401) {
         _isLoading = false;
         notifyListeners();
-        throw Exception('user already exists');
-
-        // return false;
+      //  throw Exception('user already exists');
+        SnackBar(content: Text("User already exists"));  
+         return false;
       } else {
         print(response.statusCode);
+       print(response.body);
         _isLoading = false;
         notifyListeners();
         throw Exception('Failed to register');
       }
     } catch (e) {
       _isLoading = false;
+      print(e);
       notifyListeners();
       return false;
     }
@@ -121,10 +128,14 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> Consumer_register(String name, String city, String email,
       String contact, String password, File? image) async {
+     _isLoading=true;
+     notifyListeners();
+
     final url = Uri.parse(
         'https://shopemeapp-backend.onrender.com/api/user/registerConsumer');
 
     String imagurl = await _uploadImage(image);
+     print("baina image  ke yha aa rha hai........");
     var response = await http.post(url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -135,8 +146,13 @@ class AuthProvider with ChangeNotifier {
           "password": password,
           "contact": contact,
           "city": city,
-          "type": "Consumer"
+          "type": "Consumer",
+          "image":imagurl,
         }));
+
+    _isLoading=false;
+     notifyListeners();
+
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -156,11 +172,11 @@ class AuthProvider with ChangeNotifier {
       print("bad request");
       return false;
     } else if (response.statusCode == 401) {
-      throw Exception('user already exists');
+    print('user already exists');
       return false;
     } else {
       print(response.statusCode);
-      throw Exception('Failed to register');
+      print('Failed to register');
       return false;
     }
   }
@@ -199,6 +215,9 @@ class AuthProvider with ChangeNotifier {
     String email,
     String password,
   ) async {
+      _isLoading=true;
+      notifyListeners();
+
     final url = Uri.parse(
         'https://shopemeapp-backend.onrender.com/api/user/loginConsumer');
 
@@ -212,6 +231,8 @@ class AuthProvider with ChangeNotifier {
           "password": password,
         }));
 
+    _isLoading=false;
+    notifyListeners();
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       _token = data['token'];
@@ -229,10 +250,14 @@ class AuthProvider with ChangeNotifier {
     } else if (response.statusCode == 400) {
       print("bad request");
       return false;
-    } else if (response.statusCode == 401) {
-      throw Exception('user already exists');
-      return false;
-    } else {
+    } else if (response.statusCode == 404) {
+      print(response.body);
+      throw Exception('Check Email and Password');
+      
+    } else if(response.statusCode==401){
+      throw Exception('Incorrect Password');
+    }
+    else{
       print(response.statusCode);
       throw Exception('Failed to Login');
       return false;

@@ -17,9 +17,10 @@ class Usermodel {
   //  String? password;
    // String? address;
  //   String? contact;
+     String? type;
     String? bgImage;
     String? city;
-    String? type;
+   
     String? image;
     List<String?> connections;
    // DateTime createdAt;
@@ -27,6 +28,7 @@ class Usermodel {
     int? v;
 
     Usermodel({
+      this.type,
       this.bgImage,
         required this.id,
        // required this.ownerName,
@@ -36,7 +38,7 @@ class Usermodel {
         //required this.address,
         //required this.contact,
          this.city,
-         this.type,
+      
          this.image,
         required this.connections,
         //required this.createdAt,
@@ -56,6 +58,7 @@ class Usermodel {
         city: json["city"]??'',
         type: json["type"]??'',
         image: json["image"]??'',
+      //  type:json['type']??'',
         connections: List<String>.from(json["connections"].map((x) => x))??[],
         //createdAt: DateTime.parse(json["createdAt"]),
         //updatedAt: DateTime.parse(json["updatedAt"]),
@@ -66,12 +69,13 @@ class Usermodel {
         "_id": id,
       //  "ownerName": ownerName,
         "businessName": businessName,
+        "type":type,
        // "email": email,
         //"password": password,
         //"address": address,
         //"contact": contact,
         "city": city,
-        "type": type,
+      
         "image": image,
         "connections": List<dynamic>.from(connections.map((x) => x)),
         //"createdAt": createdAt.toIso8601String(),

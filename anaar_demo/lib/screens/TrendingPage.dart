@@ -9,6 +9,7 @@ import 'package:anaar_demo/widgets/photGrid.dart';
 import 'package:anaar_demo/widgets/profileTile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -62,11 +63,16 @@ class _TrendingpageState extends State<Trendingpage> {
           
         }
         else{
+
+          print("1 pe to aa rha hai");
 return Consumer<Trendingprovider>(
         builder: (context, trendprovider, child) {
           if (trendprovider.isLoading) {
             return Center(child: _buildShimmerLoading());
-          }else {
+          } else if (trendprovider.postcards.isEmpty) {
+            return Center(child: Text("No trending data this week"));}
+          
+          else {
             return ListView.builder(
               itemCount: trendprovider.postcards.length,
               itemBuilder: (context, index) {
@@ -112,13 +118,14 @@ class _PostCardWidgetState extends State<PostCardWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print("trending build ke andr aa giye ..............${widget.posttt.userid}");
     return FutureBuilder<Usermodel?>(
       future: Provider.of<UserProvider>(context, listen: false)
           .fetchUserinfo(widget.posttt.userid),
       builder: (context, userSnapshot) {
         if (userSnapshot.connectionState == ConnectionState.waiting) {
           return _buildShimmerLoading();
-        } else if (userSnapshot.hasError || !userSnapshot.hasData) {
+        } else if (userSnapshot.hasError ) {
           print('Error: ${userSnapshot.error}');
           return SizedBox.shrink(); // Don't show anything if there's an error
         } else {
@@ -133,6 +140,8 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                   Location: userModel.city ?? '',
                   ProfileName: userModel.businessName ?? '',
                   Imagepath: userModel.image ?? '',
+                  loggedInUserId: loggedinuserid,
+                  
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),

@@ -1,4 +1,6 @@
 import 'package:anaar_demo/providers/authProvider.dart';
+import 'package:anaar_demo/providers/userProvider.dart';
+import 'package:anaar_demo/screens/consumer/EditConsumerProfile.dart';
 import 'package:anaar_demo/screens/onboardingScreens.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Consumerprofilepage extends StatefulWidget {
   @override
@@ -78,6 +81,48 @@ class _UserProfilePageState extends State<Consumerprofilepage> {
     }
   }
 
+//,.................................shimmer loading ......................
+
+ Widget _buildShimmerLoading() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.white,
+            ),
+          ),
+          SizedBox(height: 16),
+          _buildShimmerLine(),
+          SizedBox(height: 16),
+          _buildShimmerLine(),
+          SizedBox(height: 16),
+          _buildShimmerLine(),
+          SizedBox(height: 16),
+          _buildShimmerLine(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerLine() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        height: 20,
+        color: Colors.white,
+      ),
+    );
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -90,17 +135,52 @@ class _UserProfilePageState extends State<Consumerprofilepage> {
         elevation: 0,
         actions: [
           IconButton(
-              onPressed: () async {
-                authProvider.logout();
-                Get.offAll(() => onboardingLoginPage());
+              onPressed: () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Log out'),
+          content: const Text('Do you want to logout?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: ()async {
+                 authProvider.logout();
+               Get.offAll(() => onboardingLoginPage());
+
               },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ),
               icon: Icon(
                 Icons.logout,
                 color: Colors.white,
               ))
         ],
       ),
-      body: SingleChildScrollView(
+      body:
+      FutureBuilder(future:
+      Provider.of<UserProvider>(context,listen: false).fetchConsumerData()
+       , builder: (context,snapshot){
+      if(snapshot.connectionState==ConnectionState.waiting){
+      return _buildShimmerLoading();
+      }
+    else if(snapshot.error!=null){
+      print('Error: ${snapshot.error}');
+            return Center(child: Text('An error occurred!'));
+    }
+   else{
+            return Consumer<UserProvider>(builder: (ctx,userProvider,child){
+            if(userProvider.consumer==null){
+              return Center(child: Text('no user data available'),);
+
+            }
+            else{
+          return  SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,8 +191,8 @@ class _UserProfilePageState extends State<Consumerprofilepage> {
                 children: [
                   CircleAvatar(
                     radius: 60,
-                    backgroundImage: _image != null
-                        ? FileImage(_image!)
+                    backgroundImage: userProvider.consumer!.image != null
+                        ? NetworkImage(userProvider.consumer!.image??'')
                         : AssetImage('assets/profile_image.jpg')
                             as ImageProvider,
                   ),
@@ -123,20 +203,33 @@ class _UserProfilePageState extends State<Consumerprofilepage> {
                     ),
                     child: IconButton(
                       icon: Icon(Icons.edit, color: Colors.white),
-                      onPressed: _pickImage,
+                      onPressed: ()=>Get.to(()=>Editconsumerprofile()),
                     ),
                   ),
                 ],
               ),
             ),
             SizedBox(height: 24),
-            _buildEditableField(title: 'Name', value: name),
-            _buildEditableField(title: 'Phone', value: phone),
-            _buildEditableField(title: 'Email', value: email),
-            _buildEditableField(title: 'Bio', value: bio, isMultiline: true),
+             Row(mainAxisAlignment: MainAxisAlignment.center,
+              children: [Text("17"),SizedBox(width: 10,) ,Text("Connections.")],),
+            _buildEditableField(title: 'Name', value: userProvider.consumer!.name??''),
+            _buildEditableField(title: 'Phone', value:userProvider.consumer!.contact??'' ),
+            _buildEditableField(title: 'Email', value: userProvider.consumer!.email??''),
+            _buildEditableField(title: 'Bio', value: userProvider.consumer!.businessName??'', isMultiline: true),
           ],
         ),
-      ),
+      );
+            }
+            }            
+            );
+
+      }
+      
+      
+   
+   
+   } )
+
     );
   }
 
@@ -159,17 +252,17 @@ class _UserProfilePageState extends State<Consumerprofilepage> {
             Expanded(
               child: Text(
                 value,
+              
                 style: TextStyle(
+                
+                
                   fontSize: 14,
                 ),
-                maxLines: isMultiline ? null : 1,
-                overflow: isMultiline ? null : TextOverflow.ellipsis,
+                maxLines: 20,
+                overflow:  TextOverflow.ellipsis,
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.edit, color: Colors.blue),
-              onPressed: () => _editField(title, value),
-            ),
+           
           ],
         ),
         Divider(),

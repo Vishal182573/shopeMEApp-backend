@@ -96,14 +96,19 @@ Consumer<PostcardProvider>(
 }
 
 
-class builpostCard extends StatelessWidget {
+class builpostCard extends StatefulWidget {
   final Postcard postcar;
   final String? logedinuserId;
   builpostCard({required this.postcar, this.logedinuserId});
 
   @override
+  State<builpostCard> createState() => _builpostCardState();
+}
+
+class _builpostCardState extends State<builpostCard> {
+  @override
   Widget build(BuildContext context) {
-    final postCard = postcar;
+    final postCard = widget.postcar;
 
     return FutureBuilder<Usermodel?>(
       future: Provider.of<UserProvider>(context, listen: false)
@@ -126,6 +131,7 @@ class builpostCard extends StatelessWidget {
                   Location: userModel.city ?? '',
                   ProfileName: userModel.businessName ?? '',
                   Imagepath: userModel.image ?? '',
+                  loggedInUserId: widget.logedinuserId,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -136,10 +142,15 @@ class builpostCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Container(
+                  decoration: 
+                             BoxDecoration(color: const Color.fromARGB(255, 232, 232, 232)),       
                   height: 250,
-                  child: PhotoGrid(
-                    imageUrls: postCard.images ?? [],
-                    onImageClicked: (i) => print('Image $i was clicked!'),
+                  child: Expanded(
+                    child: PhotoGrid(
+                      imageUrls: postCard.images ?? [],
+                      onImageClicked: (i) => print('Image $i was clicked!'),
+                      
+                    ),
                   ),
                 ),
                 Padding(
@@ -150,17 +161,17 @@ class builpostCard extends StatelessWidget {
                       LikeButton(
                         postId: postCard.sId!,
                         likes: postCard.likes,
-                        loggedinuser: logedinuserId,
+                        loggedinuser: widget.logedinuserId,
                       ),
                       TextButton(
                         onPressed: () => Get.to(() => CommentScreen(
                               postcard: postCard,
-                              loggedinuserid: logedinuserId,
+                              loggedinuserid: widget.logedinuserId,
                             )),
                         child: Text('Comments'),
                       ),
                       TextButton(
-                        onPressed: () => Get.to(() => ChatScreen(loggedInUserId:logedinuserId??''
+                        onPressed: () => Get.to(() => ChatScreen(loggedInUserId:widget.logedinuserId??''
                         , postOwnerId: postCard.userid??'',user:userModel ,)),
                         child: Row(
                           children: [

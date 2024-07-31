@@ -66,6 +66,13 @@ class PostProvider with ChangeNotifier {
       throw error;
     }
   }
+
+
+
+
+
+
+
 }
 
 ////................................getting post data homepage......................
@@ -268,4 +275,37 @@ class PostcardProvider with ChangeNotifier {
       throw (error);
     }
   }
+
+
+ Future<bool> deletePost(String postId) async {
+   final prefs = await SharedPreferences.getInstance();
+
+   _isLoading=true;
+    notifyListeners();
+    final token = prefs.getString('token');
+    final url = 'https://shopemeapp-backend.onrender.com/api/post/deletePost?postId=$postId';
+    final response = await http.get(Uri.parse(url),
+                  headers: {
+          'Authorization': 'Bearer $token',
+        },
+    );
+
+     _isLoading=false;
+    notifyListeners(); 
+
+    if (response.statusCode == 200) {
+      _postcards.removeWhere((post) => post.sId == postId);
+      notifyListeners();
+         print("...........Deleted post successfully...............");
+          return true;
+
+    } else {
+      print(response.body);
+      print('................Failed to delete post');
+       return false;
+    }
+  }
+
+
+
 }

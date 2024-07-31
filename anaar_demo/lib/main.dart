@@ -41,6 +41,22 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => RequirementcardProvider()),
         ChangeNotifierProvider(create: (context) => PostProvider()),
         ChangeNotifierProvider(create: (context) => Trendingprovider()),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         ChangeNotifierProvider(create: (context) => CatelogProvider()),
         ChangeNotifierProvider(create: (context) => ChatProvider()),
         

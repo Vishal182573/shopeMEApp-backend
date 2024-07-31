@@ -177,7 +177,7 @@ class _LoginPageResellerState extends State<LoginPageReseller> {
                           ),
                           GestureDetector(
                             onTap: () =>
-                                Get.to(() => ResellerRegistrationPage()),
+                                Get.offAll(() => ResellerRegistrationPage()),
                             child: Text(
                               'Sign Up',
                               style: TextStyle(

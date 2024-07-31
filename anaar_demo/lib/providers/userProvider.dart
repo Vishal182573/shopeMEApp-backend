@@ -2,16 +2,20 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:anaar_demo/helperfunction/helperfunction.dart';
+import 'package:anaar_demo/model/consumer_model.dart';
 import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:anaar_demo/model/userModel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider with ChangeNotifier {
   Reseller? _reseller;
 
   Reseller? get reseller => _reseller;
+  ConsumerModel? _consumer;
+  ConsumerModel? get consumer=> _consumer;
   // Usermodel? _usermodel;
   // Usermodel? get usermodel => _usermodel;
   bool _isloading = false;
@@ -62,6 +66,11 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+
+
+//.................fetch Reseller dat.......................................
+
+
   Future<void> fetchUserData() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -94,6 +103,57 @@ class UserProvider with ChangeNotifier {
       throw error;
     }
   }
+
+
+
+//......................Fetch cosumer details....................
+
+  Future<void> fetchConsumerData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token == null) {
+      return;
+    }
+
+    print(token);
+    final userId = prefs.getString('userId');
+    print(userId);
+    final url = Uri.parse(
+        'https://shopemeapp-backend.onrender.com/api/user/getConsumer?id=$userId');
+
+    try {
+      final response = await http.get(url, headers: {
+        'Authorization': 'barrer $token',
+      });
+
+      if (response.statusCode == 200) {
+        print("............Got the consumer data..........");
+        final userData = json.decode(response.body);
+        _consumer = ConsumerModel.fromJson(userData);
+        print(_consumer!.businessName);
+        notifyListeners();
+      } else {
+        print(response.statusCode);
+        print(response.body);
+        throw Exception('Failed to load user data');
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //.......................................update userprofile data..for reseller.....................
 
@@ -149,4 +209,59 @@ class UserProvider with ChangeNotifier {
       throw error;
     }
   }
+//.......................................Connect with user.......................
+ List<String> _connections = [];
+  List<String> get connections => _connections;
+
+Future<void> connectUser(String loggedInUserId, String targetUserId ,String targetUsertype) async {
+     final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final logginusertype=prefs.getString('userType');
+    var url;
+    var body;
+    print("logged in user type ................${logginusertype}");
+    print("target user type...............${targetUsertype}");
+    if(logginusertype=='reseller' && targetUsertype=='reseller'){
+      url='https://shopemeapp-backend.onrender.com/api/user/resellerToReseller';
+
+      body=json.encode({
+           'resellerId1': loggedInUserId,
+          'resellerId1': targetUserId,
+
+      });
+    }
+
+   if(logginusertype=='reseller' && targetUsertype=='consumer'){
+      url='https://shopemeapp-backend.onrender.com/api/user/resellerToReseller';
+
+      body=json.encode({
+           'resellerId1': loggedInUserId,
+          'resellerId1': targetUserId,
+
+      });
+    }
+
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json',
+                    'Authorization': 'Bearer $token',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        _connections.add(targetUserId);
+        print('........................connection successfull');
+        notifyListeners();
+      } else {
+        throw Exception('Failed to connect to user .......${response.body}............${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error connecting to user: $error');
+    }
+  }
+
+
 }

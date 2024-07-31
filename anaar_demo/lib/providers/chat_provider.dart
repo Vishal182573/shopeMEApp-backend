@@ -180,7 +180,7 @@ class ChatProvider with ChangeNotifier {
   String? _currentChatId;
 
   void initSocket() {
-    socket = IO.io('http://192.168.0.107:3000', <String, dynamic>{
+    socket = IO.io('https://shopemeapp-backend.onrender.com', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
@@ -197,7 +197,7 @@ class ChatProvider with ChangeNotifier {
   Future<void> initializeChat(String? userId1, String userId2) async {
     print('Initializing chat for users $userId1 and $userId2');
     final response = await http.post(
-      Uri.parse('http://192.168.0.107:3000/api/chat/addChat'),
+      Uri.parse('https://shopemeapp-backend.onrender.com/api/chat/addChat'),
       body: json.encode({'userId1': userId1, 'userId2': userId2}),
       headers: {'Content-Type': 'application/json'},
     );
@@ -233,7 +233,7 @@ class ChatProvider with ChangeNotifier {
 
 Future<List<ChatPreview>> getChatPreviews(String? loggedInUserId) async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.0.107:3000/api/chat/ChatPreview?id=$loggedInUserId'));
+      final response = await http.get(Uri.parse('https://shopemeapp-backend.onrender.com/api/chat/ChatPreview?id=$loggedInUserId'));
       
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);

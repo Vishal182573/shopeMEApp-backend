@@ -68,26 +68,20 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
                   ),
                 ),
                 SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                          labelText: 'Username',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your Owner name';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    SizedBox(width: 16.0),
-                  ],
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your Owner name';
+                    }
+                    return null;
+                  },
                 ),
+                SizedBox(width: 16.0),
                 SizedBox(height: 16.0),
                 TextFormField(
                   controller: _cityController,
@@ -119,7 +113,9 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
                 SizedBox(height: 16.0),
                 TextFormField(
                   controller: _phoneNumberController,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
+                  
                     labelText: 'Phone Number',
                     border: OutlineInputBorder(),
                   ),
@@ -146,6 +142,8 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
                   },
                 ),
                 SizedBox(height: 16.0),
+               authProvider.isLoading?CircularProgressIndicator():
+               
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState?.validate() ?? false) {
@@ -165,9 +163,22 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
                           ),
                         );
                       }
+                      else{
+                          showDialog<String>(
+                                      barrierDismissible: true,
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                        title: const Text('Login failed'),
+                                        content: const Text(
+                                            'Check Email and password again'),
+                                      ),
+                                    );
+                      }
                     }
                   },
-                  child: Text('Create Account'),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: Text('Create Account',style: TextStyle(color: Colors.white),),
                 ),
                  Row(children: [
                 Text("Already have an account?"),

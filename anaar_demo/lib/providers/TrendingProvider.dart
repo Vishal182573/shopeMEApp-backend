@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class PostcardService {
   static const String url =
       'https://shopemeapp-backend.onrender.com/api/post/trending';
-
+  
   static Future<List<Postcard>> fetchPostcards() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -23,6 +23,8 @@ class PostcardService {
 
     if (response.statusCode == 200) {
       print("..................Got the trend  data successfully.........");
+      print(response.body);
+      
       List jsonResponse = json.decode(response.body);
       return jsonResponse
           .map((postcard) => Postcard.fromJson(postcard))
@@ -43,7 +45,9 @@ class Trendingprovider with ChangeNotifier {
 
   Future<void> fetchPostcards() async {
     try {
+     
       _postcards = await PostcardService.fetchPostcards();
+  
     } catch (error) {
       print(error);
     }
