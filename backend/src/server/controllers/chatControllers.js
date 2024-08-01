@@ -280,18 +280,15 @@ const chatPreviews = asyncHandler(async (req, res) => {
 });
 
 
-
-
 const markMessagesAsRead = asyncHandler(async (req, res) => {
   try {
     const { chatId, userId } = req.body;
 
-    if (!chatId || !userId) {
-      return res.status(400).json({ message: "Bad request: chatId and userId are required" });
+    if (!isValidObjectId(chatId) || !isValidObjectId(userId)) {
+      return res.status(400).json({ message: "Invalid chatId or userId" });
     }
 
     const chat = await Chat.findById(chatId);
-
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });
     }
@@ -303,13 +300,11 @@ const markMessagesAsRead = asyncHandler(async (req, res) => {
     });
 
     await chat.save();
-
     res.status(200).json({ message: "Messages marked as read" });
   } catch (err) {
     console.error("Error in markMessagesAsRead:", err);
     res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 });
-
 
 export { addChat,chatPreviews,markMessagesAsRead};

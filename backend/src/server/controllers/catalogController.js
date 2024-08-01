@@ -80,10 +80,39 @@ const deleteCatalog = asyncHandler(async (req, res) => {
     }
   });
 
+
+
+
+
+  const searchCatalog = asyncHandler(async (req, res) => {
+    try {
+        const { query } = req.query;
+        if (!query) return res.status(400).json({ message: "Query parameter is required" });
+
+        // Use text search for partial matching
+        const catalogs = await Catalog.find({
+            $text: { $search: query } // Uses text index for searching
+        });
+
+        res.status(200).json(catalogs);
+    } catch (error) {
+        res.status(500).json({ error: 'Error searching catalogs', details: error.message });
+    }
+});
+
+
+
+
+
+
+
 export{
     uploadCatalog,
     deleteCatalog,
     getAllCatalog,
     getCatalogsByCategory,
     getCatalogByUserId,
+
+
+ searchCatalog,
 }
