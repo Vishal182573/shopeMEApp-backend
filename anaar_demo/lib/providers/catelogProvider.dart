@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:anaar_demo/backend/notification_services.dart';
 import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/model/catelogMode.dart';
+import 'package:anaar_demo/providers/chat_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -11,17 +13,22 @@ class CatelogProvider extends ChangeNotifier {
   List<Catelogmodel> _catelogpost = [];
 
   List<Catelogmodel> get catelogpost => _catelogpost;
+
+
+  List<Catelogmodel> _searchResults = [];
+
+
+  List<Catelogmodel> get searchResults => _searchResults;  // A
   bool _isLoading = false;
 
-  bool get isLoading => _isLoading;
+  bool  get isLoading => _isLoading;
 
   Future<void> uploadCatelog(Catelogmodel catelog) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final url =
         'https://shopemeapp-backend.onrender.com/api/catalog/uploadCatalog';
-    _isLoading = true;
-    notifyListeners();
+    
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -46,6 +53,8 @@ class CatelogProvider extends ChangeNotifier {
   Future<void> uploadCatelogWithImages(
       Catelogmodel catelogModel, List<File> images) async {
     try {
+      _isLoading = true;
+    notifyListeners();
       List<String?> imageUrls = [];
       for (var image in images) {
         String? imageUrl = await Helperfunction.uploadImage(image);
@@ -58,6 +67,8 @@ class CatelogProvider extends ChangeNotifier {
       print(imageUrls[0]);
       await uploadCatelog(catelogModel);
     } catch (error) {
+      _isLoading =false;
+    notifyListeners();
       throw error;
     }
   }
@@ -91,4 +102,46 @@ class CatelogProvider extends ChangeNotifier {
       throw (error);
     }
   }
+
+
+
+Future<void> searchCatalog(String query) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  final url =
+      'http://192.168.0.107:30/api/catalog/search?query=$query';
+  _isLoading = true;
+  notifyListeners();
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      
+    );
+    if (response.statusCode == 200) {
+      print("................this is working............");
+      List jsonResponse = json.decode(response.body);
+      _searchResults = jsonResponse
+          .map((item) => Catelogmodel.fromJson(item))
+          .toList();
+      notifyListeners();
+    } else {
+      throw Exception('Failed to search catalog');
+    }
+  } catch (error) {
+    print('Error searching catalog: $error');
+    throw error;
+  } finally {
+    _isLoading = false;
+    notifyListeners();
+  }
+}
+
+
+
+
+
+
+
+
+
 }

@@ -28,8 +28,7 @@ class PostProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final url = 'https://shopemeapp-backend.onrender.com/api/post/upload';
-    _isLoading = true;
-    notifyListeners();
+  
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -53,6 +52,9 @@ class PostProvider with ChangeNotifier {
 
   Future<void> uploadPostWithImages(Post post, List<File> images) async {
     try {
+  _isLoading = true;
+    notifyListeners();
+      
       List<String?> imageUrls = [];
       for (var image in images) {
         String? imageUrl = await Helperfunction.uploadImage(image);
@@ -63,6 +65,8 @@ class PostProvider with ChangeNotifier {
       print(imageUrls[0]);
       await uploadPost(post);
     } catch (error) {
+        _isLoading = false;
+    notifyListeners();
       throw error;
     }
   }
@@ -212,7 +216,7 @@ class PostcardProvider with ChangeNotifier {
   Future<void> addComment(String? postId, Comments newComment) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-
+    final userType=prefs.getString('userType');
     try {
       final response = await http.post(
         Uri.parse('https://shopemeapp-backend.onrender.com/api/post/comment'),
@@ -224,6 +228,7 @@ class PostcardProvider with ChangeNotifier {
           'postid': postId,
           'userid': newComment.userId,
           'comment': newComment.comment,
+          'userType':userType
         }),
       );
 
@@ -308,4 +313,63 @@ class PostcardProvider with ChangeNotifier {
 
 
 
+}
+
+
+
+///..................................Getx controller for likessss..........................
+///
+///
+
+
+// lib/controllers/post_controller.dart
+
+class PostController extends GetxController {
+  var posts = <Postcard>[].obs;
+
+  void setPosts(List<Postcard> postList) {
+    posts.assignAll(postList);
+  }
+
+  void _optimisticallyToggleLike(String postId, String? userId) {
+    final postIndex = posts.indexWhere((post) => post.sId == postId);
+    if (postIndex != -1) {
+      final post = posts[postIndex];
+      if (post.likes!.any((like) => like.userId == userId)) {
+        post.likes!.removeWhere((like) => like.userId == userId);
+      } else {
+        post.likes!.add(Likes(userId: userId));
+      }
+      posts[postIndex] = post; // Update the list to trigger the observer
+    }
+  }
+
+  Future<void> likePost(String postId, String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    _optimisticallyToggleLike(postId, userId);
+
+    try {
+      final response = await http.post(
+        Uri.parse('https://shopemeapp-backend.onrender.com/api/post/like'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        },
+        body: json.encode({
+          'postid': postId,
+          'userid': userId,
+          'userType': 'reseller'
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        _optimisticallyToggleLike(postId, userId); // Revert on failure
+      }
+    } catch (error) {
+      _optimisticallyToggleLike(postId, userId); // Revert on failure
+      throw (error);
+    }
+  }
 }

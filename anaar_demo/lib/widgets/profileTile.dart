@@ -47,7 +47,7 @@ class Profiletile extends StatelessWidget {
               onPressed: () async {
                 if (!isConnected) {
                   print(" connected function hitted.......................");
-                  await userProvider.connectUser(loggedInUserId!, usermodel.id!,usermodel.type!);
+                  await userProvider.connectUser(loggedInUserId, usermodel.id,usermodel.type);
                 }
               },
               child: Text(

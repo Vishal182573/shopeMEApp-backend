@@ -27,10 +27,14 @@ class Reseller {
   String? createdAt;
   String? updatedAt;
   int? v;
+  String? aboutUs;
+  int?  catalogueCount;
 
   Reseller({
+    this.catalogueCount,
      this.bgImage,
      this.id,
+     this.aboutUs,
     required this.ownerName,
     required this.businessName,
     required this.email,
@@ -58,6 +62,8 @@ class Reseller {
         type: json["type"],
         image: json["image"],
         bgImage: json["bgImage"],
+        aboutUs: json["aboutUs"],
+        catalogueCount: json["catalogueCount"],
         connections: List<String>.from(json["connections"].map((x) => x)),
       );
 
@@ -73,6 +79,8 @@ class Reseller {
         "type": type,
         "image": image,
         "bgImage":bgImage,
+        "aboutUs":aboutUs,
+        "catalogueCount":catalogueCount,
         "connections": List<dynamic>.from(connections.map((x) => x)),
       
       };

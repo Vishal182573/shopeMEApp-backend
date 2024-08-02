@@ -17,6 +17,8 @@ import 'package:anaar_demo/screens/requirement_page.dart';
 import 'package:anaar_demo/screens/resellerShowProfile.dart';
 import 'package:anaar_demo/widgets/bottomNavigationBar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +29,8 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    // Get.put(PostController());
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -40,23 +44,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => PostcardProvider()),
         ChangeNotifierProvider(create: (context) => RequirementcardProvider()),
         ChangeNotifierProvider(create: (context) => PostProvider()),
-        ChangeNotifierProvider(create: (context) => Trendingprovider()),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
+        ChangeNotifierProvider(create: (context) => Trendingprovider()),        
         ChangeNotifierProvider(create: (context) => CatelogProvider()),
         ChangeNotifierProvider(create: (context) => ChatProvider()),
         

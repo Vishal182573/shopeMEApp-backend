@@ -11,6 +11,8 @@ class ConsumerModel {
   final String? contact;
   final String? image; 
   final String? type;
+  String? bio;
+    List<String?> connections;
 
   ConsumerModel({
     required this.id,
@@ -21,10 +23,13 @@ class ConsumerModel {
     required this.contact,
     required this.image,
     required this.type,
+    required this.connections,
+    this.bio
   });
 
   factory ConsumerModel.fromJson(Map<String, dynamic> json) {
     return ConsumerModel(
+      bio: json['bio']??'',
       id: json['_id'],
       name: json['ownername'] ?? json['name'],
       businessName: json['businessname'] ?? '',
@@ -33,6 +38,7 @@ class ConsumerModel {
       contact: json['contact'],
       image: json['image'] ?? '',
       type: json['type'],
+       connections: List<String>.from(json["connections"].map((x) => x))
     );
   }
 }

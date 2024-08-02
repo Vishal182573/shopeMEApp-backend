@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage>
         controller: _tabController,
         children: [
           Feedsection(
-            loginuse: logedinuserId,
+            //loginuse: logedinuserId,
           ),
           _buildRequirementsTab(),
           _buildTrendingTab(),

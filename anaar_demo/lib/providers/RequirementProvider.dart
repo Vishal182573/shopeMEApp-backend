@@ -19,11 +19,6 @@ class RequirementProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final type = prefs.getString('userType');
-    if (type == 'reseller') {
-      requirement.userType = 'reseller';
-    } else {
-      requirement.userType = 'consumer';
-    }
     final url =
         'https://shopemeapp-backend.onrender.com/api/requirement/postRequirement';
     print(token);
@@ -35,7 +30,8 @@ class RequirementProvider with ChangeNotifier {
       },
       body: json.encode(requirement.toJson()),
     );
-
+  isLoading = false;
+    notifyListeners();
     if (response.statusCode == 200) {
       print(
           "............Requirement uploaded successfully....................");
@@ -45,6 +41,7 @@ class RequirementProvider with ChangeNotifier {
       print(response.statusCode);
       print(response.body);
       isLoading = false;
+      notifyListeners();
       throw Exception(
           '...................Failed to upload Requirement...............');
     }
@@ -54,10 +51,10 @@ class RequirementProvider with ChangeNotifier {
   }
 
   Future<void> postrequiremnetwithimage(
-      Requirement requirement, List<File> images) async {
+      Requirement requirement, List<File?> images) async {
     isLoading = true;
     notifyListeners();
-    if (images == null) {
+    if (images == []) {
       await postRequirement(requirement);
     }
     try {
@@ -70,7 +67,9 @@ class RequirementProvider with ChangeNotifier {
       requirement.images = imageUrls;
       print(imageUrls[0]);
       await postRequirement(requirement);
-    } catch (error) {
+    } catch (error) {  isLoading =false;
+    notifyListeners();
+        print("..........image error");
       throw error;
     }
   }

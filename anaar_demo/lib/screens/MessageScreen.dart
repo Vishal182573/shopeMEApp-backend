@@ -122,6 +122,107 @@ import 'package:anaar_demo/screens/chatScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// class MessageListScreen extends StatefulWidget {
+//   @override
+//   State<MessageListScreen> createState() => _MessageListScreenState();
+// }
+
+// class _MessageListScreenState extends State<MessageListScreen> {
+//   String? loggedInUserId;
+//   String? userType;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadUserId();
+//   }
+
+//   void _loadUserId() async {
+//     loggedInUserId = await Helperfunction.getUserId();
+//     setState(() {});
+//   }
+
+//   void _markMessagesAsRead(String chatId) {
+//     Provider.of<ChatProvider>(context, listen: false).markMessagesAsRead(chatId, loggedInUserId!);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(automaticallyImplyLeading: false,
+//         title: Text('Messages',style: TextStyle(color: Colors.white),),
+//         backgroundColor: Colors.red,
+//       ),
+//       body: FutureBuilder<List<ChatPreview>>(
+//         future: Provider.of<ChatProvider>(context, listen: false).getChatPreviews(loggedInUserId),
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return Center(child: CircularProgressIndicator());
+//           } else if (snapshot.hasError) {
+//             return Center(child: Text('Error: ${snapshot.error}'));
+//           } else {
+//             return ListView.builder(
+//               itemCount: snapshot.data!.length,
+//               itemBuilder: (context, index) {
+//                 final chatPreview = snapshot.data![index];
+
+//                 return ListTile(
+//                   dense: true,
+//                   leading: CircleAvatar(
+//                     backgroundImage: chatPreview.image != null
+//                         ? NetworkImage(chatPreview.image)
+//                         : NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsyA44JdhHChP6kGqx36BolQq4Hn7z2yGekw&s"),
+//                   ),
+//                   title: Text(chatPreview.otherUserName),
+//                   subtitle: Text(chatPreview.lastMessage),
+//                   trailing: chatPreview.unreadCount > 0
+//                       ? Badge(
+//                           label: Text(
+//                             chatPreview.unreadCount.toString(),
+//                             style: TextStyle(color: Colors.white),
+//                           ),
+//                           child: Text(
+//                             chatPreview.timestamp == ''
+//                                 ? "time"
+//                                 : '${DateTime.parse(chatPreview.timestamp).hour}:${DateTime.parse(chatPreview.timestamp).minute}',
+//                             style: TextStyle(color: const Color.fromARGB(255, 3, 2, 2)),
+//                           ),
+//                         )
+//                       : Text(
+//                           chatPreview.timestamp == ''
+//                               ? "time"
+//                               : '${DateTime.parse(chatPreview.timestamp).hour}:${DateTime.parse(chatPreview.timestamp).minute}',
+//                           style: TextStyle(color: const Color.fromARGB(255, 3, 2, 2)),
+//                         ),
+//                   onTap: () {
+//                     _markMessagesAsRead(chatPreview.chatId);
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                         builder: (context) => ChatScreen(
+//                           loggedInUserId: loggedInUserId,
+//                           postOwnerId: chatPreview.otherUserId,
+//                           user: Usermodel(
+//                             id: chatPreview.otherUserId,
+//                             businessName: chatPreview.otherUserName,
+//                             connections: [],
+//                             image: chatPreview.image,
+//                           ),
+//                         ),
+//                       ),
+//                     ).then((_) {
+//                       setState(() {});
+//                     });
+//                   },
+//                 );
+//               },
+//             );
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
 class MessageListScreen extends StatefulWidget {
   @override
   State<MessageListScreen> createState() => _MessageListScreenState();
@@ -129,6 +230,7 @@ class MessageListScreen extends StatefulWidget {
 
 class _MessageListScreenState extends State<MessageListScreen> {
   String? loggedInUserId;
+  Future<List<ChatPreview>>? chatPreviewsFuture;
 
   @override
   void initState() {
@@ -138,27 +240,37 @@ class _MessageListScreenState extends State<MessageListScreen> {
 
   void _loadUserId() async {
     loggedInUserId = await Helperfunction.getUserId();
-    setState(() {});
+    _loadChatPreviews();
   }
 
-  void _markMessagesAsRead(String chatId) {
-    Provider.of<ChatProvider>(context, listen: false).markMessagesAsRead(chatId, loggedInUserId!);
+  void _loadChatPreviews() {
+    setState(() {
+      chatPreviewsFuture = Provider.of<ChatProvider>(context, listen: false).getChatPreviews(loggedInUserId);
+    });
+  }
+
+  Future<void> _markMessagesAsRead(String chatId) async {
+    await Provider.of<ChatProvider>(context, listen: false).markMessagesAsRead(chatId, loggedInUserId!);
+    _loadChatPreviews(); // Reload chat previews after marking messages as read
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false,
-        title: Text('Messages',style: TextStyle(color: Colors.white),),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text('Messages', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.red,
       ),
       body: FutureBuilder<List<ChatPreview>>(
-        future: Provider.of<ChatProvider>(context, listen: false).getChatPreviews(loggedInUserId),
+        future: chatPreviewsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No messages'));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.length,
@@ -193,8 +305,8 @@ class _MessageListScreenState extends State<MessageListScreen> {
                               : '${DateTime.parse(chatPreview.timestamp).hour}:${DateTime.parse(chatPreview.timestamp).minute}',
                           style: TextStyle(color: const Color.fromARGB(255, 3, 2, 2)),
                         ),
-                  onTap: () {
-                    _markMessagesAsRead(chatPreview.chatId);
+                  onTap: () async {
+                    await _markMessagesAsRead(chatPreview.chatId);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -210,7 +322,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
                         ),
                       ),
                     ).then((_) {
-                      setState(() {});
+                      _loadChatPreviews(); // Refresh the chat previews after returning from the chat screen
                     });
                   },
                 );

@@ -14,6 +14,7 @@ class CommentProvider with ChangeNotifier {
   Future<void> addComment(String? postId, Comments newComment) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+    final userType=prefs.getString('type');
 
     final response = await http.post(
       Uri.parse('https://shopemeapp-backend.onrender.com/api/post/comment'),
@@ -25,6 +26,7 @@ class CommentProvider with ChangeNotifier {
         'postid': postId,
         'userid': newComment.userId,
         'comment': newComment.comment,
+        'userType':userType,
       }),
     );
 

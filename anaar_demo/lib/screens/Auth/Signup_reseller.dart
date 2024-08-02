@@ -22,6 +22,7 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
   final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
   final _addressController = TextEditingController();
+  final _aboutUscontroller=TextEditingController();
   File? _image;
   bool _obscureText = true;
   Future<void> _pickImage() async {
@@ -54,6 +55,7 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
     final contact = _phoneNumberController.text;
     final businessname = _businessNameController.text;
     final city = _cityController.text;
+    final aboutus=_aboutUscontroller.text;
     var image = _image;
   
 
@@ -63,9 +65,10 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
         businessname,
         city,
         email,
-        password,
         contact,
+        password,
         address,
+        aboutus,
         image,
       );
       return val;
@@ -103,7 +106,7 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
         elevation: 0,
       ),
       body: authProvider.isLoading
-          ? CircularProgressIndicator()
+          ? Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -246,6 +249,15 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
                         },
                       ),
                       SizedBox(height: 16.0),
+ TextField(
+              controller: _aboutUscontroller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Add text here...',
+              ),
+              maxLines: 5,
+            ),SizedBox(height: 10,),
+
                      
                      authProvider.isLoading?CircularProgressIndicator():
                       ElevatedButton(
