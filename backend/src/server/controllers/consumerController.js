@@ -4,18 +4,19 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { User } from "../models/UserModel.js";
 
 dotenv.config();
 
 const consumerRegistration = asyncHandler(async (req, res) => {
   try {
-    const { name, email, password, contact,city, image, connections } = req.body;
+    const { name, email, password, contact,city, image, bio } = req.body;
     if (!name || !email || !password || !contact || !city) {
       return res.status(400).json({ message: "Bad request: Missing required fields" });
     }
     const existingConsumer = await Consumer.findOne({ email });
     if (existingConsumer) {
-      return res.status(401).json({ message: "Consumer already exists" });
+      return res.status(400).json({ message: "Consumer already exists" });
     }
     
     const salt = await bcrypt.genSalt(10);
@@ -29,9 +30,9 @@ const consumerRegistration = asyncHandler(async (req, res) => {
       city,
       type:"consumer",
       image:image || "",
-      connections : connections || [],
+      bio: bio || "",
+      connections : []
     });
-    
     const savedConsumer = await newConsumer.save();
     const payload = {
       consumer: {
@@ -102,7 +103,7 @@ const getConsumer = asyncHandler(async (req, res) => {
 
 const updateConsumer = asyncHandler(async (req, res) => {
   try {
-    const { name, email, password, contact, city, image, connections } = req.body;
+    const { name, email, password, contact, city, image,bio,connections } = req.body;
     
     if (!email) {
       return res.status(400).json({ message: "Bad request: Missing required email" });
@@ -119,6 +120,7 @@ const updateConsumer = asyncHandler(async (req, res) => {
     if (contact) consumer.contact = contact;
     if (city) consumer.city = city;
     if (image) consumer.image = image;
+    if (bio) consumer.bio = bio;
     if (connections) consumer.connections = connections;
 
     const updatedConsumer = await consumer.save();
@@ -141,8 +143,8 @@ const resellerToConsumer = asyncHandler(async (req, res) => {
     if (!reseller || !consumer) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      reseller.connections.push({ id: consumerId, type: 'consumer' });
-      consumer.connections.push({ id: resellerId, type: 'reseller' });
+      reseller.connections.push(new User({ userId: consumerId, Type: 'consumer' }));
+      consumer.connections.push(new User({ userId: resellerId, Type: 'reseller' }));
       await reseller.save();
       await consumer.save();
       return res.status(200).json({ message: "Users connected successfully" });
@@ -163,8 +165,8 @@ const consumerToConsumer = asyncHandler(async (req, res) => {
     if (!consumer1 || !consumer2) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      consumer1.connections.push({ id: consumerId2, type: 'consumer' });
-      consumer2.connections.push({ id: consumerId1, type: 'consumer' });
+      consumer1.connections.push(new User({ userId: consumerId2, Type: 'consumer' }));
+      consumer2.connections.push(new User({ userId: consumerId1, Type: 'consumer' }));
       await consumer1.save();
       await consumer2.save();
       return res.status(200).json({ message: "Users connected successfully" });
