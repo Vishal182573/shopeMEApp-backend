@@ -101,22 +101,29 @@ const deleteCatalog = asyncHandler(async (req, res) => {
 
 const searchCatalog = asyncHandler(async (req, res) => {
   try {
-    const { query } = req.query;
-    if (!query)
-      return res.status(400).json({ message: "Query parameter is required" });
+    const { prefix } = req.query;
 
-    // Use text search for partial matching
+    if (!prefix) {
+      return res.status(400).json({ message: "Prefix parameter is required" });
+    }
+
+    // Create a case-insensitive regex pattern for the prefix
+    const regex = new RegExp(prefix, 'i');
+
+    // Find catalogs where productName or category matches the regex
     const catalogs = await Catalog.find({
-      $text: { $search: query }, // Uses text index for searching
+      $or: [
+        { productName: regex },
+        { category: regex }
+      ]
     });
 
     res.status(200).json(catalogs);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Error searching catalogs", details: error.message });
+    res.status(500).json({ error: "Error searching catalogs", details: error.message });
   }
 });
+
 
 export {
   uploadCatalog,
