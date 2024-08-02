@@ -211,11 +211,19 @@ class _CatelogUploadScreenState extends State<CatelogUploadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final catelogProvider= Provider.of<CatelogProvider>(context);
+    return
+  catelogProvider.isLoading?
+       Stack(children: [Container(color: Colors.black.withOpacity(0.1),),Center(child: CircularProgressIndicator(),)],)
+       :    
+    
+     Scaffold(
       appBar: AppBar(
         title: Text("Upload Catalog"),
       ),
-      body: SingleChildScrollView(
+      body:
+      
+       SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -344,7 +352,7 @@ class _CatelogUploadScreenState extends State<CatelogUploadScreen> {
         ),
       ),
       bottomNavigationBar: GestureDetector(
-        onTap: () {},
+        onTap: () {_uploadcatelog();},
         child: Container(
           height: 40,
           color: Colors.blue,

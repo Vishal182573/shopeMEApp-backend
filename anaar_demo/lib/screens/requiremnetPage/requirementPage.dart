@@ -1,6 +1,12 @@
+import 'package:anaar_demo/helperfunction/helperfunction.dart';
+import 'package:anaar_demo/model/Requirement_model.dart';
+import 'package:anaar_demo/providers/RequirementProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RequirementPostScreen extends StatefulWidget {
   @override
@@ -13,8 +19,58 @@ class _RequirementScreenState extends State<RequirementPostScreen> {
   String totalValue = '1000';
   TextEditingController productController =
       TextEditingController(text: 'saree');
+TextEditingController categorycontroller=TextEditingController();
+TextEditingController Quantitycontroller=TextEditingController();
+TextEditingController detailscontroller=TextEditingController();
+TextEditingController pricecontroller=TextEditingController();
   List<File> attachedImages = [];
+  String? loggedInUserId;
+String? userType;
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loaduserid();
+  }
 
+ void _loaduserid()async{
+ 
+ loggedInUserId=await Helperfunction.getUserId();
+   final prefs = await SharedPreferences.getInstance();
+   // userId = prefs.getString('userId');
+    userType = prefs.getString('userType');
+ 
+
+ } 
+
+
+void _upload(){
+print(productController.text);
+print(categorycontroller.text);
+print(loggedInUserId);
+print(Quantitycontroller.text);
+print(detailscontroller.text);
+print(userType);
+print(pricecontroller.text);
+Requirement  req=Requirement(userId: loggedInUserId??'', 
+productName: productController.text??'', 
+category:categorycontroller.text??'' , quantity: quantity??'', 
+totalPrice: pricecontroller.text??'',
+ details: detailscontroller.text??'', images:[],
+userType: userType??''
+);
+
+Provider.of<RequirementProvider>(context,listen: false).postrequiremnetwithimage(req, attachedImages).
+then((_){
+  Navigator.of(context).pop();
+}).catchError((onError)
+{ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(onError.toString())));
+      });
+;
+
+
+}
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -28,7 +84,11 @@ class _RequirementScreenState extends State<RequirementPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final reqprovide=Provider.of<RequirementProvider>(context);
+    
+    return reqprovide.isLoading?Container(color: Colors.white.withOpacity(0.1),child: Center(child: CircularProgressIndicator(),),):
+    
+    Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -69,13 +129,24 @@ class _RequirementScreenState extends State<RequirementPostScreen> {
               }).toList(),
             ),
             SizedBox(height: 16),
-            Text('Quantity Required?',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Row(
+              children: [
+                Expanded(
+                  child: Text('Quantity Required?',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ),
+                    Expanded(
+                      child: Text('category?',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    )
+              ],
+            ),
             SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
                   child: TextField(
+                    controller: Quantitycontroller,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: '70',
@@ -86,9 +157,10 @@ class _RequirementScreenState extends State<RequirementPostScreen> {
                 SizedBox(width: 8),
                 Expanded(
                   child: TextField(
+                    controller: categorycontroller,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      hintText: 'pieces',
+                      hintText: 'category',
                     ),
                   ),
                 ),
@@ -106,6 +178,7 @@ class _RequirementScreenState extends State<RequirementPostScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 8),
             TextField(
+              controller: pricecontroller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 prefixText: '₹ ',
@@ -118,6 +191,7 @@ class _RequirementScreenState extends State<RequirementPostScreen> {
                 style: TextStyle(fontSize: 16)),
             SizedBox(height: 8),
             TextField(
+              controller: detailscontroller,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Add text here...',
@@ -188,6 +262,7 @@ class _RequirementScreenState extends State<RequirementPostScreen> {
           ),
           onPressed: () {
             // Handle post action
+            _upload();
           },
         ),
       ),

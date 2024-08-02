@@ -53,6 +53,7 @@ class Requirement {
       'totalPrice': totalPrice,
       'details': details,
       'images': images,
+      'userType':userType,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       '__v': iV,

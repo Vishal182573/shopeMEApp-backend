@@ -209,6 +209,7 @@ class Comments {
   String? userId;
   String? comment;
   String? createdAt;
+  String? userType;
   String? sId;
 
   Comments({this.userId, this.comment, this.createdAt, this.sId});
@@ -217,6 +218,7 @@ class Comments {
     userId = json['userId'];
     comment = json['comment'];
     createdAt = json['createdAt'];
+    userType=json['userType'];
     sId = json['_id'];
   }
 
@@ -226,6 +228,7 @@ class Comments {
     data['comment'] = this.comment;
     data['createdAt'] = this.createdAt;
     data['_id'] = this.sId;
+    data['userType']=this.userType;
     return data;
   }
 }

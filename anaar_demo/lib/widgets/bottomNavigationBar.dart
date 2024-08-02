@@ -71,7 +71,7 @@ class _NavigationExampleState extends State<NavigationExample> {
       ),
       body: <Widget>[
         HomePage(),
-        DiscoverPage(),
+        SearchScreen(),
         MessageListScreen(),
         userType == "reseller" ? ResellerProfilePage() : Consumerprofilepage(),
       ][currentPageIndex],

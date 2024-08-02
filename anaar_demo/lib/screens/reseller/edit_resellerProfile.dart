@@ -11,6 +11,7 @@ class EditResellerprofile extends StatefulWidget {
   String ownername;
   String businessname;
   //String username;
+  String? aboutUs;
   String? email;
   String? password;
   String phoneno_;
@@ -20,6 +21,7 @@ class EditResellerprofile extends StatefulWidget {
   String? profileimage;
   String? bgImage;
   EditResellerprofile({
+    this.aboutUs,
     this.bgImage,
     this.profileimage,
     this.email,
@@ -46,6 +48,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
   //final _passwordController = TextEditingController();
   var _addressController = TextEditingController();
   var _phonenocontroller = TextEditingController();
+  var _aboutUscontroller=TextEditingController();
   File? _image;
   File? forgroundimage;
 
@@ -83,6 +86,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
         city: _cityController.text,
         image: '',
         connections: widget.connections,
+        aboutUs:_aboutUscontroller.text ,
         type: 'reseller');
 
     Provider.of<UserProvider>(context, listen: false)
@@ -104,6 +108,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
     _addressController = new TextEditingController(text: widget.adress);
     // _businessNameController = new TextEditingController();
     _cityController = new TextEditingController(text: widget.city);
+    _aboutUscontroller=new TextEditingController(text: widget.aboutUs);
   }
 
   @override
@@ -229,7 +234,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                 enableSuggestions: true,
                 decoration: InputDecoration(
                   hintText: 'Delhi',
-                  labelText: 'Username',
+                  labelText: 'city',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -268,6 +273,15 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                   }
                   return null;
                 },
+              ),SizedBox(height: 10,),
+               TextFormField(
+                controller: _aboutUscontroller,
+                //obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'about us',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 5,
               ),
               SizedBox(height: 16.0),
               ElevatedButton(

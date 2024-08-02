@@ -1,3 +1,4 @@
+import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/model/postcard_model.dart';
 import 'package:anaar_demo/model/userModel.dart';
 import 'package:anaar_demo/providers/postProvider.dart';
@@ -13,14 +14,12 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class Feedsection extends StatefulWidget {
-  final String? loginuse;
-  Feedsection({required this.loginuse});
-
-  @override
+    @override
   _FeedsectionState createState() => _FeedsectionState();
 }
 
 class _FeedsectionState extends State<Feedsection> {
+  String? loggeduserid;
   @override
   void initState() {
     
@@ -29,6 +28,10 @@ class _FeedsectionState extends State<Feedsection> {
       Provider.of<PostcardProvider>(context, listen: false).fetchPostcards();
     });
   }
+
+void _loaduserid()async{
+  loggeduserid=await Helperfunction.getUserId();
+}
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -81,7 +84,7 @@ Consumer<PostcardProvider>(
               itemBuilder: (context, index) {
                 return builpostCard(
                   postcar: postcardProvider.postcards[index],
-                  logedinuserId: widget.loginuse,
+                  logedinuserId: loggeduserid,
                 );
               },
             );
@@ -161,7 +164,9 @@ class _builpostCardState extends State<builpostCard> {
                       LikeButton(
                         postId: postCard.sId!,
                         likes: postCard.likes,
-                        loggedinuser: widget.logedinuserId,
+                        // loggedinuser: widget.logedinuserId,
+                        // isLiked: (postCard.likes!.any((like) => like.userId == widget.logedinuserId))?true:false,
+
                       ),
                       TextButton(
                         onPressed: () => Get.to(() => CommentScreen(

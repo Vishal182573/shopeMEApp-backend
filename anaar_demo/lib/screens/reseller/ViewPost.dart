@@ -113,7 +113,7 @@ class _ViewpostState extends State<Viewpost> {
                             LikeButton(
                               postId: widget.postcard.sId!,
                               likes: widget.postcard.likes,
-                              loggedinuser: widget.loggedInUserId,
+                             // loggedinuser: widget.loggedInUserId,
                             ),
                             TextButton(
                               onPressed: () => Get.to(() => CommentScreen(

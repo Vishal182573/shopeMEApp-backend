@@ -94,6 +94,7 @@ class UserProvider with ChangeNotifier {
         final userData = json.decode(response.body);
         _reseller = Reseller.fromJson(userData);
         print(_reseller!.ownerName);
+        print(response.body);
         notifyListeners();
       } else {
         print(response.statusCode);
@@ -210,14 +211,15 @@ class UserProvider with ChangeNotifier {
     }
   }
 //.......................................Connect with user.......................
- List<String> _connections = [];
-  List<String> get connections => _connections;
+ List<String?> _connections = [];
+  List<String?> get connections => _connections;
 
-Future<void> connectUser(String loggedInUserId, String targetUserId ,String targetUsertype) async {
+Future<void> connectUser(String? loggedInUserId, String? targetUserId ,String? targetUsertype) async {
      final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final logginusertype=prefs.getString('userType');
-    var url;
+     loggedInUserId=  await  Helperfunction.getUserId();
+        var url;
     var body;
     print("logged in user type ................${logginusertype}");
     print("target user type...............${targetUsertype}");
@@ -226,17 +228,37 @@ Future<void> connectUser(String loggedInUserId, String targetUserId ,String targ
 
       body=json.encode({
            'resellerId1': loggedInUserId,
-          'resellerId1': targetUserId,
+          'resellerId2': targetUserId,
 
       });
     }
 
    if(logginusertype=='reseller' && targetUsertype=='consumer'){
-      url='https://shopemeapp-backend.onrender.com/api/user/resellerToReseller';
+      url='https://shopemeapp-backend.onrender.com/api/user/resellerToConsumer';
 
       body=json.encode({
-           'resellerId1': loggedInUserId,
-          'resellerId1': targetUserId,
+           'resellerId': loggedInUserId,
+          'consumerId': targetUserId,
+
+      });
+    }
+       if(logginusertype=='consumer' && targetUsertype=='reseller'){
+      url='https://shopemeapp-backend.onrender.com/api/user/consumerToReseller';
+       print('consumer -reseller');
+       print(loggedInUserId);
+       print(targetUserId);
+      body=json.encode({
+           'consumerId': loggedInUserId,
+          'resellerId': targetUserId,
+
+      });
+    }
+       if(logginusertype=='consumer' && targetUsertype=='consumer'){
+      url='https://shopemeapp-backend.onrender.com/api/user/consumerToConsumer';
+
+      body=json.encode({
+           'consumerId1': loggedInUserId,
+          'consumerId2': targetUserId,
 
       });
     }

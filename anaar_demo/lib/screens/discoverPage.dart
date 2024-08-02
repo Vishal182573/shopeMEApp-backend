@@ -1,237 +1,82 @@
-import 'package:anaar_demo/screens/resellerShowProfile.dart';
-import 'package:flutter/foundation.dart';
+import 'package:anaar_demo/providers/catelogProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
-class DiscoverPage extends StatelessWidget {
+import 'package:anaar_demo/model/catelogMode.dart';
+
+class SearchScreen extends StatefulWidget {
+  @override
+  _SearchScreenState createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  final _searchController = TextEditingController();
+  bool _isSearching = false;
+
   @override
   Widget build(BuildContext context) {
-    String url = "assets/images/saree 4.jpeg";
+    final catelogProvider = Provider.of<CatelogProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text('Discover'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  suffixIcon: Icon(Icons.filter_list),
-                ),
+        title: Text('Search Catalog'),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(50.0),
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                if (value.isNotEmpty) {
+                  setState(() {
+                    _isSearching = true;
+                  });
+                  catelogProvider.searchCatalog(value).then((_) {
+                    setState(() {
+                      _isSearching = false;
+                    });
+                  });
+                } else {
+                  setState(() {
+                    _isSearching = false;
+                  });
+                  catelogProvider.searchResults.clear();
+                }
+              },
+              decoration: InputDecoration(
+                hintText: 'Search for products...',
+                border: OutlineInputBorder(),
               ),
-              SizedBox(height: 24.0),
-              Text(
-                'Explore Products',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 12.0),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    CategoryCard(
-                      title: "kurti",
-                      imagePath: "assets/images/kurti.jpeg",
-                      CategoryType: "Clothes",
-                    ),
-                    CategoryCard(
-                      title: "kurti",
-                      imagePath: "assets/images/ElectroniceItems.jpg",
-                      CategoryType: "Electical",
-                    ),
-                    CategoryCard(
-                      title: "kurti",
-                      imagePath: "assets/images/furniture.jpg",
-                      CategoryType: "furniture",
-                    ),
-                    CategoryCard(
-                      title: "kurti",
-                      imagePath: "assets/images/decor1.jpg",
-                      CategoryType: "Home Decor",
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(height: 24.0),
-              Text(
-                'Business Nearby',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 12.0),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: NearbyBusinessCard(
-                        title: 'vijay sarees',
-                        subtitle: 'Reseller',
-                        imagePath: 'assets/images/manufacturer 1.jpeg',
-                        brandlogo: 'assets/images/clothes logo.jpeg',
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: NearbyBusinessCard(
-                        title: 'Furnitures',
-                        subtitle: 'Reseller',
-                        imagePath: 'assets/images/fur1.jpg',
-                        brandlogo: 'assets/images/clothes logo  2.jpeg',
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: NearbyBusinessCard(
-                        title: 'Dharma Electronics',
-                        subtitle: 'Reseller',
-                        imagePath: 'assets/images/ElectroniceItems.jpg',
-                        brandlogo: 'assets/images/clothes logo.jpeg',
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
+            ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class CategoryCard extends StatelessWidget {
-  final String title;
-  final String imagePath;
-  final String CategoryType;
-
-  const CategoryCard(
-      {required this.title,
-      required this.imagePath,
-      required this.CategoryType});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Stack(children: [
-        Container(
-          width: 120,
-          height: 150,
-          //color: Colors.amber,
-          child: Image(
-            image: AssetImage(imagePath),
-            fit: BoxFit.fill,
-          ),
-        ),
-        Container(
-          height: 150,
-          width: 120,
-          color: Colors.black.withOpacity(0.3),
-        ),
-        Positioned(
-          top: 50,
-          left: 35,
-          child: Text(
-            CategoryType,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        )
-      ]),
-    );
-  }
-}
-
-class NearbyBusinessCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String imagePath;
-  final String brandlogo;
-
-  const NearbyBusinessCard(
-      {required this.title,
-      required this.subtitle,
-      required this.imagePath,
-      required this.brandlogo});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      // onTap: () => Get.to(() =>ResellerShowprofile()),
-      child: Container(
-        width: 250,
-        height: 220,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-            color: Colors.grey[200],
-            boxShadow: [
-              BoxShadow(color: Colors.grey, blurRadius: 4.0, spreadRadius: 2)
-            ]),
-        child: Stack(children: [
-          Column(
-            children: [
-              Container(
-                height: 150,
-                width: 250,
-                child: Container(
-                  child: Image(
-                    image: AssetImage(imagePath),
-                    fit: BoxFit.cover,
+      body: _isSearching
+          ? Center(child: CircularProgressIndicator())
+          : GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 8.0,
+              ),
+              itemCount: catelogProvider.searchResults.length,
+              itemBuilder: (context, index) {
+                final catalog = catelogProvider.searchResults[index];
+                return Card(
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: Image.network(catalog.images.isNotEmpty
+                            ? catalog.images[0]??''
+                            : ''),
+                      ),
+                      Text(catalog.productName ?? 'No Name'),
+                      Text(catalog.description ?? 'No Description'),
+                    ],
                   ),
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                title,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Text(subtitle,
-                  style: TextStyle(
-                    fontSize: 15,
-                  ))
-            ],
-          ),
-          Positioned(
-              top: 90,
-              left: 85,
-              child: Container(
-                height: 70,
-                width: 70,
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
-                  child: Image(
-                    image: AssetImage(brandlogo),
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                decoration: BoxDecoration(
-                  // color: Colors.red,
-                  shape: BoxShape.circle,
-                ),
-              )),
-        ]),
-      ),
+                );
+              },
+            ),
     );
   }
 }

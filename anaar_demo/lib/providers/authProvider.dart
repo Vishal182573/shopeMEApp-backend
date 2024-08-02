@@ -59,6 +59,7 @@ class AuthProvider with ChangeNotifier {
       String contact,
       String password,
       String address,
+      String aboutUs,
       File? image) async {
     try {
       _isLoading=true;
@@ -81,7 +82,8 @@ class AuthProvider with ChangeNotifier {
             "type": "reseller",
             "contact": contact,
             "city": city,
-            "image":imagurl,
+            "image":imagurl??'',
+            "aboutUs":aboutUs
           }));
             _isLoading = false;
         notifyListeners();
@@ -305,11 +307,11 @@ class AuthProvider with ChangeNotifier {
       return false;
     } else if (response.statusCode == 401) {
       //throw Exception('user already exists');
-      print("................login failed................");
+      print("................login failed................${response.statusCode}${response.body}");
       return false;
     } else {
       print(response.statusCode);
-      print("................login failed................");
+      print("................login failed................${response.body}");
       //throw Exception('Failed to Login');
       return false;
     }

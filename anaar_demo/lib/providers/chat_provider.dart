@@ -233,7 +233,10 @@ class ChatProvider with ChangeNotifier {
 
 Future<List<ChatPreview>> getChatPreviews(String? loggedInUserId) async {
     try {
-      final response = await http.get(Uri.parse('https://shopemeapp-backend.onrender.com/api/chat/ChatPreview?id=$loggedInUserId'));
+      
+      print(".........ye function work kr rha hai");
+      final response = await http.get(
+        Uri.parse('https://shopemeapp-backend.onrender.com/api/chat/ChatPreview?id=$loggedInUserId'));
       
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -262,16 +265,18 @@ Future<List<ChatPreview>> getChatPreviews(String? loggedInUserId) async {
 
   Future<void> markMessagesAsRead(String chatId, String userId) async {
     try {
+      print("...............mark function trigger hua hai");
       final response = await http.post(
-        Uri.parse('http://your-backend-url/markMessagesAsRead'),
+        Uri.parse('https://shopemeapp-backend.onrender.com/api/chat/Markasread'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'chatId': chatId, 'userId': userId}),
       );
 
       if (response.statusCode == 200) {
+        print("Messageread work succesff..........................................");
         notifyListeners();
       } else {
-        throw Exception('Failed to mark messages as read');
+        throw Exception('Failed to mark messages as read...............................${response.body}');
       }
     } catch (error) {
       throw error;

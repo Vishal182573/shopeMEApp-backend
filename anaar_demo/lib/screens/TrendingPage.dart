@@ -3,6 +3,7 @@ import 'package:anaar_demo/model/postcard_model.dart';
 import 'package:anaar_demo/model/userModel.dart';
 import 'package:anaar_demo/providers/TrendingProvider.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
+import 'package:anaar_demo/screens/chatScreen.dart';
 import 'package:anaar_demo/screens/commentsection.dart';
 import 'package:anaar_demo/widgets/Likebutton.dart';
 import 'package:anaar_demo/widgets/photGrid.dart';
@@ -166,7 +167,7 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                       LikeButton(
                         postId: widget.posttt.sId!,
                         likes: widget.posttt.likes,
-                        loggedinuser: loggedinuserid,
+                       // loggedinuser: loggedinuserid,
                       ),
                       TextButton(
                         onPressed: () => Get.to(() => CommentScreen(
@@ -175,8 +176,9 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                             )),
                         child: Text('Comments'),
                       ),
-                      TextButton(
-                        onPressed: () => Get.to(() => Container()),
+                     TextButton(
+                        onPressed: () => Get.to(() => ChatScreen(loggedInUserId:loggedinuserid??''
+                        , postOwnerId: widget.posttt.userid??'',user:userModel ,)),
                         child: Row(
                           children: [
                             Icon(Icons.chat, color: Colors.blue),
