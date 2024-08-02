@@ -4,12 +4,13 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { User } from "../models/UserModel.js";
 
 dotenv.config();
 
 const resellerRegistration = asyncHandler(async (req, res) => {
   try {
-    const { ownerName, businessName, email, password, address, contact, city, image, bgImage,connections } = req.body;
+    const { ownerName, businessName, email, password, address, contact, city, image, bgImage,aboutUs } = req.body;
     if (!ownerName || !businessName || !email || !password || !address || !contact) {
       return res.status(400).json({ message: "Bad request: Missing required fields" });
     }
@@ -33,9 +34,10 @@ const resellerRegistration = asyncHandler(async (req, res) => {
       type:"reseller",
       image:image || "",
       bgImage: bgImage || "",
-      connections: connections || [],
+      aboutUs: aboutUs || "",
+      catalogueCount:0,
+      connections: [],
     });
-
     const savedReseller = await newReseller.save();
     const payload = {
       reseller: {
@@ -51,7 +53,7 @@ const resellerRegistration = asyncHandler(async (req, res) => {
     });
 
   } catch (err) {
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: `Internal server error ${err}` });
   }
 });
 
@@ -105,7 +107,7 @@ const getReseller = asyncHandler(async (req, res) => {
 
 const updateReseller = asyncHandler(async (req, res) => {
   try {
-    const { ownerName, businessName, email, password, address, contact, city, image, bgImage, connections } = req.body;
+    const { ownerName, businessName, email, password, address, contact, city, image, bgImage,aboutUs,catalogueCount,connections } = req.body;
     
     if (!email) {
       return res.status(400).json({ message: "Bad request: Missing required email" });
@@ -125,6 +127,8 @@ const updateReseller = asyncHandler(async (req, res) => {
     if (city) reseller.city = city;
     if (image) reseller.image = image;
     if (bgImage) reseller.bgImage = bgImage;
+    if (aboutUs) reseller.aboutUs = aboutUs;
+    if (catalogueCount) reseller.catalogueCount = catalogueCount;
     if (connections) reseller.connections = connections;
 
     const updatedReseller = await reseller.save();
@@ -146,8 +150,7 @@ const consumerToReseller = asyncHandler(async (req, res) => {
     if (!reseller || !consumer) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      reseller.connections.push({ id: consumerId, type: 'consumer' });
-      consumer.connections.push({ id: resellerId, type: 'reseller' });
+      reseller.connections.push(new User({ userId: consumerId, Type: "consumer" }));
       await reseller.save();
       await consumer.save();
       return res.status(200).json({ message: "Users connected successfully" });
@@ -161,14 +164,13 @@ const resellerToReseller = asyncHandler(async (req, res) => {
   try {
     const { resellerId1, resellerId2 } = req.body;
     if (!resellerId1 || !resellerId2) return res.status(400).json({ message: "Bad request" });
-
     const reseller1 = await Reseller.findById(resellerId1);
     const reseller2 = await Reseller.findById(resellerId2);
     if (!reseller1 || !reseller2) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      reseller1.connections.push({ id: resellerId2, type: 'reseller' });
-      reseller2.connections.push({ id: resellerId1, type: 'reseller' });
+      reseller1.connections.push(new User({ userId: resellerId2, Type: "reseller" }));
+      reseller2.connections.push(new User({ userId: resellerId1, Type: "reseller" }));
       await reseller1.save();
       await reseller2.save();
       return res.status(200).json({ message: "Users connected successfully" });

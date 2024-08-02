@@ -19,8 +19,8 @@ router.post("/resellerToReseller",resellerToReseller);
 router.post("/consumerToReseller",consumerToReseller);
 router.post("/consumerToConsumer",consumerToConsumer);
 router.post("/resellerToConsumer",resellerToConsumer);
-router.post("/updateConsumer",auth,updateConsumer);
-router.post("/updateReseller",auth,updateReseller);
+router.post("/updateConsumer",updateConsumer);
+router.post("/updateReseller",updateReseller);
 
 router.get("/getConsumer",getConsumer);
 router.get("/getReseller",getReseller);
