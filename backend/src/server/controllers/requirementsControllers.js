@@ -80,9 +80,48 @@ const deleteRequirement = asyncHandler(async (req, res) => {
   }
 });
 
+
+
+const searchrequirement = asyncHandler(async (req, res) => {
+  try {
+    const { prefix } = req.query;
+
+    if (!prefix) {
+      return res.status(400).json({ message: "Prefix parameter is required" });
+    }
+
+    // Create a case-insensitive regex pattern for the prefix
+    const regex = new RegExp(prefix, 'i');
+
+    // Find catalogs where productName or category matches the regex
+    const catalogs = await Requirement.find({
+      $or: [
+        { productNam: regex },
+        { category: regex }
+      ]
+    });
+
+    res.status(200).json(catalogs);
+  } catch (error) {
+    res.status(500).json({ error: "Error searching requirement..",
+       details: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
 export {
   postRequirements,
   showAllRequirements,
   getRequirementByCategory,
   deleteRequirement,
+  searchrequirement,
 };
