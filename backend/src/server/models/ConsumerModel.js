@@ -1,5 +1,15 @@
 import { Schema, model } from "mongoose";
-import { User } from "./UserModel.js"; // Adjust the path as necessary
+
+const userConnectionSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: true
+  },
+  Type: {
+    type: String,
+    required: true
+  }
+}, { _id: false });
 
 const consumerSchema = new Schema({
   name: {
@@ -32,10 +42,7 @@ const consumerSchema = new Schema({
   bio: {
     type: String,
   },
-  connections: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }]
+  connections: [userConnectionSchema]
 }, { timestamps: true });
 
 export default model('Consumer', consumerSchema);
