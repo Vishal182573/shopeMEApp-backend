@@ -4,7 +4,6 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { User } from "../models/UserModel.js";
 
 dotenv.config();
 
@@ -14,7 +13,7 @@ const resellerRegistration = asyncHandler(async (req, res) => {
     if (!ownerName || !businessName || !email || !password || !address || !contact) {
       return res.status(400).json({ message: "Bad request: Missing required fields" });
     }
-
+    
     const existingReseller = await Reseller.findOne({ email });
     if (existingReseller) {
       return res.status(401).json({ message: "Reseller already exists" });
@@ -147,14 +146,30 @@ const consumerToReseller = asyncHandler(async (req, res) => {
 
     const reseller = await Reseller.findById(resellerId);
     const consumer = await Consumer.findById(consumerId);
+
     if (!reseller || !consumer) {
       return res.status(404).json({ message: "User not found" });
-    } else {
-      reseller.connections.push(new User({ userId: consumerId, Type: "consumer" }));
-      await reseller.save();
-      await consumer.save();
-      return res.status(200).json({ message: "Users connected successfully" });
     }
+
+    // Check if connection already exists
+    const existingResellerConnection = reseller.connections.find(
+      conn => conn.userId.toString() === consumerId && conn.Type === "consumer"
+    );
+    const existingConsumerConnection = consumer.connections.find(
+      conn => conn.userId.toString() === resellerId && conn.Type === "reseller"
+    );
+
+    if (existingResellerConnection || existingConsumerConnection) {
+      return res.status(400).json({ message: "Users are already connected" });
+    }
+
+    reseller.connections.push({ userId: consumerId, Type: "consumer" });
+    consumer.connections.push({ userId: resellerId, Type: "reseller" });
+
+    await reseller.save();
+    await consumer.save();
+
+    return res.status(200).json({ message: "Users connected successfully" });
   } catch (err) {
     return res.status(500).json({ message: "Internal Server Error" });
   }
@@ -164,17 +179,33 @@ const resellerToReseller = asyncHandler(async (req, res) => {
   try {
     const { resellerId1, resellerId2 } = req.body;
     if (!resellerId1 || !resellerId2) return res.status(400).json({ message: "Bad request" });
+
     const reseller1 = await Reseller.findById(resellerId1);
     const reseller2 = await Reseller.findById(resellerId2);
+
     if (!reseller1 || !reseller2) {
       return res.status(404).json({ message: "User not found" });
-    } else {
-      reseller1.connections.push(new User({ userId: resellerId2, Type: "reseller" }));
-      reseller2.connections.push(new User({ userId: resellerId1, Type: "reseller" }));
-      await reseller1.save();
-      await reseller2.save();
-      return res.status(200).json({ message: "Users connected successfully" });
     }
+
+    // Check if connection already exists
+    const existingConnection1 = reseller1.connections.find(
+      conn => conn.userId.toString() === resellerId2 && conn.Type === "reseller"
+    );
+    const existingConnection2 = reseller2.connections.find(
+      conn => conn.userId.toString() === resellerId1 && conn.Type === "reseller"
+    );
+
+    if (existingConnection1 || existingConnection2) {
+      return res.status(400).json({ message: "Users are already connected" });
+    }
+
+    reseller1.connections.push({ userId: resellerId2, Type: "reseller" });
+    reseller2.connections.push({ userId: resellerId1, Type: "reseller" });
+
+    await reseller1.save();
+    await reseller2.save();
+
+    return res.status(200).json({ message: "Users connected successfully" });
   } catch (err) {
     return res.status(500).json({ message: "Internal Server Error" });
   }
