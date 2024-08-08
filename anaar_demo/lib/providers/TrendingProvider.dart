@@ -38,17 +38,26 @@ class PostcardService {
 
 class Trendingprovider with ChangeNotifier {
   List<Postcard> _postcards = [];
-  bool _isLoading = false;
+   bool _isLoading = false;
+bool _isLoaded=false;
+bool get isLoaded=>_isLoaded;
+
 
   List<Postcard> get postcards => _postcards;
   bool get isLoading => _isLoading;
 
   Future<void> fetchPostcards() async {
     try {
-     
+    _isLoading=true;
+      notifyListeners();
       _postcards = await PostcardService.fetchPostcards();
-  
+      _isLoaded=true;
+        notifyListeners();
+        _isLoading=false;
+      notifyListeners();
     } catch (error) {
+      _isLoading=false;
+      notifyListeners();
       print(error);
     }
   }

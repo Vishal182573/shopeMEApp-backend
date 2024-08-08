@@ -129,7 +129,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<bool> Consumer_register(String name, String city, String email,
-      String contact, String password, File? image) async {
+      String contact, String password, File? image,String bio) async {
      _isLoading=true;
      notifyListeners();
 
@@ -150,6 +150,7 @@ class AuthProvider with ChangeNotifier {
           "city": city,
           "type": "Consumer",
           "image":imagurl,
+          "bio":bio
         }));
 
     _isLoading=false;

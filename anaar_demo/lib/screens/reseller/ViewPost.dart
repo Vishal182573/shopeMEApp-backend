@@ -1,4 +1,6 @@
+import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/model/postcard_model.dart';
+import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:anaar_demo/providers/postProvider.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
 import 'package:anaar_demo/screens/commentsection.dart';
@@ -12,13 +14,15 @@ import 'package:provider/provider.dart';
 
 class Viewpost extends StatefulWidget{
   final Postcard postcard;
-  String? loggedInUserId;
+ // String? loggedInUserId;
 UserProvider? userProvider;
+Reseller? userprofile;
 
   Viewpost({
      this.userProvider,
       required this.postcard,
-      this.loggedInUserId
+     // this.loggedInUserId,
+      this.userprofile
 
   });
 
@@ -27,6 +31,19 @@ UserProvider? userProvider;
 }
 
 class _ViewpostState extends State<Viewpost> {
+  var loggedinuserid;
+
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  _loggedinuserid();
+  }
+
+void _loggedinuserid()async{
+ loggedinuserid=await Helperfunction.getUserId();
+
+}
 
 @override
   Widget build(BuildContext context) {
@@ -49,18 +66,20 @@ class _ViewpostState extends State<Viewpost> {
                       ListTile(
                 //  onTap: () => Get.to(() => ResellerShowprofile(usermodel: usermodel)),
             leading: CircleAvatar(
-              backgroundImage: NetworkImage(widget.userProvider!.reseller!.image??''),
+              backgroundImage: NetworkImage(widget.userProvider?.reseller?.image??widget.userprofile?.image??''),
             ),
-            title: Text(widget.userProvider!.reseller!.ownerName),
+            title: Text(widget.userProvider?.reseller?.businessName??widget.userprofile?.businessName??''),
             subtitle: Row(
               children: [
                 Text('Manufacturers'),
                 SizedBox(width: 10),
-                Text(widget.userProvider!.reseller!.city),
+                Text(widget.userProvider?.reseller?.city??widget.userprofile?.city??''),
               ],
             ),
         
-            trailing: TextButton(
+            trailing: 
+            widget.userprofile?.id==loggedinuserid?
+            TextButton(
               onPressed: ()=>
                showDialog<String>(
             context: context,
@@ -82,13 +101,14 @@ class _ViewpostState extends State<Viewpost> {
                   
                   },
                   child: const Text('OK'),
-                ),
+                )
+                ,
               ],
             ),
           )
               
               ,
-              child: Text("Delete",style: TextStyle(color: Colors.red,fontSize: 15),)),
+              child: Text("Delete",style: TextStyle(color: Colors.red,fontSize: 15),)):null,
                 ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -118,7 +138,7 @@ class _ViewpostState extends State<Viewpost> {
                             TextButton(
                               onPressed: () => Get.to(() => CommentScreen(
                                     postcard: widget.postcard,
-                                    loggedinuserid: widget.loggedInUserId,
+                                    loggedinuserid: loggedinuserid,
                                   )),
                               child: Text('Comments'),
                             ),

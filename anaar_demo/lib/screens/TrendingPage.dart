@@ -1,6 +1,6 @@
 import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/model/postcard_model.dart';
-import 'package:anaar_demo/model/userModel.dart';
+import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:anaar_demo/providers/TrendingProvider.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
 import 'package:anaar_demo/screens/chatScreen.dart';
@@ -10,7 +10,6 @@ import 'package:anaar_demo/widgets/photGrid.dart';
 import 'package:anaar_demo/widgets/profileTile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -19,78 +18,51 @@ class Trendingpage extends StatefulWidget {
   State<Trendingpage> createState() => _TrendingpageState();
 }
 
-class _TrendingpageState extends State<Trendingpage> {
+class _TrendingpageState extends State<Trendingpage> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<Trendingprovider>(context, listen: false).fetchPostcards();
+      final trendingProvider = Provider.of<Trendingprovider>(context, listen: false);
+      if (!trendingProvider.isLoaded) {
+        trendingProvider.fetchPostcards();
+      }
     });
   }
-                                                                                                                           
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     body: Consumer<Trendingprovider>(
-  //       builder: (context, trendprovider, child) {
-  //         if (trendprovider.isLoading) {
-  //           return Center(child: _buildShimmerLoading());
-  //         } else if (trendprovider.postcards.isEmpty) {
-  //           return Center(child: Text("No trending posts available"));
-  //         } else {
-  //           return ListView.builder(
-  //             itemCount: trendprovider.postcards.length,
-  //             itemBuilder: (context, index) {
-  //               return PostCardWidget(
-  //                 posttt: trendprovider.postcards[index],
-  //               );
-  //             },
-  //           );
-  //         }
-  //       },
-  //     ),
-  //   );
-  // }
-@override
+
+  @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return FutureBuilder(future: Provider.of<Trendingprovider>(context, listen: false).fetchPostcards() , 
-    builder: (context,snapshot){
-        if(snapshot.connectionState==ConnectionState.waiting){
-          return Center(child: CircularProgressIndicator(),);
-        }
-        else if(snapshot.hasError){
-          return Text("Error occured");
-          
-        }
-        else{
+    super.build(context);
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: ()async{
+         await Provider.of<Trendingprovider>(context, listen: false).fetchPostcards();
 
-          print("1 pe to aa rha hai");
-return Consumer<Trendingprovider>(
-        builder: (context, trendprovider, child) {
-          if (trendprovider.isLoading) {
-            return Center(child: _buildShimmerLoading());
-          } else if (trendprovider.postcards.isEmpty) {
-            return Center(child: Text("No trending data this week"));}
-          
-          else {
-            return ListView.builder(
-              itemCount: trendprovider.postcards.length,
-              itemBuilder: (context, index) {
-                return PostCardWidget(
-                  posttt: trendprovider.postcards[index],
-                );
-              },
-            );
-          }
         },
-      );
-
-        }
-
-    });
+        child: Consumer<Trendingprovider>(
+          builder: (context, trendprovider, child) {
+            if (trendprovider.isLoading) {
+              return Center(child: _buildShimmerLoading());
+            } else if (trendprovider.postcards.isEmpty && !trendprovider.isLoading) {
+              return Center(child: Text("No trending data this week"));
+            } else {
+              return ListView.builder(
+                itemCount: trendprovider.postcards.length,
+                itemBuilder: (context, index) {
+                  return PostCardWidget(
+                    posttt: trendprovider.postcards[index],
+                  );
+                },
+              );
+            }
+          },
+        ),
+      ),
+    );
   }
-
 }
 
 class PostCardWidget extends StatefulWidget {
@@ -102,7 +74,7 @@ class PostCardWidget extends StatefulWidget {
 }
 
 class _PostCardWidgetState extends State<PostCardWidget> {
-  var loggedinuserid;
+  String? loggedinuserid;
 
   @override
   void initState() {
@@ -112,37 +84,37 @@ class _PostCardWidgetState extends State<PostCardWidget> {
 
   void getuserid() async {
     loggedinuserid = await Helperfunction.getUserId();
-    setState(() {}); // Update the state once the user ID is fetched
+    if (mounted) {
+      setState(() {});
+    }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
-    print("trending build ke andr aa giye ..............${widget.posttt.userid}");
-    return FutureBuilder<Usermodel?>(
+    return FutureBuilder<Reseller?>(
       future: Provider.of<UserProvider>(context, listen: false)
-          .fetchUserinfo(widget.posttt.userid),
+          .fetchResellerinfo_post(widget.posttt.userid),
       builder: (context, userSnapshot) {
         if (userSnapshot.connectionState == ConnectionState.waiting) {
           return _buildShimmerLoading();
-        } else if (userSnapshot.hasError ) {
+        } else if (userSnapshot.hasError || !userSnapshot.hasData) {
           print('Error: ${userSnapshot.error}');
-          return SizedBox.shrink(); // Don't show anything if there's an error
+          return SizedBox.shrink();
         } else {
           final userModel = userSnapshot.data!;
           return Card(
+            color: Colors.white,
             margin: EdgeInsets.all(8.0),
             elevation: 10,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Profiletile(usermodel: userModel,
+                Profiletile(
+                  usermodel: userModel,
                   Location: userModel.city ?? '',
                   ProfileName: userModel.businessName ?? '',
                   Imagepath: userModel.image ?? '',
                   loggedInUserId: loggedinuserid,
-                  
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -167,7 +139,6 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                       LikeButton(
                         postId: widget.posttt.sId!,
                         likes: widget.posttt.likes,
-                       // loggedinuser: loggedinuserid,
                       ),
                       TextButton(
                         onPressed: () => Get.to(() => CommentScreen(
@@ -176,17 +147,19 @@ class _PostCardWidgetState extends State<PostCardWidget> {
                             )),
                         child: Text('Comments'),
                       ),
-                     TextButton(
-                        onPressed: () => Get.to(() => ChatScreen(loggedInUserId:loggedinuserid??''
-                        , postOwnerId: widget.posttt.userid??'',user:userModel ,)),
+                      TextButton(
+                        onPressed: () => Get.to(() => ChatScreen(
+                              loggedInUserId: loggedinuserid ?? '',
+                              postOwnerId: widget.posttt.userid ?? '',
+                              reseller: userModel,
+                            )),
                         child: Row(
                           children: [
                             Icon(Icons.chat, color: Colors.blue),
                             SizedBox(width: 10),
                             Text(
                               "Chat",
-                              style:
-                                  TextStyle(color: Colors.blue, fontSize: 15),
+                              style: TextStyle(color: Colors.blue, fontSize: 15),
                             ),
                           ],
                         ),
@@ -202,66 +175,58 @@ class _PostCardWidgetState extends State<PostCardWidget> {
     );
   }
 }
-class _buildShimmerLoading extends StatefulWidget{
-  @override
-  State<_buildShimmerLoading> createState() => _buildShimmerLoadingState();
-}
 
-class _buildShimmerLoadingState extends State<_buildShimmerLoading> {
-@override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.white,
-            ),
-            title: Container(
-              color: Colors.white,
-              height: 10.0,
-              width: double.infinity,
-            ),
-            subtitle: Container(
-              color: Colors.white,
-              height: 10.0,
-              width: double.infinity,
-            ),
+Widget _buildShimmerLoading() {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey[300]!,
+    highlightColor: Colors.grey[100]!,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          leading: CircleAvatar(
+            backgroundColor: Colors.white,
           ),
-          Container(
+          title: Container(
             color: Colors.white,
-            height: 150.0,
+            height: 10.0,
             width: double.infinity,
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  color: Colors.white,
-                  height: 10.0,
-                  width: 50.0,
-                ),
-                Container(
-                  color: Colors.white,
-                  height: 10.0,
-                  width: 50.0,
-                ),
-                Container(
-                  color: Colors.white,
-                  height: 10.0,
-                  width: 50.0,
-                ),
-              ],
-            ),
+          subtitle: Container(
+            color: Colors.white,
+            height: 10.0,
+            width: double.infinity,
           ),
-        ],
-      ),
-    );
-  }
+        ),
+        Container(
+          color: Colors.white,
+          height: 150.0,
+          width: double.infinity,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                color: Colors.white,
+                height: 10.0,
+                width: 50.0,
+              ),
+              Container(
+                color: Colors.white,
+                height: 10.0,
+                width: 50.0,
+              ),
+              Container(
+                color: Colors.white,
+                height: 10.0,
+                width: 50.0,
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }

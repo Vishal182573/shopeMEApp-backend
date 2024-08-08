@@ -103,13 +103,16 @@ class CatelogProvider extends ChangeNotifier {
     }
   }
 
+//....................................search result..............................
 
-
-Future<void> searchCatalog(String query) async {
+Future<void> searchCatalog(String prefix) async {
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
+
+print('request aa rhi hai................................');
+
   final url =
-      'http://192.168.0.107:30/api/catalog/search?query=$query';
+      'http://shopemeapp-backend.onrender.com/api/catalog/searchCatalog?prefix=$prefix';
   _isLoading = true;
   notifyListeners();
   try {
@@ -117,6 +120,8 @@ Future<void> searchCatalog(String query) async {
       Uri.parse(url),
       
     );
+
+    
     if (response.statusCode == 200) {
       print("................this is working............");
       List jsonResponse = json.decode(response.body);
@@ -125,6 +130,7 @@ Future<void> searchCatalog(String query) async {
           .toList();
       notifyListeners();
     } else {
+      print("${response.body}.................${response.statusCode}");
       throw Exception('Failed to search catalog');
     }
   } catch (error) {

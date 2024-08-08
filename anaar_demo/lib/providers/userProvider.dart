@@ -25,9 +25,9 @@ class UserProvider with ChangeNotifier {
 
   Usermodel? getUserModel(String userId) => _userModels[userId];
 
-  Future<Usermodel?> fetchUserinfo(String? userId) async {
+  Future<Usermodel?> fetchUserinfo(String? userId,{String? userType='reseller'}) async {
     if (userId == null) return null;
-
+         print("yha ayta hu.......................");
     if (_userModels.containsKey(userId)) {
       return _userModels[userId];
     }
@@ -37,9 +37,19 @@ class UserProvider with ChangeNotifier {
     if (token == null) {
       return null;
     }
+    var url;
+    print("${userType}......................................");
+if(userType=="consumer"){
 
-    final url = Uri.parse(
+     url = Uri.parse(
+        'https://shopemeapp-backend.onrender.com/api/user/getConsumer?id=$userId');
+}
+else{
+     url=Uri.parse(
         'https://shopemeapp-backend.onrender.com/api/user/getReseller?id=$userId');
+
+}
+
 
     try {
       final response = await http.get(
@@ -53,6 +63,54 @@ class UserProvider with ChangeNotifier {
         final userData = json.decode(response.body);
         final userModel = Usermodel.fromJson(userData);
         _userModels[userId] = userModel;
+        print("successfully comment card ki detail mil giye ............");
+        notifyListeners();
+        return userModel;
+      } else {
+        print('Failed to load user data. Status code: ${response.statusCode}${response.body}');
+        return null;
+      }
+    } catch (error) {
+      print('Error fetching user data......................: $error');
+      return null;
+    }
+  }
+
+//................................Reseller info  for post........................
+
+
+  Future<Reseller?> fetchResellerinfo_post(String? userId) async {
+    if (userId == null) return null;
+         print("yha ayta hu.......................");
+    // if (_userModels.containsKey(userId)) {
+    //   return _userModels[userId];
+    // }
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token == null) {
+      return null;
+    }
+    var url;
+
+
+     url=Uri.parse(
+        'https://shopemeapp-backend.onrender.com/api/user/getReseller?id=$userId');
+
+
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final userData = json.decode(response.body);
+        final userModel = Reseller.fromJson(userData);
+        _reseller= userModel;
         print("successfully requirement card ki detail mil giye ............");
         notifyListeners();
         return userModel;
@@ -65,6 +123,9 @@ class UserProvider with ChangeNotifier {
       return null;
     }
   }
+
+
+
 
 
 
@@ -199,14 +260,27 @@ class UserProvider with ChangeNotifier {
   Future<void> updateresellerinfowithImage(
       Reseller info, File? image, File? bgImage) async {
     try {
-      String? imageurl1 = await Helperfunction.uploadImage(image);
-      String? bgimage_url = await Helperfunction.uploadImage(bgImage);
+      _isloading=true;
+      notifyListeners();
+      if(image==null && bgImage!=null){
+ String? imageurl1 = await Helperfunction.uploadImage(image);
+ info.image = imageurl1;
+      }
+      else if(bgImage==null && image!=null){
+ String? bgimage_url = await Helperfunction.uploadImage(bgImage);
+ info.bgImage = bgimage_url;
+      }
+     
+     // String? bgimage_url = await Helperfunction.uploadImage(bgImage);
 
-      info.image = imageurl1;
-      info.bgImage = bgimage_url;
+     
+      
       print("Success");
       await _updateResellerInfo(info);
     } catch (error) {
+      _isloading=false;
+      notifyListeners();
+      print("herereeeeeeeeeeeeeeeeeeeeeeeeeee");
       throw error;
     }
   }
@@ -284,6 +358,85 @@ Future<void> connectUser(String? loggedInUserId, String? targetUserId ,String? t
       print('Error connecting to user: $error');
     }
   }
+
+
+//............................................update Consumer info................................................................
+
+
+
+
+ Future<void> _updateConsumerInfo(ConsumerModel cons) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    try {
+      
+      final url = Uri.parse(
+          'https://shopemeapp-backend.onrender.com/api/user/updateConsumer');
+
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: json.encode(cons.toJson()),
+      );
+      _isloading = false;
+      notifyListeners();
+      if (response.statusCode == 200) {
+        print("Successfully update userdata...........");
+        notifyListeners();
+      } else if (response.statusCode == 400) {
+        print("bad request");
+      } else if (response.statusCode == 401) {
+        throw Exception('user already exists');
+
+        // return false;
+      } else {
+        print(response.statusCode);
+        notifyListeners();
+        throw Exception('Failed to register');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> updaterConsumer_infowithImage(
+    ConsumerModel info, File? image,) async {
+    _isloading = true;
+      notifyListeners();
+    try {
+      if(image==null){
+await _updateConsumerInfo(info);
+     
+      }else{
+
+      String? imageurl1 = await Helperfunction.uploadImage(image);
+      //String? bgimage_url = await Helperfunction.uploadImage(bgImage);
+
+      info.image = imageurl1;
+     // info.bgImage = bgimage_url;}
+      print("Success");
+      
+      await _updateConsumerInfo(info);}
+    } catch (error) {
+
+      _isloading = false;
+      notifyListeners();
+      throw error;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
 
 
 }

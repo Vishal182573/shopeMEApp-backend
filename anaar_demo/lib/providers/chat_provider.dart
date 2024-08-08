@@ -141,6 +141,7 @@
 // }
 
 
+import 'package:anaar_demo/backend/notification_services.dart';
 import 'package:anaar_demo/model/chat_message_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -173,54 +174,94 @@ class ChatMessage {
 // }
 
 
+
+
 class ChatProvider with ChangeNotifier {
   List<ChatMessage> _messages = [];
   List<ChatMessage> get messages => _messages;
+
   late IO.Socket socket;
   String? _currentChatId;
+  final NotificationService _notificationService = NotificationService();
 
+  // Constructor to initialize socket and notifications
+  ChatProvider() {
+   NotificationService.initNotification;
+    initSocket();
+  }
+
+  // Initialize the Socket.IO connection
   void initSocket() {
     socket = IO.io('https://shopemeapp-backend.onrender.com', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
-    socket.connect().onerror((err)=>print(err));
+
+    socket.connect().on('connect_error', (err) => print('Socket error: $err'));
     print('Socket initialized and connected');
-   
+
+    // Listen for 'new message' event
     socket.on('new message', (data) {
       print('Received new message: ${data['message']}');
-      _messages.add(ChatMessage(userId: data['userId'], message: data['message']));
+
+      // Add the new message to the messages list
+      _messages.add(ChatMessage(
+        userId: data['userId'],
+        message: data['message'],
+      ));
+
+      // Notify listeners to update the UI
       notifyListeners();
+print("newwwwwwww message aya.....................................................................................");
+//Show a notification if the current chat is not active
+      if (_currentChatId != data['chatId']) {
+        NotificationService.showNotification(
+          id: data['chatId'].hashCode, // Unique ID based on chat ID
+          title: 'New message from ${data['userName']}',
+          body: data['message'],
+          payload: data['chatId'], // Pass chat ID as payload
+        );
+      }
     });
   }
 
+  // Initialize a chat between two users
   Future<void> initializeChat(String? userId1, String userId2) async {
     print('Initializing chat for users $userId1 and $userId2');
     final response = await http.post(
       Uri.parse('https://shopemeapp-backend.onrender.com/api/chat/addChat'),
-      body: json.encode({'userId1': userId1, 'userId2': userId2}),
       headers: {'Content-Type': 'application/json'},
+      body: json.encode({'userId1': userId1, 'userId2': userId2}),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       final chatData = json.decode(response.body);
       _currentChatId = chatData['_id'];
+
+      // Load existing messages
       _messages = chatData['messages']
-          .map<ChatMessage>((msg) => ChatMessage(userId: msg['userId'], message: msg['message']))
+          .map<ChatMessage>((msg) => ChatMessage(
+                userId: msg['userId'],
+                message: msg['message'],
+              ))
           .toList();
+
+      // Join the chat room on the socket
       socket.emit('join chat', _currentChatId);
       print('Chat initialized with ID: $_currentChatId');
       notifyListeners();
     } else {
-      print('Failed to initialize chat. Status code: ${response.statusCode}${response.body}');
+      print(
+          'Failed to initialize chat. Status code: ${response.statusCode} ${response.body}');
       throw Exception('Failed to initialize chat');
     }
   }
 
+  // Send a message
   void sendMessage(String? userId, String message) {
     if (_currentChatId != null) {
-      print("............................${userId}");
-      print('Sending message:....... $message');
+      print("Sending message from user $userId: $message");
+
       socket.emit('send message', {
         'chatId': _currentChatId,
         'userId': userId,
@@ -231,20 +272,21 @@ class ChatProvider with ChangeNotifier {
     }
   }
 
-Future<List<ChatPreview>> getChatPreviews(String? loggedInUserId) async {
+  // Get chat previews for the logged-in user
+  Future<List<ChatPreview>> getChatPreviews(String? loggedInUserId) async {
     try {
-      
-      print(".........ye function work kr rha hai");
+      print("Fetching chat previews for user $loggedInUserId");
       final response = await http.get(
-        Uri.parse('https://shopemeapp-backend.onrender.com/api/chat/ChatPreview?id=$loggedInUserId'));
-      
+        Uri.parse(
+            'https://shopemeapp-backend.onrender.com/api/chat/ChatPreview?id=$loggedInUserId'),
+      );
+
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        print(response.body);
-        print(".............................................got message tiles......................successfully");
-     return  data.map((json) => ChatPreview.fromJson(json)).toList();;
+        print("Successfully fetched chat previews");
+        return data.map((json) => ChatPreview.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to load chat previews ${response.body}');
+        throw Exception('Failed to load chat previews: ${response.body}');
       }
     } catch (e) {
       print('Error getting chat previews: $e');
@@ -252,20 +294,10 @@ Future<List<ChatPreview>> getChatPreviews(String? loggedInUserId) async {
     }
   }
 
-
-
-
-
-  void dispose() {
-    print('Disposing ChatProvider');
-    socket.disconnect();
-    super.dispose();
-  }
-
-
+  // Mark messages as read
   Future<void> markMessagesAsRead(String chatId, String userId) async {
     try {
-      print("...............mark function trigger hua hai");
+      print("Marking messages as read for chat $chatId");
       final response = await http.post(
         Uri.parse('https://shopemeapp-backend.onrender.com/api/chat/Markasread'),
         headers: {'Content-Type': 'application/json'},
@@ -273,16 +305,23 @@ Future<List<ChatPreview>> getChatPreviews(String? loggedInUserId) async {
       );
 
       if (response.statusCode == 200) {
-        print("Messageread work succesff..........................................");
+        print("Messages marked as read successfully");
         notifyListeners();
       } else {
-        throw Exception('Failed to mark messages as read...............................${response.body}');
+        throw Exception(
+            'Failed to mark messages as read: ${response.statusCode} ${response.body}');
       }
     } catch (error) {
+      print('Error marking messages as read: $error');
       throw error;
     }
   }
 
-
-
+  // Dispose method to clean up resources
+  @override
+  void dispose() {
+    print('Disposing ChatProvider');
+    socket.disconnect();
+    super.dispose();
+  }
 }

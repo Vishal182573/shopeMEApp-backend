@@ -1,10 +1,16 @@
+import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:anaar_demo/model/userModel.dart';
+import 'package:anaar_demo/screens/chatScreen.dart';
+import 'package:anaar_demo/widgets/Catelog_grib_builder.dart';
 import 'package:anaar_demo/widgets/Post_Grib_builder.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ResellerShowprofile extends StatefulWidget {
-Usermodel usermodel;
-ResellerShowprofile({required this.usermodel});
+
+Reseller usermodel;
+String? loggedInUserId;
+ResellerShowprofile({required this.usermodel,this.loggedInUserId});
 
   @override
   State<ResellerShowprofile> createState() => _ResellerShowprofileState();
@@ -16,7 +22,7 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Stack(children: [
-          Column(
+          Column(crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
               _buildProfileInfo(),
@@ -24,18 +30,22 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
               _buildAboutSection(),
               _buildActionButtons(),
               _buildTabBar(),
-              _buildProductGrid(),
+              //_buildProductGrid(),
             ],
           ),
           Positioned(
             top: 140,
             left: 140,
             child: CircleAvatar(
-              radius: 50,
-             // backgroundColor: Colors.yellow[200],
-             backgroundImage: NetworkImage(widget.usermodel.image??'',),
-              // child: Text('RV',
-              //     style: TextStyle(fontSize: 30, color: Colors.black)),
+              radius: 53,
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: 50,
+               // backgroundColor: Colors.yellow[200],
+               backgroundImage: NetworkImage(widget.usermodel.image??'',),
+                // child: Text('RV',
+                //     style: TextStyle(fontSize: 30, color: Colors.black)),
+              ),
             ),
           ),
         ]),
@@ -59,12 +69,14 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
   Widget _buildProfileInfo() {
     return Padding(
       padding: EdgeInsets.only(top: 60, bottom: 20),
-      child: Column(
-        children: [
-          Text(widget.usermodel.businessName??'',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          Text('Manufacturers . Delhi', style: TextStyle(color: Colors.grey)),
-        ],
+      child: Center(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(widget.usermodel.businessName??'',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            Text('Manufacturers . ${widget.usermodel.city}', style: TextStyle(color: Colors.grey)),
+          ],
+        ),
       ),
     );
   }
@@ -75,10 +87,10 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('147:Product details',
+          Text('${widget.usermodel.catalogueCount}:Product details',
               style: TextStyle(fontWeight: FontWeight.bold)),
           SizedBox(width: 20),
-          Text('69:Connection', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text('${widget.usermodel.connections?.length}:Connection', style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -92,29 +104,53 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
         children: [
           Text('About:', style: TextStyle(fontWeight: FontWeight.bold)),
           Text(
-              'saree with a fine work and hand crafted with skilled labours dicpict.we are mumbai based saree interprse and trading ferm......'),
-          TextButton(
-            child: Text('More'),
-            onPressed: () {},
-          ),
+              "${widget.usermodel.aboutUs}",maxLines: 3,overflow: TextOverflow.ellipsis,),
+         
         ],
       ),
     );
   }
 
   Widget _buildActionButtons() {
+    final bool isSameUser = widget.loggedInUserId ==widget.usermodel.id;
+   
+   final Listofconnection=widget.usermodel.connections;
+   final bool isConnected=Listofconnection?.any((connections)=>connections.userId==widget.loggedInUserId)??false;
+    //bool isConnected=Listofconnection?.
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ElevatedButton.icon(
-          icon: Icon(Icons.person_add),
-          label: Text('Connect'),
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-        ),
+      // isSameUser
+      //     ? null
+      //     : TextButton(
+      //         onPressed: () async {
+      //           if (!isConnected) {
+      //             print(" connected function hitted.......................");
+      //             await userProvider.connectUser(loggedInUserId, usermodel.id,usermodel.type);
+      //           }
+      //         },
+      //         child: Text(
+      //           isConnected ? 'Connected' : 'Connect',
+      //           style: TextStyle(
+      //             color: isConnected ? Colors.red : Colors.blue,
+      //             fontSize: 18,
+      //           ),
+      //         ),
+      //       )>,
+      !isSameUser? TextButton(onPressed: (){
+
+      }, child: Text(
+        isConnected?'connected':'connect',
+        style: TextStyle(
+           color: isConnected?Colors.red:Colors.blue,
+           fontSize: 18
+        )
+      )):SizedBox(),
+
+      
         OutlinedButton(
           child: Text('Chat'),
-          onPressed: () {},
+          onPressed:()=>Get.to(()=>ChatScreen(loggedInUserId: widget.loggedInUserId, postOwnerId: widget.usermodel.id??'',reseller: widget.usermodel,)),
         ),
       ],
     );
@@ -122,26 +158,53 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
 
   Widget _buildTabBar() {
     return DefaultTabController(
-      length: 3,
-      child: TabBar(
-        tabs: [
-          Tab(text: 'Products'),
-          Tab(text: 'Posts'),
-          Tab(text: 'About'),
+      length: 2,
+      child: Column(
+        children: [
+          TabBar(
+            tabs: [
+              Tab(text: 'Post'),
+              Tab(text: 'Catalog'),
+            
+            ],
+          ),
+
+          Container(
+          height: 200,
+          child: TabBarView(children: [
+                   Post_Grid(
+                    userid: widget.usermodel.id,
+                  userprofile: widget.usermodel,
+                
+                    ),
+                      Catelog_Grid(
+                                      userid: widget.usermodel.id,
+                                    ),
+            
+
+          ]),
+ 
+
+          )
+
+
         ],
       ),
     );
   }
 
-  Widget _buildProductGrid() {
-    return Post_Grid(
-      userid: widget.usermodel.id,
-    );
-  }
+  // Widget _buildProductGrid() {
+  //   return Post_Grid(
+  //     userid: widget.usermodel.id,
+  //   );
+  // }
 
-  Widget _buildProductItem(String imagePath) {
-    return Card(
-      child: Image.asset(imagePath, fit: BoxFit.cover),
-    );
-  }
+  // Widget _buildProductItem(String imagePath) {
+  //   return Card(
+  //     child: Image.asset(imagePath, fit: BoxFit.cover),
+  //   );
+  // }
 }
+
+
+

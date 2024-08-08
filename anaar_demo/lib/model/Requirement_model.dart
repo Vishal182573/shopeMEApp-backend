@@ -29,17 +29,18 @@ class Requirement {
 
   factory Requirement.fromJson(Map<String, dynamic> json) {
     return Requirement(
-      sId: json['_id'],
-      userId: json['userId'].toString(),
-      productName: json['productName'].toString(),
-      category: json['category'].toString(),
-      quantity: json['quantity'].toString(),
-      totalPrice: json['totalPrice'].toString(),
-      details: json['details'].toString(),
-      images: List<String>.from(json['images']),
-      createdAt: json['createdAt'].toString(),
-      updatedAt: json['updatedAt'].toString(),
+      sId: json['_id']??'',
+      userId: json['userId'].toString()??'',
+      productName: json['productName'].toString()??'',
+      category: json['category'].toString()??'',
+      quantity: json['quantity'].toString()??'',
+      totalPrice: json['totalPrice'].toString()??'',
+      details: json['details'].toString()??'',
+      images: List<String>.from(json['images'])??[],
+      createdAt: json['createdAt'].toString()??'',
+      updatedAt: json['updatedAt'].toString()??'',
       iV: json['__v'],
+      userType: json['userType']??'',
     );
   }
 

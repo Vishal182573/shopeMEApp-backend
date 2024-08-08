@@ -71,6 +71,69 @@ import 'package:anaar_demo/providers/postProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// class LikeButton extends StatefulWidget {
+//   final String postId;
+//   final List<Likes>? likes;
+//   LikeButton({required this.postId, required this.likes});
+
+//   @override
+//   State<LikeButton> createState() => _LikeButtonState();
+// }
+
+// class _LikeButtonState extends State<LikeButton> {
+//   String? loggedinuser;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadUserId();
+//   }
+
+//   void _loadUserId() async {
+//     loggedinuser = await Helperfunction.getUserId();
+//     setState(() {}); // Update the state to reflect the loaded user ID
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Consumer<PostcardProvider>(
+//       builder: (ctx, postcardProvider, child) {
+//         if (loggedinuser == null) {
+//           return CircularProgressIndicator(); // Show a loading indicator while the user ID is being fetched
+//         }
+
+//         final isLiked = widget.likes?.any((like) => like.userId == loggedinuser) ?? false;
+//         print("$isLiked ...................post is liked......");
+
+//         return Row(
+//           children: [
+//             IconButton(
+//               icon: Icon(
+//                 isLiked ? Icons.favorite : Icons.favorite_border,
+//                 color: isLiked ? Colors.red : Colors.yellow,
+//               ),
+//               onPressed: () async {
+//                 await postcardProvider.likePost(widget.postId, loggedinuser!);
+//                 // setState(() {
+//                 //   // Toggle the isLiked state locally to reflect the change immediately
+//                 //   if (isLiked) {
+//                 //     widget.likes?.removeWhere((like) => like.userId == loggedinuser);
+//                 //   } else {
+//                 //     widget.likes?.add(Likes(userId: loggedinuser!));
+//                 //   }
+//                 // }
+                
+//                // );
+//               },
+//             ),
+//             Text('${widget.likes?.length ?? '0'}'),
+//           ],
+//         );
+//       },
+//     );
+//   }
+// }
+
 class LikeButton extends StatefulWidget {
   final String postId;
   final List<Likes>? likes;
@@ -82,6 +145,8 @@ class LikeButton extends StatefulWidget {
 
 class _LikeButtonState extends State<LikeButton> {
   String? loggedinuser;
+  bool isLiked = false;
+  int likeCount = 0;
 
   @override
   void initState() {
@@ -91,45 +156,38 @@ class _LikeButtonState extends State<LikeButton> {
 
   void _loadUserId() async {
     loggedinuser = await Helperfunction.getUserId();
-    setState(() {}); // Update the state to reflect the loaded user ID
+    setState(() {
+      isLiked = widget.likes?.any((like) => like.userId == loggedinuser) ?? false;
+      likeCount = widget.likes?.length ?? 0;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PostcardProvider>(
-      builder: (ctx, postcardProvider, child) {
-        if (loggedinuser == null) {
-          return CircularProgressIndicator(); // Show a loading indicator while the user ID is being fetched
-        }
+    return Row(
+      children: [
+        IconButton(
+          icon: Icon(
+            isLiked ? Icons.favorite : Icons.favorite_border,
+            color: isLiked ? Colors.red : Colors.yellow,
+          ),
+          onPressed: () async {
+            // Optimistically update the UI
+            setState(() {
+              if (isLiked) {
+                likeCount--;
+              } else {
+                likeCount++;
+              }
+              isLiked = !isLiked;
+            });
 
-        final isLiked = widget.likes?.any((like) => like.userId == loggedinuser) ?? false;
-        print("$isLiked ...................post is liked......");
-
-        return Row(
-          children: [
-            IconButton(
-              icon: Icon(
-                isLiked ? Icons.favorite : Icons.favorite_border,
-                color: isLiked ? Colors.red : Colors.yellow,
-              ),
-              onPressed: () async {
-                await postcardProvider.likePost(widget.postId, loggedinuser!);
-                // setState(() {
-                //   // Toggle the isLiked state locally to reflect the change immediately
-                //   if (isLiked) {
-                //     widget.likes?.removeWhere((like) => like.userId == loggedinuser);
-                //   } else {
-                //     widget.likes?.add(Likes(userId: loggedinuser!));
-                //   }
-                // }
-                
-               // );
-              },
-            ),
-            Text('${widget.likes?.length ?? '0'}'),
-          ],
-        );
-      },
+            // Send like/unlike request to the server
+            await Provider.of<PostcardProvider>(context, listen: false).likePost(widget.postId, loggedinuser!);
+          },
+        ),
+        Text('$likeCount'),
+      ],
     );
   }
 }

@@ -17,7 +17,7 @@ class EditResellerprofile extends StatefulWidget {
   String phoneno_;
   String adress;
   String city;
-  List<String?> connections;
+  List<Connections>? connections;
   String? profileimage;
   String? bgImage;
   EditResellerprofile({
@@ -76,7 +76,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
 
   void _updateInfo() {
     Reseller reseller = Reseller(
-        bgImage: '',
+        bgImage: widget.bgImage??'',
         ownerName: _ownerNameController.text,
         businessName: _businessNameController.text,
         email: widget.email ?? '',
@@ -84,7 +84,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
         address: _addressController.text,
         contact: _phonenocontroller.text,
         city: _cityController.text,
-        image: '',
+        image: widget.profileimage,
         connections: widget.connections,
         aboutUs:_aboutUscontroller.text ,
         type: 'reseller');
@@ -113,6 +113,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
 
   @override
   Widget build(BuildContext context) {
+    final User=Provider.of<UserProvider>(context, listen: false);
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
@@ -142,7 +143,9 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                               image: FileImage(forgroundimage!),
                               fit: BoxFit.cover,
                             ))
-                          : null,
+                          : 
+                          widget.bgImage!=null?
+                          Image(image: NetworkImage(widget.bgImage??'')):null,
                     ),
                     Positioned(
                         top: 20,
@@ -174,7 +177,12 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                           radius: 50,
                           backgroundColor: Colors.grey[200],
                           backgroundImage:
-                              _image != null ? FileImage(_image!) : null,
+                              _image != null ? FileImage(_image!) :
+
+                              widget.profileimage!=null?
+                               NetworkImage(widget.profileimage??''):null
+                              
+                               ,
                           child: _image == null
                               ? Icon(
                                   Icons.add_a_photo,
@@ -285,7 +293,18 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: () {
+                onPressed: ()
+                 {
+
+                // User.isloading?
+                // showDialog<void>(context: context,
+                //   builder:(BuildContext context){
+                //     return AlertDialog(
+                //       content: Center(child: CircularProgressIndicator(),),
+                //     );
+                //   }
+                // ):null;
+
                   _updateInfo();
                 },
                 child: Text('Save Changes'),

@@ -31,7 +31,7 @@ class _LoginPageResellerState extends State<LoginPageReseller> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Log into your Reseller Account',
+                      'Log into your Supplier Account',
                       style: TextStyle(
                         color: Colors.red,
                         fontSize: 32,

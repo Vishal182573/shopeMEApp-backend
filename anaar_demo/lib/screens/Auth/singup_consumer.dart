@@ -21,6 +21,8 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
   final _emailController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _businessNameController=TextEditingController();
+  final _bio_controller=TextEditingController();
   File? _image;
 
   Future<void> _pickImage() async {
@@ -50,21 +52,23 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
-            child: Column(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
                   onTap: _pickImage,
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.grey[200],
-                    backgroundImage: _image != null ? FileImage(_image!) : null,
-                    child: _image == null
-                        ? Icon(
-                            Icons.add_a_photo,
-                            size: 50,
-                            color: Colors.grey[700],
-                          )
-                        : null,
+                  child: Center(
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.grey[200],
+                      backgroundImage: _image != null ? FileImage(_image!) : null,
+                      child: _image == null
+                          ? Icon(
+                              Icons.add_a_photo,
+                              size: 50,
+                              color: Colors.grey[700],
+                            )
+                          : null,
+                    ),
                   ),
                 ),
                 SizedBox(height: 16.0),
@@ -81,6 +85,24 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
                     return null;
                   },
                 ),
+                SizedBox(height: 16,),
+
+ TextFormField(
+                  controller: _businessNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Business Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your Owner name';
+                    }
+                    return null;
+                  },
+                ),
+
+
+
                 SizedBox(width: 16.0),
                 SizedBox(height: 16.0),
                 TextFormField(
@@ -142,18 +164,32 @@ class _RegistrationPageState extends State<ConsumerRegistrationPage> {
                   },
                 ),
                 SizedBox(height: 16.0),
+               // Text("bio",style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),),
+              TextField(
+              controller: 
+              _bio_controller,
+              decoration: InputDecoration(
+                label: Text("Bio"),
+                border: OutlineInputBorder(),
+                hintText: 'Add text here...',
+              ),
+              maxLines: 5,
+            ),SizedBox(height: 5,),
+
                authProvider.isLoading?CircularProgressIndicator():
                
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState?.validate() ?? false) {
                       bool val = await authProvider.Consumer_register(
-                          _nameController.text,
+                          _businessNameController.text,
                           _cityController.text,
                           _emailController.text,
                           _phoneNumberController.text,
                           _passwordController.text,
-                          _image);
+                          _image,
+                          _bio_controller.text
+                          );
 
                       if (val) {
                         Navigator.pushReplacement(

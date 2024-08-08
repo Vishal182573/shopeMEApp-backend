@@ -5,30 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Commenttile extends StatelessWidget {
   String userid;
   //final String ProfileName;
   final String Comment;
   final DateTime commentdate;
+  String? userType;
   Commenttile(
-    this.userid, {
+    {required this.userid, 
+     this.userType,
     required this.Comment,
     required this.commentdate,
   });
 
   @override
   Widget build(BuildContext context) {
+    print(userType);
     // TODO: implement build
     return FutureBuilder<Usermodel?>(
         future: Provider.of<UserProvider>(context, listen: false)
-            .fetchUserinfo(userid),
+            .fetchUserinfo(userid,userType: userType),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.data == null) {
+            return buildShimmerList();
+          } else if (snapshot.hasError) {
             return Text("Failed to get userdata");
           } else {
             final usermodel = snapshot.data;
@@ -48,5 +50,52 @@ class Commenttile extends StatelessWidget {
             );
           }
         });
+
+
+
+
+
+
+
+        
   }
+
+
+Widget buildShimmerList() {
+    return ListView.builder(
+      itemCount: 5,  // Number of shimmer items to show
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.white,
+              radius: 20,
+            ),
+            title: Container(
+              height: 10,
+              width: double.infinity,
+              color: Colors.white,
+            ),
+            subtitle: Container(
+              height: 10,
+              width: double.infinity,
+              color: Colors.white,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+
+
+
+
+
+
+
+
 }

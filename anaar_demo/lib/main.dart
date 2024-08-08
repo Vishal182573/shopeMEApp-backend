@@ -1,3 +1,5 @@
+import 'package:anaar_demo/backend/notification_services.dart';
+import 'package:anaar_demo/backend/permissionhandleer.dart';
 import 'package:anaar_demo/providers/RequirementProvider.dart';
 import 'package:anaar_demo/providers/TrendingProvider.dart';
 import 'package:anaar_demo/providers/authProvider.dart';
@@ -18,36 +20,39 @@ import 'package:anaar_demo/screens/resellerShowProfile.dart';
 import 'package:anaar_demo/widgets/bottomNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
+  // Import notification service
 
-void main() {
+void main()async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await requestNotificationPermission();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Initialize the NotificationService
+    final NotificationService notificationService = NotificationService();
+NotificationService.initNotification();
 
-    // Get.put(PostController());
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (context) => AuthProvider()..tryAutoLogin()),
-        ChangeNotifierProvider(create: (context) => UserProvider()),
-        ChangeNotifierProvider(create: (context) => CommentProvider()),
-        ChangeNotifierProvider(create: (context) => CommenUserProvider()),
+            create: (context) => AuthProvider()..tryAutoLogin()), // Handles authentication
+        ChangeNotifierProvider(create: (context) => UserProvider()), // Handles user data
+        ChangeNotifierProvider(create: (context) => CommentProvider()), // Handles comments
+        ChangeNotifierProvider(create: (context) => CommenUserProvider()), // Common user data provider
         ChangeNotifierProvider(
-          create: (context) => RequirementProvider(),
+          create: (context) => RequirementProvider(), // Handles requirements
         ),
-        ChangeNotifierProvider(create: (context) => PostcardProvider()),
-        ChangeNotifierProvider(create: (context) => RequirementcardProvider()),
-        ChangeNotifierProvider(create: (context) => PostProvider()),
-        ChangeNotifierProvider(create: (context) => Trendingprovider()),        
-        ChangeNotifierProvider(create: (context) => CatelogProvider()),
-        ChangeNotifierProvider(create: (context) => ChatProvider()),
-        
+        ChangeNotifierProvider(create: (context) => PostcardProvider()), // Handles post cards
+        ChangeNotifierProvider(create: (context) => RequirementcardProvider()), // Handles requirement cards
+        ChangeNotifierProvider(create: (context) => PostProvider()), // Handles posts
+        ChangeNotifierProvider(create: (context) => Trendingprovider()), // Handles trending items
+        ChangeNotifierProvider(create: (context) => CatelogProvider()), // Handles catalog
+        ChangeNotifierProvider(create: (context) => ChatProvider()), // Handles chat
       ],
       child: GetMaterialApp(
         title: 'Registration Form',
@@ -59,12 +64,11 @@ class MyApp extends StatelessWidget {
         home: Consumer<AuthProvider>(
           builder: (context, authProvider, _) {
             if (authProvider.isAuth) {
+              // If the user is authenticated, navigate to the main screen
               return NavigationExample();
             } else {
-            
+              // If the user is not authenticated, show the onboarding screen
               return onboardingScreen();
-
-            
             }
           },
         ),

@@ -82,6 +82,7 @@
 // }
 
 
+import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:anaar_demo/model/userModel.dart';
 import 'package:anaar_demo/providers/chat_provider.dart';
 import 'package:flutter/material.dart';
@@ -91,9 +92,10 @@ import 'package:provider/provider.dart';
 class ChatScreen extends StatefulWidget {
   final String? loggedInUserId;
   final String postOwnerId;
-  Usermodel user;
+  Reseller? reseller;
+  Usermodel? user;
 
-  ChatScreen({required this.loggedInUserId, required this.postOwnerId,required this.user});
+  ChatScreen({required this.loggedInUserId, required this.postOwnerId, this.user,this.reseller});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -113,16 +115,24 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromARGB(255, 240, 240, 240),
-      appBar: AppBar(title: Text(widget.user.businessName??'',style: TextStyle(
+    return 
+    
+    Scaffold(
+      backgroundColor: Color.fromARGB(255, 233, 233, 233),
+      appBar: AppBar(title: Text(widget.user?.businessName??widget.reseller?.businessName??'',
+      
+      style: TextStyle(
         color: Colors.black),
         ),
       automaticallyImplyLeading: false,
-      leading: CircleAvatar(backgroundImage: NetworkImage(widget.user.image??'',),maxRadius: 10,),
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CircleAvatar(backgroundImage: NetworkImage(widget.user?.image??
+        widget.reseller?.image??'',),maxRadius: 10,),
+      ),
       
      
-      backgroundColor: const Color.fromARGB(255, 204, 203, 203),
+      backgroundColor: Colors.red,
       leadingWidth: 50,
       ),
       body: Column(

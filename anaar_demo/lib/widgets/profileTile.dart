@@ -1,3 +1,4 @@
+import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:anaar_demo/model/userModel.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
 import 'package:anaar_demo/screens/resellerShowProfile.dart';
@@ -9,7 +10,7 @@ class Profiletile extends StatelessWidget {
   final String ProfileName;
   final String Location;
   final String Imagepath;
-  final Usermodel usermodel;
+  final Reseller usermodel;
   final String? loggedInUserId;
 
   Profiletile({
@@ -22,14 +23,19 @@ class Profiletile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  
+      
+
     final userProvider = Provider.of<UserProvider>(context);
-    final bool isConnected = userProvider.connections.contains(usermodel.id);
-    final bool isSameUser = loggedInUserId == usermodel.id;
+    final Listofconnection=userProvider.reseller?.connections;
+   // final bool isConnected = userProvider.connections.contains(usermodel.id);
+     bool isConnected=Listofconnection?.any((connections)=>connections.userId==loggedInUserId)??false;
+     bool isSameUser = loggedInUserId == usermodel.id;
 
     return ListTile(
       style: ListTileStyle.drawer,
       //style: ListTileStyle.list,
-      onTap: () => Get.to(() => ResellerShowprofile(usermodel: usermodel)),
+      onTap: () => Get.to(() => ResellerShowprofile(usermodel: usermodel,loggedInUserId: loggedInUserId,)),
       leading: CircleAvatar(
         backgroundImage: NetworkImage(Imagepath),
       ),

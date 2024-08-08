@@ -22,7 +22,8 @@ class Usermodel {
     String? city;
    
     String? image;
-    List<String?> connections;
+    // List<String?> connections;
+    List<Connections>? connections;
    // DateTime createdAt;
    // DateTime updatedAt;
     int? v;
@@ -49,7 +50,7 @@ class Usermodel {
     factory Usermodel.fromJson(Map<String, dynamic> json) => Usermodel(
         id: json["_id"],
        // ownerName: json["ownerName"]??'',
-        businessName: json["businessName"]??'',
+        businessName: json["businessName"]??json['name'],
         //email: json["email"]??'',
         //password: json["password"]??'',
         //address: json["address"]??'',
@@ -59,9 +60,14 @@ class Usermodel {
         type: json["type"]??'',
         image: json["image"]??'',
       //  type:json['type']??'',
-        connections: List<String>.from(json["connections"].map((x) => x))??[],
+        //connections: List<String>.from(json["connections"].map((x) => x))??[],
         //createdAt: DateTime.parse(json["createdAt"]),
         //updatedAt: DateTime.parse(json["updatedAt"]),
+        connections: json['connections'] != null
+            ? List<Connections>.from(
+                json["connections"].map((x) => Connections.fromJson(x)))
+            : null,
+        
         v: json["__v"],
     );
 
@@ -77,10 +83,30 @@ class Usermodel {
         "city": city,
       
         "image": image,
-        "connections": List<dynamic>.from(connections.map((x) => x)),
+        //"connections": List<dynamic>.from(connections.map((x) => x)),
         //"createdAt": createdAt.toIso8601String(),
         //"updatedAt": updatedAt.toIso8601String(),
+         "connections": connections != null
+            ? List<dynamic>.from(connections!.map((x) => x.toJson()))
+            : null,
         "__v": v,
         "bgImage":bgImage,
     };
+}
+
+class Connections {
+  String? userId;
+  String? type;
+
+  Connections({this.userId, this.type});
+
+  factory Connections.fromJson(Map<String, dynamic> json) => Connections(
+        userId: json["userId"],
+        type: json["Type"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "userId": userId,
+        "Type": type,
+      };
 }

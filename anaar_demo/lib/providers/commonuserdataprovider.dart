@@ -23,8 +23,9 @@ class CommenUserProvider with ChangeNotifier {
     print(token);
     var url;
     final userId = prefs.getString('userId');
+    print(userType);
     print(userId);
-    if (userType == 'consumer') {
+    if (userType == 'Consumer') {
       url = Uri.parse(
           'http://192.168.0.107:3000/api/user/getConsumer?id=$userId');
     } else {

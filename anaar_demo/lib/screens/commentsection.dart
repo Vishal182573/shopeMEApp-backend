@@ -35,7 +35,9 @@ class _CommentScreenState extends State<CommentScreen> {
       appBar: AppBar(
         title: Text('Comments'),
       ),
-      body: Column(
+      body:
+               
+       Column(
         children: [
           Expanded(
             child: _comments.isEmpty
@@ -45,9 +47,10 @@ class _CommentScreenState extends State<CommentScreen> {
                     itemBuilder: (ctx, index) {
                       final comment = _comments[index];
                       return Commenttile(
-                        comment.userId ?? '',
+                     userid:    comment.userId ?? '',
                         Comment: comment.comment ?? '',
                         commentdate: DateTime.parse(comment.createdAt??''),
+                        userType:comment.userType??'',
                       
 
                       );

@@ -1,4 +1,4 @@
   flutter_native_splash:
     android:true
-    image:"assets/images/launchicon.png"
+    image:"assets/images/welcome.png"
     color:"#FF0000"

@@ -59,6 +59,11 @@ class _RegistrationPageState extends State<ResellerRegistrationPage> {
     var image = _image;
   
 
+
+
+
+
+
     try {
     bool val=  await Provider.of<AuthProvider>(context, listen: false).resllerregister(
         owernername,

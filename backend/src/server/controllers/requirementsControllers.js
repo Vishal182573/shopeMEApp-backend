@@ -94,14 +94,14 @@ const searchrequirement = asyncHandler(async (req, res) => {
     const regex = new RegExp(prefix, 'i');
 
     // Find catalogs where productName or category matches the regex
-    const catalogs = await Requirement.find({
+    const requirement = await Requirement.find({
       $or: [
-        { productNam: regex },
+        { productName: regex },
         { category: regex }
       ]
     });
 
-    res.status(200).json(catalogs);
+    res.status(200).json(requirement);
   } catch (error) {
     res.status(500).json({ error: "Error searching requirement..",
        details: error.message });
@@ -109,6 +109,19 @@ const searchrequirement = asyncHandler(async (req, res) => {
 });
 
 
+const getRequirementByUserId = asyncHandler(async(req,res)=>{
+  try{
+      const {userId} = req.query;
+      if(!userId) return res.status(400).json({message:"UserId required"});
+      const reqi = await Requirement.find({userId:userId});
+      if(!reqi){
+        return res.status(404).json({message:"requirement not found"});  
+      }
+      return res.status(200).json(reqi);
+  }catch(err){
+      return res.status(500).json({message:"Internal Server Error ",error:err});
+  }
+});
 
 
 
@@ -124,4 +137,5 @@ export {
   getRequirementByCategory,
   deleteRequirement,
   searchrequirement,
+  getRequirementByUserId
 };

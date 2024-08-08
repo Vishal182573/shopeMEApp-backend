@@ -169,7 +169,7 @@ class onboardingLoginPage extends StatelessWidget {
           ElevatedButton(
             onPressed: () => Get.to(() => ResellerRegistrationPage()),
             child: Text(
-              "Register as Reseller",
+              "Register as supplier",
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

@@ -117,28 +117,50 @@ class PostcardService {
 class PostcardProvider with ChangeNotifier {
   List<Postcard> _postcards = [];
   bool _isLoading = false;
+  bool _isLoaded=false;
+   bool get isLoaded => _isLoaded;
 
   List<Postcard> get postcards => _postcards;
   bool get isLoading => _isLoading;
 
   Future<void> fetchPostcards() async {
     try {
+      _isLoading=true;
+         notifyListeners();
       _postcards = await PostcardService.fetchPostcards();
+      _isLoaded=true;
+      notifyListeners();
+      _isLoading=false;
+      notifyListeners();
     } catch (error) {
+      _isLoading=false;
+      notifyListeners();
       print(error);
     }
   }
 
 //....................for posting likes............................
 
-  // Future<void> likePost(
-  //   String? postId,
-  // ) async {
+
+  // void _optimisticallyToggleLike(String postId, String? userId) {
+  //   final postIndex = _postcards.indexWhere((post) => post.sId == postId);
+  //   if (postIndex != -1) {
+  //     final post = _postcards[postIndex];
+  //     if (post.likes!.any((like) => like.userId == userId)) {
+  //       post.likes!.removeWhere((like) => like.userId == userId);
+  //     } else {
+  //       post.likes!.add(Likes(userId: userId));
+  //     }
+  //     notifyListeners();
+  //   }
+  // }
+
+  // Future<void> likePost(String? postId, String? userId) async {
   //   final prefs = await SharedPreferences.getInstance();
   //   final token = prefs.getString('token');
-  //   String? userId = await Helperfunction.getUserId();
-  //   print(postId);
-  //   print(userId);
+
+  //   _optimisticallyToggleLike(postId!, userId);
+
   //   try {
   //     final response = await http.post(
   //       Uri.parse('https://shopemeapp-backend.onrender.com/api/post/like'),
@@ -146,70 +168,72 @@ class PostcardProvider with ChangeNotifier {
   //         'Authorization': 'Bearer $token',
   //         'Content-Type': 'application/json'
   //       },
-  //       body: json.encode(
-  //           {'postid': postId, 'userid': userId, 'userType': 'reseller'}),
+  //       body: json.encode({
+  //         'postid': postId,
+  //         'userid': userId,
+  //         'userType': 'reseller'
+  //       }),
   //     );
-  //     print("like krne aya hu.....");
   //     if (response.statusCode == 200) {
-  //       final index = _postcards.indexWhere((post) => post.sId == postId);
-  //       if (index != -1) {
-  //         _postcards[index].likes?.add(Likes(userId: userId));
-  //         print("..........like ho giya.........");
-  //         notifyListeners();
-  //       }
-  //     } else {
-  //       print("${response.statusCode}...${response.body}");
+  //       print(
+  //           ".................................liked successsfully...........");
+  //     }
+
+  //     if (response.statusCode != 200) {
+  //       _optimisticallyToggleLike(postId, userId); // Revert on failure
   //     }
   //   } catch (error) {
+  //     _optimisticallyToggleLike(postId, userId); // Revert on failure
   //     throw (error);
   //   }
   // }
 
-  void _optimisticallyToggleLike(String postId, String? userId) {
-    final postIndex = _postcards.indexWhere((post) => post.sId == postId);
-    if (postIndex != -1) {
-      final post = _postcards[postIndex];
-      if (post.likes!.any((like) => like.userId == userId)) {
-        post.likes!.removeWhere((like) => like.userId == userId);
-      } else {
-        post.likes!.add(Likes(userId: userId));
-      }
-      notifyListeners();
+
+
+void _optimisticallyToggleLike(String postId, String? userId) {
+  final postIndex = _postcards.indexWhere((post) => post.sId == postId);
+  if (postIndex != -1) {
+    final post = _postcards[postIndex];
+    if (post.likes!.any((like) => like.userId == userId)) {
+      post.likes!.removeWhere((like) => like.userId == userId);
+    } else {
+      post.likes!.add(Likes(userId: userId));
     }
+    notifyListeners();
   }
+}
 
-  Future<void> likePost(String? postId, String? userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+Future<void> likePost(String postId, String userId) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
 
-    _optimisticallyToggleLike(postId!, userId);
+  // Optimistically update the local state
+  _optimisticallyToggleLike(postId, userId);
 
-    try {
-      final response = await http.post(
-        Uri.parse('https://shopemeapp-backend.onrender.com/api/post/like'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json'
-        },
-        body: json.encode({
-          'postid': postId,
-          'userid': userId,
-          'userType': 'reseller'
-        }),
-      );
-      if (response.statusCode == 200) {
-        print(
-            ".................................liked successsfully...........");
-      }
-
-      if (response.statusCode != 200) {
-        _optimisticallyToggleLike(postId, userId); // Revert on failure
-      }
-    } catch (error) {
+  try {
+    final response = await http.post(
+      Uri.parse('https://shopemeapp-backend.onrender.com/api/post/like'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
+      },
+      body: json.encode({
+        'postid': postId,
+        'userid': userId,
+        'userType': 'reseller'
+      }),
+    );
+    if (response.statusCode != 200) {
       _optimisticallyToggleLike(postId, userId); // Revert on failure
-      throw (error);
     }
+  } catch (error) {
+    _optimisticallyToggleLike(postId, userId); // Revert on failure
+    throw error;
   }
+}
+
+
+
 
 ///////...........................for adding comments...........................
 

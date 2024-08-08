@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:anaar_demo/model/postcard_model.dart';
+import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:anaar_demo/providers/postProvider.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
 import 'package:anaar_demo/screens/TrendingPage.dart';
@@ -11,8 +12,9 @@ import 'package:provider/provider.dart';
 class Post_Grid extends StatefulWidget {
   String? userid;
   UserProvider? userProvider;
+  Reseller? userprofile;
 
-  Post_Grid({this.userid, this.userProvider});
+  Post_Grid({this.userid, this.userProvider,this.userprofile});
 
   @override
   State<Post_Grid> createState() => _Post_GridState();
@@ -63,7 +65,8 @@ class _Post_GridState extends State<Post_Grid> {
               itemCount: postcardlist.length,
               itemBuilder: (context, index) => GestureDetector(
                 onTap: (){Get.to(()=>Viewpost(
-                  userProvider: widget.userProvider,
+                  userprofile:widget.userprofile ,
+                 userProvider: widget.userProvider,
                   postcard: postcardlist[index]));},
                 child: Container(
                   height: 20,
