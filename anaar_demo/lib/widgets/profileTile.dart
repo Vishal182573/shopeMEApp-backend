@@ -1,3 +1,4 @@
+import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:anaar_demo/model/userModel.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
@@ -6,45 +7,73 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-class Profiletile extends StatelessWidget {
+class Profiletile extends StatefulWidget {
   final String ProfileName;
   final String Location;
   final String Imagepath;
   final Reseller usermodel;
-  final String? loggedInUserId;
+  String? loggedInUserId;
 
   Profiletile({
     required this.Location,
     required this.ProfileName,
     required this.Imagepath,
     required this.usermodel,
-    required this.loggedInUserId,
+     this.loggedInUserId,
   });
+
+  @override
+  State<Profiletile> createState() => _ProfiletileState();
+}
+
+class _ProfiletileState extends State<Profiletile> {
+ String? logUserId;
+ bool isConnected=false;
+
+ bool isSameUser=false;
+ 
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getuserid();
+   // final userProvider = Provider.of<UserProvider>(context);
+  }
+void getuserid()async{
+  logUserId=await Helperfunction.getUserId();
+  setState(() {
+    final Listofconnection=widget.usermodel.connections;
+     isConnected=Listofconnection?.any((connections)=>connections.userId==logUserId)??false;
+     isSameUser = logUserId == widget.usermodel.id;
+    
+  });
+
+}
 
   @override
   Widget build(BuildContext context) {
   
       
 
-    final userProvider = Provider.of<UserProvider>(context);
-    final Listofconnection=userProvider.reseller?.connections;
+    
+    final userProvider=Provider.of<UserProvider>(context);
    // final bool isConnected = userProvider.connections.contains(usermodel.id);
-     bool isConnected=Listofconnection?.any((connections)=>connections.userId==loggedInUserId)??false;
-     bool isSameUser = loggedInUserId == usermodel.id;
+    
+    print('${isConnected}.........................connect hai ya nhiiiiiiii');
 
     return ListTile(
       style: ListTileStyle.drawer,
       //style: ListTileStyle.list,
-      onTap: () => Get.to(() => ResellerShowprofile(usermodel: usermodel,loggedInUserId: loggedInUserId,)),
+      onTap: () => Get.to(() => ResellerShowprofile(usermodel: widget.usermodel,loggedInUserId: widget.loggedInUserId,)),
       leading: CircleAvatar(
-        backgroundImage: NetworkImage(Imagepath),
+        backgroundImage: NetworkImage(widget.Imagepath),
       ),
-      title: Text(ProfileName),
+      title: Text(widget.ProfileName),
       subtitle: Row(
         children: [
           Text('Manufacturers'),
           SizedBox(width: 10),
-          Text(Location),
+          Text(widget.Location),
         ],
       ),
       trailing: isSameUser
@@ -53,8 +82,12 @@ class Profiletile extends StatelessWidget {
               onPressed: () async {
                 if (!isConnected) {
                   print(" connected function hitted.......................");
-                  await userProvider.connectUser(loggedInUserId, usermodel.id,usermodel.type);
+                  await userProvider.connectUser(widget.loggedInUserId, widget.usermodel.id,widget.usermodel.type);
+                setState(() {
+                  
+                });
                 }
+
               },
               child: Text(
                 isConnected ? 'Connected' : 'Connect',

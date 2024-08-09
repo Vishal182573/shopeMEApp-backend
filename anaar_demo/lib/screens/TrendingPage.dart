@@ -26,7 +26,8 @@ class _TrendingpageState extends State<Trendingpage> with AutomaticKeepAliveClie
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final trendingProvider = Provider.of<Trendingprovider>(context, listen: false);
+      final trendingProvider = Provider.of<Trendingprovider>
+      (context, listen: false);
       if (!trendingProvider.isLoaded) {
         trendingProvider.fetchPostcards();
       }
@@ -39,7 +40,8 @@ class _TrendingpageState extends State<Trendingpage> with AutomaticKeepAliveClie
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: ()async{
-         await Provider.of<Trendingprovider>(context, listen: false).fetchPostcards();
+         await Provider.of<Trendingprovider>(context, listen: false).
+         fetchPostcards();
 
         },
         child: Consumer<Trendingprovider>(

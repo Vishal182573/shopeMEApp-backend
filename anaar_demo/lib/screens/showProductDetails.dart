@@ -2,7 +2,10 @@ import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/model/catelogMode.dart';
 import 'package:anaar_demo/providers/catelogProvider.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
+import 'package:anaar_demo/screens/chatScreen.dart';
+import 'package:anaar_demo/screens/profiles/ResellerProfilepage.dart';
 import 'package:anaar_demo/screens/requirement_page.dart';
+import 'package:anaar_demo/screens/resellerShowProfile.dart';
 import 'package:anaar_demo/widgets/GalleryPhotoViewer.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -258,7 +261,7 @@ void _loaduserid()async{
                         ],
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
                           'Product details:',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -272,58 +275,86 @@ void _loaduserid()async{
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              backgroundImage: NetworkImage(userProvider.reseller?.image ?? ''),
-                              radius: 30,
-                            ),
-                            SizedBox(width: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  userProvider.reseller?.businessName??'',
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                ),
-                                Text(userProvider.reseller?.city ?? ''),
-                              ],
-                            ),
-                            Spacer(),
-                           isSameUser
-          ? SizedBox()
-          : TextButton(
-              onPressed: () async {
-                if (!isConnected) {
-                  print(" connected function hitted.......................");
-                  await userProvider.connectUser(userid, widget.catelog.userId,userProvider.reseller?.type);
-                }
-              },
-              child: Text(
-                isConnected ? 'Connected' : 'Connect',
-                style: TextStyle(
-                  color: isConnected ? Colors.red : Colors.blue,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-                          ],
+                        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 5),
+                        child: Row(children: [Text('Product Name :',style: TextStyle(fontSize: 15,
+                        fontWeight: FontWeight.w500
+                        
+                        ),),Text(' ${widget.catelog.productName}',
+                        style: TextStyle(fontSize: 15,
+                        fontWeight: FontWeight.w400
+                        
                         ),
+                        )],),
                       ),
+                       Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 5),
+                        child: Row(children: [Text('Category :',style: TextStyle(fontSize: 15,
+                        fontWeight: FontWeight.w500
+                        
+                        ),),Text(' ${widget.catelog.category}',
+                        style: TextStyle(fontSize: 15,
+                        fontWeight: FontWeight.w400
+                        
+                        ),
+                        )],),
+                      ),
+                       Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 5),
+                        child: Row(children: [Text('Price :',style: TextStyle(fontSize: 15,
+                        fontWeight: FontWeight.w500
+                        
+                        ),),Text(' ${widget.catelog.price}',
+                        style: TextStyle(fontSize: 15,
+                        fontWeight: FontWeight.w400
+                        
+                        ),
+                        )],),
+                      ),
+                      
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            // Handle chat button pressed
-                          },
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                          icon: Icon(Icons.chat,color: Colors.white,),
-                          label: Text('Initiate Conversion now .....',style: TextStyle(
-                            color: Colors.white
-                          ),),
+                        padding: const EdgeInsets.all(16.0),
+                        child: GestureDetector(
+                          onTap: ()=>Get.to(()=>ResellerShowprofile(usermodel: userProvider?.reseller)),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: NetworkImage(userProvider.reseller?.image ?? ''),
+                                radius: 30,
+                              ),
+                              SizedBox(width: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    userProvider.reseller?.businessName??'',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
+                                  Text(userProvider.reseller?.city ?? ''),
+                                ],
+                              ),
+                              Spacer(),
+                             isSameUser
+                                    ? SizedBox()
+                                    : TextButton(
+                                        onPressed: () async {
+                                          if (!isConnected) {
+                                            print(" connected function hitted.......................");
+                                            await userProvider.connectUser(userid, widget.catelog.userId,userProvider.reseller?.type);
+                                          }
+                                        },
+                                        child: Text(
+                                          isConnected ? 'Connected' : 'Connect',
+                                          style: TextStyle(
+                                            color: isConnected ? Colors.red : Colors.blue,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ),
+                            ],
+                          ),
                         ),
                       ),
+                    
                       Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Text(

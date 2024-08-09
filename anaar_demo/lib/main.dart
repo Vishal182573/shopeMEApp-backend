@@ -22,13 +22,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
   // Import notification service
+void main(){
 
-void main()async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await requestNotificationPermission();
   runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -72,6 +70,58 @@ NotificationService.initNotification();
             }
           },
         ),
+      ),
+    );
+  }
+}
+class SplashScreen extends StatefulWidget {
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToHome();
+  }
+
+  _navigateToHome() async {
+    await Future.delayed(Duration(seconds: 4), () {
+      // After the delay, check authentication status and navigate accordingly
+      final authProvider = Provider.of<AuthProvider>(context, listen: false)..tryAutoLogin();
+      if (authProvider.isAuth) {
+        // If the user is authenticated, navigate to the main screen
+        Get.off(() => NavigationExample());
+      } else {
+        // If the user is not authenticated, show the onboarding screen
+        Get.off(() => onboardingScreen());
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(backgroundColor: Colors.red,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: Container(
+              width: 200,
+              height: 200, // Adjust the height as needed
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/welcome.png"),
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text('"App for all your cab needs"', style: TextStyle(fontSize: 20)),
+        ],
       ),
     );
   }

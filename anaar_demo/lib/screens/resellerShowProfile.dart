@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 
 class ResellerShowprofile extends StatefulWidget {
 
-Reseller usermodel;
+Reseller? usermodel;
 String? loggedInUserId;
 ResellerShowprofile({required this.usermodel,this.loggedInUserId});
 
@@ -42,7 +42,7 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
               child: CircleAvatar(
                 radius: 50,
                // backgroundColor: Colors.yellow[200],
-               backgroundImage: NetworkImage(widget.usermodel.image??'',),
+               backgroundImage: NetworkImage(widget.usermodel?.image??'',),
                 // child: Text('RV',
                 //     style: TextStyle(fontSize: 30, color: Colors.black)),
               ),
@@ -60,7 +60,7 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
         Container(
           height: 200,
           width: double.infinity,
-          child:Image.network(widget.usermodel.bgImage??"",fit: BoxFit.cover,)
+          child:Image.network(widget.usermodel?.bgImage??"",fit: BoxFit.cover,)
         ),
       ],
     );
@@ -72,9 +72,9 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
       child: Center(
         child: Column(crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(widget.usermodel.businessName??'',
+            Text(widget.usermodel?.businessName??'',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Text('Manufacturers . ${widget.usermodel.city}', style: TextStyle(color: Colors.grey)),
+            Text('Manufacturers . ${widget.usermodel?.city}', style: TextStyle(color: Colors.grey)),
           ],
         ),
       ),
@@ -87,10 +87,10 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('${widget.usermodel.catalogueCount}:Product details',
+          Text('${widget.usermodel?.catalogueCount}:Product details',
               style: TextStyle(fontWeight: FontWeight.bold)),
           SizedBox(width: 20),
-          Text('${widget.usermodel.connections?.length}:Connection', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text('${widget.usermodel?.connections?.length}:Connection', style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -104,7 +104,7 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
         children: [
           Text('About:', style: TextStyle(fontWeight: FontWeight.bold)),
           Text(
-              "${widget.usermodel.aboutUs}",maxLines: 3,overflow: TextOverflow.ellipsis,),
+              "${widget.usermodel?.aboutUs}",maxLines: 3,overflow: TextOverflow.ellipsis,),
          
         ],
       ),
@@ -112,9 +112,9 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
   }
 
   Widget _buildActionButtons() {
-    final bool isSameUser = widget.loggedInUserId ==widget.usermodel.id;
+    final bool isSameUser = widget.loggedInUserId ==widget.usermodel?.id;
    
-   final Listofconnection=widget.usermodel.connections;
+   final Listofconnection=widget.usermodel?.connections;
    final bool isConnected=Listofconnection?.any((connections)=>connections.userId==widget.loggedInUserId)??false;
     //bool isConnected=Listofconnection?.
     return Row(
@@ -137,20 +137,19 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
       //           ),
       //         ),
       //       )>,
-      !isSameUser? TextButton(onPressed: (){
-
-      }, child: Text(
-        isConnected?'connected':'connect',
-        style: TextStyle(
-           color: isConnected?Colors.red:Colors.blue,
-           fontSize: 18
-        )
-      )):SizedBox(),
+      
 
       
-        OutlinedButton(
-          child: Text('Chat'),
-          onPressed:()=>Get.to(()=>ChatScreen(loggedInUserId: widget.loggedInUserId, postOwnerId: widget.usermodel.id??'',reseller: widget.usermodel,)),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(backgroundColor:Colors.green ),
+              child: Text('Chat',style: TextStyle(color: Colors.white),),
+              onPressed:()=>Get.to(()=>ChatScreen(loggedInUserId: widget.loggedInUserId, postOwnerId: widget.usermodel?.id??'',reseller: 
+              widget.usermodel,)),
+            ),
+          ),
         ),
       ],
     );
@@ -173,12 +172,12 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
           height: 200,
           child: TabBarView(children: [
                    Post_Grid(
-                    userid: widget.usermodel.id,
+                    userid: widget.usermodel?.id,
                   userprofile: widget.usermodel,
                 
                     ),
                       Catelog_Grid(
-                                      userid: widget.usermodel.id,
+                                      userid: widget.usermodel?.id,
                                     ),
             
 

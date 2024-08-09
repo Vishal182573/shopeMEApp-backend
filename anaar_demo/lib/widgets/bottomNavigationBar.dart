@@ -38,6 +38,7 @@ class _NavigationExampleState extends State<NavigationExample> {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       bottomNavigationBar: NavigationBar(
+        
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
@@ -46,6 +47,7 @@ class _NavigationExampleState extends State<NavigationExample> {
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(
+            
             selectedIcon: Icon(Icons.home),
             icon: Icon(Icons.home_outlined),
             label: 'Home',
@@ -56,7 +58,7 @@ class _NavigationExampleState extends State<NavigationExample> {
           ),
           NavigationDestination(
             icon: Badge(
-              label: Text('2'),
+              //label: Text('2'),
               child: Icon(Icons.messenger_sharp),
             ),
             label: 'Messages',

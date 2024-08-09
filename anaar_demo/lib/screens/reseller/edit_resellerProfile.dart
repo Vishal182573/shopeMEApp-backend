@@ -292,7 +292,11 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                 maxLines: 5,
               ),
               SizedBox(height: 16.0),
-              ElevatedButton(
+             
+             User.isloading?
+             Center(child: CircularProgressIndicator(),)
+             
+             : ElevatedButton(
                 onPressed: ()
                  {
 

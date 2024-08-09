@@ -146,7 +146,7 @@ class RequirementcardProvider with ChangeNotifier {
     print('${userid}.........................');
     final token = prefs.getString('token');
      String url =
-      'http://192.168.0.107:3000/api/requirement/getReqByUserid?userId=$userid';
+      'http://shopemeapp-backend.onrender.com/api/requirement/getReqByUserid?userId=$userid';
     print(token);
     print('REQUIREMENT CARD FETCH KRNE AYA HU');
     final response = await http.get(
@@ -234,7 +234,7 @@ Future<void> searchRequirements(String prefix) async {
 print('requiremnet search ki .......... request aa rhi hai................................');
 
   final url =
-      'http://192.168.0.107:3000/api/requirement/searchRequirement?prefix=$prefix';
+      'http://shopemeapp-backend.onrender.com/api/requirement/searchRequirement?prefix=$prefix';
   _isLoading = true;
   notifyListeners();
   try {
