@@ -289,7 +289,7 @@ class _RequirementsPageState extends State<RequirementsPage> {
               padding: const EdgeInsets.only(top: 20),
               child: Column(
                 children: [
-                  SizedBox(height: 30,),
+                  SizedBox(height: 20,),
                   _buildSearchField(),
                 ],
               ),
@@ -488,20 +488,7 @@ final userProvider = Provider.of<UserProvider>(context);
                 backgroundImage: NetworkImage(user.image ?? ''),
               ),
               title: Text(user.businessName ?? ''),
-              trailing: TextButton(
-                onPressed: () async{
-                       if(!isConnected){
-                      print("coonected function hitted............");
-                       await userProvider.connectUser(loggedinuser, user.id, user.type);
-
-                       }
-
-                },
-                child: Text(
-                 isConnected? 'Connected':'Connect',
-                  style: TextStyle(color:isConnected? Colors.red:Colors.blue),
-                ),
-              ),
+              
             ),
             SizedBox(height: 8.0),
             Text('Product Details:',

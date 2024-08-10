@@ -146,6 +146,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('ShopME', style: TextStyle(color: Colors.red, fontSize: 24, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
         bottom: TabBar(
