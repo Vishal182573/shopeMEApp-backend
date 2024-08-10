@@ -147,13 +147,18 @@ import 'package:anaar_demo/backend/notification_services.dart';
 import 'package:anaar_demo/model/chat_message_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'dart:convert';
 
+@HiveType(typeId: 0)
 class ChatMessage {
+   @HiveField(0)
   final String userId;
+  @HiveField(1)
   final String message;
+  
 
   ChatMessage({required this.userId, required this.message});
 }

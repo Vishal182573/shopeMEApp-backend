@@ -318,7 +318,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
     chatProvider.initSocket();
     chatProvider.initializeChat(widget.loggedInUserId, widget.postOwnerId);
-
+// chatProvider.initialize();
 
 
     // Scroll to bottom when keyboard is focused

@@ -20,10 +20,12 @@ import 'package:anaar_demo/screens/resellerShowProfile.dart';
 import 'package:anaar_demo/widgets/bottomNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
   // Import notification service
-void main(){
-
+void main()async{
+ await Hive.initFlutter();
   runApp(MyApp());
 }
 
