@@ -11,10 +11,10 @@ import auth from "../middleware/authMiddleware.js"
 
 const router = Router();
 
-router.post("/postRequirement",auth,postRequirements);
+router.post("/postRequirement",postRequirements);
 
 router.get("/getAllRequirements",showAllRequirements);
-router.get("/getRequirementsByCategory",auth,getRequirementByCategory),
+router.get("/getRequirementsByCategory",getRequirementByCategory),
 router.get("/deleteRequirement",auth,deleteRequirement);
 router.get("/searchRequirement",searchrequirement);
 router.get("/getReqByUserid",getRequirementByUserId);
