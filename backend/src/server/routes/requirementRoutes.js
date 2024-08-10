@@ -15,7 +15,7 @@ router.post("/postRequirement",postRequirements);
 
 router.get("/getAllRequirements",showAllRequirements);
 router.get("/getRequirementsByCategory",getRequirementByCategory),
-router.get("/deleteRequirement",auth,deleteRequirement);
+router.get("/deleteRequirement",deleteRequirement);
 router.get("/searchRequirement",searchrequirement);
 router.get("/getReqByUserid",getRequirementByUserId);
 
