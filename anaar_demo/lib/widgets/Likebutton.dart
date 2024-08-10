@@ -134,9 +134,17 @@ import 'package:provider/provider.dart';
 //   }
 // }
 
+
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+// import 'package:anaar_demo/helperfunction/helperfunction.dart';
+// import 'package:anaar_demo/model/postcard_model.dart';
+// import 'package:anaar_demo/providers/postcard_provider.dart';
+
 class LikeButton extends StatefulWidget {
   final String postId;
   final List<Likes>? likes;
+
   LikeButton({required this.postId, required this.likes});
 
   @override
@@ -169,7 +177,7 @@ class _LikeButtonState extends State<LikeButton> {
         IconButton(
           icon: Icon(
             isLiked ? Icons.favorite : Icons.favorite_border,
-            color: isLiked ? Colors.red : Colors.yellow,
+            color: isLiked ? Colors.red : Colors.grey, // Use grey for unliked state
           ),
           onPressed: () async {
             // Optimistically update the UI
@@ -183,7 +191,20 @@ class _LikeButtonState extends State<LikeButton> {
             });
 
             // Send like/unlike request to the server
-            await Provider.of<PostcardProvider>(context, listen: false).likePost(widget.postId, loggedinuser!);
+            final provider = Provider.of<PostcardProvider>(context, listen: false);
+            try {
+              await provider.likePost(widget.postId, loggedinuser!);
+            } catch (error) {
+              // Revert the optimistic update on failure
+              setState(() {
+                if (isLiked) {
+                  likeCount--;
+                } else {
+                  likeCount++;
+                }
+                isLiked = !isLiked;
+              });
+            }
           },
         ),
         Text('$likeCount'),

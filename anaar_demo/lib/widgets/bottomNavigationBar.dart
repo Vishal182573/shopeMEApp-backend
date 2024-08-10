@@ -49,7 +49,6 @@ class _NavigationExampleState extends State<NavigationExample> {
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(
-            // selectedIcon: Icon(Iconsax.home1),
             icon: Icon(Iconsax.home),
             label: 'Home',
           ),

@@ -70,13 +70,6 @@ class PostProvider with ChangeNotifier {
       throw error;
     }
   }
-
-
-
-
-
-
-
 }
 
 ////................................getting post data homepage......................
