@@ -141,22 +141,22 @@ class _LoginPageConsumerState extends State<LoginPageConsumer> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(width: 20),
-                        CircleAvatar(
-                          backgroundImage: AssetImage(
-                              'assets/images/google-icon.png'), // Add your asset image path
-                        ),
-                        SizedBox(width: 20),
-                        CircleAvatar(
-                          backgroundImage: AssetImage(
-                              'assets/images/facebook-icon.png'), // Add your asset image path
-                        ),
-                      ],
-                    ),
+                    // SizedBox(height: 20),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     SizedBox(width: 20),
+                    //     CircleAvatar(
+                    //       backgroundImage: AssetImage(
+                    //           'assets/images/google-icon.png'), // Add your asset image path
+                    //     ),
+                    //     SizedBox(width: 20),
+                    //     CircleAvatar(
+                    //       backgroundImage: AssetImage(
+                    //           'assets/images/facebook-icon.png'), // Add your asset image path
+                    //     ),
+                    //   ],
+                    // ),
                     SizedBox(height: 40),
                     Center(
                       child: Row(

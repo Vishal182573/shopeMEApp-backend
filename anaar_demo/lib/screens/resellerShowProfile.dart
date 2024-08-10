@@ -87,10 +87,10 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('${widget.usermodel.catalogueCount}:Product details',
+          Text('Product details: ${widget.usermodel.catalogueCount}',
               style: TextStyle(fontWeight: FontWeight.bold)),
           SizedBox(width: 20),
-          Text('${widget.usermodel.connections?.length}:Connection', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text('Connections: ${widget.usermodel.connections?.length}', style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );

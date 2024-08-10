@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
 NotificationService.initNotification();
 
     return MultiProvider(
+      
       providers: [
         ChangeNotifierProvider(
             create: (context) => AuthProvider()..tryAutoLogin()), // Handles authentication
@@ -60,6 +61,7 @@ NotificationService.initNotification();
         theme: ThemeData(
           primarySwatch: Colors.blue,
           scaffoldBackgroundColor: Colors.white,
+          fontFamily: 'Poppins',
         ),
         home: Consumer<AuthProvider>(
           builder: (context, authProvider, _) {

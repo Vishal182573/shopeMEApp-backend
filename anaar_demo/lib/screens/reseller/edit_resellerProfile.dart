@@ -203,7 +203,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                     child: TextFormField(
                       controller: _ownerNameController,
                       decoration: InputDecoration(
-                        labelText: 'Ownername',
+                        labelText: 'Owner Name',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
@@ -221,7 +221,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                       controller: _businessNameController,
                       decoration: InputDecoration(
                         //hintText: 'Delhi',
-                        labelText: 'Businessname',
+                        labelText: 'Business Name',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
@@ -242,7 +242,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                 enableSuggestions: true,
                 decoration: InputDecoration(
                   hintText: 'Delhi',
-                  labelText: 'city',
+                  labelText: 'City',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -272,12 +272,12 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                 controller: _addressController,
                 //obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'address',
+                  labelText: 'Address',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'please enter Address';
+                    return 'Please enter Address';
                   }
                   return null;
                 },
@@ -286,28 +286,21 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                 controller: _aboutUscontroller,
                 //obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'about us',
+                  labelText: 'About us',
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 5,
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Colors.red)
+                  ),
                 onPressed: ()
                  {
-
-                // User.isloading?
-                // showDialog<void>(context: context,
-                //   builder:(BuildContext context){
-                //     return AlertDialog(
-                //       content: Center(child: CircularProgressIndicator(),),
-                //     );
-                //   }
-                // ):null;
-
                   _updateInfo();
                 },
-                child: Text('Save Changes'),
+                child: Text('Save Changes',style: TextStyle(color: Colors.white),),
               ),
             ],
           ),

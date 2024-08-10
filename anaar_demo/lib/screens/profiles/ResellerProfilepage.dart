@@ -204,7 +204,7 @@ class _ResellerProfilePageState extends State<ResellerProfilePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                              '${user.connections?.length} Connections • ${user.catalogueCount} Products'),
+                              'Connections ${user.connections?.length}   •   Products ${user.catalogueCount} '),
                         ],
                       ),
                     ),
@@ -214,7 +214,7 @@ class _ResellerProfilePageState extends State<ResellerProfilePage> {
                         ElevatedButton(
                           style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all(Colors.blue),
+                                WidgetStateProperty.all(Colors.blue),
                           ),
                           child: Text(
                             'Add Catelog',

@@ -146,7 +146,7 @@ class RequirementcardProvider with ChangeNotifier {
     print('${userid}.........................');
     final token = prefs.getString('token');
      String url =
-      'http://192.168.0.107:3000/api/requirement/getReqByUserid?userId=$userid';
+      'https://shopemeapp-backend.onrender.com/api/requirement/getReqByUserid?userId=$userid';
     print(token);
     print('REQUIREMENT CARD FETCH KRNE AYA HU');
     final response = await http.get(

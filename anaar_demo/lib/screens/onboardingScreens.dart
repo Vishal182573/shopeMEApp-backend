@@ -160,16 +160,16 @@ class onboardingLoginPage extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red, fixedSize: Size(280, 40)),
           ),
-          Divider(
-            indent: 40,
-            endIndent: 40,
-            color: Colors.black,
-            thickness: 0.5,
-          ),
+          // Divider(
+          //   indent: 40,
+          //   endIndent: 40,
+          //   color: Colors.black,
+          //   thickness: 0.5,
+          // ),
           ElevatedButton(
             onPressed: () => Get.to(() => ResellerRegistrationPage()),
             child: Text(
-              "Register as supplier",
+              "Register as Supplier",
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

@@ -4,6 +4,7 @@ import 'package:anaar_demo/screens/homepage.dart';
 import 'package:anaar_demo/screens/profiles/ConsumerprofilePage.dart';
 import 'package:anaar_demo/screens/profiles/ResellerProfilepage.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NavigationExample extends StatefulWidget {
@@ -38,6 +39,8 @@ class _NavigationExampleState extends State<NavigationExample> {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       bottomNavigationBar: NavigationBar(
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        elevation: 1,
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
@@ -46,24 +49,26 @@ class _NavigationExampleState extends State<NavigationExample> {
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
+            // selectedIcon: Icon(Iconsax.home1),
+            icon: Icon(Iconsax.home),
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Badge(child: Icon(Icons.search)),
+            selectedIcon: Icon(Iconsax.search_normal),
+            icon: Icon(Iconsax.search_normal),
             label: 'Discover',
           ),
           NavigationDestination(
             icon: Badge(
               label: Text('2'),
-              child: Icon(Icons.messenger_sharp),
+              
+              child: Icon(Iconsax.message),
             ),
             label: 'Messages',
           ),
           NavigationDestination(
             icon: Badge(
-              child: Icon(Icons.person),
+              child: Icon(Iconsax.profile_2user),
             ),
             label: 'Profile',
           ),

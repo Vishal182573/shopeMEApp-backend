@@ -283,6 +283,7 @@ import 'package:anaar_demo/widgets/photGrid.dart';
 import 'package:anaar_demo/widgets/profileTile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -417,8 +418,6 @@ class _BuilpostCardState extends State<BuilpostCard> {
 
   @override
   Widget build(BuildContext context) {
-  
-
     return FutureBuilder<Reseller?>(
       future: Provider.of<UserProvider>(context, listen: false).
       fetchResellerinfo_post( widget.postcar.userid),
@@ -473,6 +472,7 @@ class _BuilpostCardState extends State<BuilpostCard> {
                               postcard: widget.postcar,
                               loggedinuserid: logedinuserId,
                             )),
+                        iconAlignment: IconAlignment.start, 
                         child: Text('Comments'),
                       ),
                       TextButton(
@@ -483,7 +483,7 @@ class _BuilpostCardState extends State<BuilpostCard> {
                             )),
                         child: Row(
                           children: [
-                            Icon(Icons.chat, color: Colors.blue),
+                            Icon(Iconsax.message, color: Colors.blue),
                             SizedBox(width: 10),
                             Text(
                               "Chat",

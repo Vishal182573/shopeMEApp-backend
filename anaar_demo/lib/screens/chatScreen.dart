@@ -173,9 +173,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
+                    
                     decoration: InputDecoration(
-                      
-                      hintText: 'Type a message',border: OutlineInputBorder(borderRadius: BorderRadius.circular(30),borderSide: BorderSide(color: Colors.red))),),
+                    hintText: 'Type a message',border: OutlineInputBorder(borderRadius: BorderRadius.circular(30),borderSide: BorderSide(color: Colors.red))),),
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 10),

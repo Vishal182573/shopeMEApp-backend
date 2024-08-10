@@ -113,6 +113,7 @@ import 'package:anaar_demo/screens/requiremnetPage/requirementPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -151,8 +152,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           controller: _tabController,
           tabs: [
             Tab(text: 'Feed'),
-            Tab(text: 'Requirements'),
             Tab(text: 'Trending'),
+            Tab(text: 'Requirements'),
           ],
           labelColor: Colors.red,
           unselectedLabelColor: Colors.grey,
@@ -163,8 +164,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         controller: _tabController,
         children: [
          Feedsection(),
-          RequirementsPage(),
-          Trendingpage(),
+         Trendingpage(),
+         RequirementsPage(),
            
         ],
       ),
@@ -172,7 +173,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         onPressed: () => Get.to(() => RequirementPostScreen()),
         label: Text("Add Requirement",style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.red,
-        icon: Icon(Icons.add,color: Colors.white,),
+        icon: Icon(Iconsax.add,color: Colors.white,),
       ),
     );
   }
