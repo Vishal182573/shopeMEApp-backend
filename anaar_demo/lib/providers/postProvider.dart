@@ -299,6 +299,7 @@ class PostcardProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType=prefs.getString('userType');
+     _updatePostcardComments(postId!, newComment);
     try {
       final response = await http.post(
         Uri.parse('https://shopemeapp-backend.onrender.com/api/post/comment'),
@@ -314,21 +315,28 @@ class PostcardProvider with ChangeNotifier {
         }),
       );
 
-      if (response.statusCode == 200) {
-//final index = _postcards.indexWhere((post) => post.sId == postId);
-        print("successfully comment added...................");
-        final newComment = Comments.fromJson(json.decode(response.body));
-        final postIndex = _postcards.indexWhere((post) => post.sId == postId);
-
-        if (postIndex != -1) {
-          _postcards[postIndex].comments?.add(newComment);
-          notifyListeners();
-        }
-      } else {
-        print("${response.statusCode}...${response.body}");
+      if (response.statusCode != 200) {
+        throw Exception('Failed to add comment');
       }
     } catch (error) {
-      throw (error);
+      _revertPostcardComments(postId, newComment);
+      throw error;
+    }
+  }
+
+    void _updatePostcardComments(String postId, Comments newComment) {
+    final index = _postcards.indexWhere((post) => post.sId == postId);
+    if (index != -1) {
+      _postcards[index].comments?.add(newComment);
+      notifyListeners();
+    }
+  }
+
+  void _revertPostcardComments(String? postId, Comments newComment) {
+    final index = _postcards.indexWhere((post) => post.sId == postId);
+    if (index != -1) {
+      _postcards[index].comments?.remove(newComment);
+      notifyListeners();
     }
   }
 

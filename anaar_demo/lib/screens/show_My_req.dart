@@ -139,19 +139,6 @@ class _RequirementCardState extends State<_RequirementCard> {
                 ),
               ],
             ),
-<<<<<<< HEAD
-            SizedBox(height: 8.0),
-            Text("Product Name: ${widget.requirement.productName}"),
-            Text('Category: ${widget.requirement.category}'),
-            Text('QTY: ${widget.requirement.quantity}'),
-            Text('Total Price: ${widget.requirement.totalPrice}'),
-            SizedBox(height: 8.0),
-            Text('More Details:', style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 8.0),
-            Text(widget.requirement.details ?? ''),
-            SizedBox(height: 8.0),
-            Text('Attached Images:',
-=======
             const SizedBox(height: 8.0),
             Text("Product Name: ${widget.requirement?.productName}"),
             Text('Category: ${widget.requirement?.category}'),
@@ -163,7 +150,6 @@ class _RequirementCardState extends State<_RequirementCard> {
             Text(widget.requirement?.details ?? ''),
             const SizedBox(height: 8.0),
             const Text('Attached Images:',
->>>>>>> 02b72ab12c2d074b1f76e447584f925e833dccd8
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8.0),
             SingleChildScrollView(

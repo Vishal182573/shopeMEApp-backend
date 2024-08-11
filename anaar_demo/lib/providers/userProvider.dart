@@ -19,8 +19,20 @@ class UserProvider with ChangeNotifier {
   // Usermodel? _usermodel;
   // Usermodel? get usermodel => _usermodel;
   bool _isloading = false;
+  
+  
+  static bool _cmtloading=false;
+  static bool cmtloading()=>_cmtloading;
+  
   bool get isloading => _isloading;
-
+  //  bool get cmtisloading => _isloading;
+  
+  static  set cmtisloading(bool value) {
+    if (_cmtloading != value) {
+      _cmtloading = value;
+     // notifyListeners(); // Notify listeners about the change (if using ChangeNotifier)
+    }
+  }
   Map<String, Usermodel> _userModels = {};
 
   Usermodel? getUserModel(String userId) => _userModels[userId];
@@ -31,6 +43,8 @@ class UserProvider with ChangeNotifier {
     if (_userModels.containsKey(userId)) {
       return _userModels[userId];
     }
+    _isloading=true;
+    notifyListeners();
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -58,6 +72,8 @@ else{
           'Authorization': 'Bearer $token',
         },
       );
+        _isloading=false;
+    notifyListeners();
 
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
