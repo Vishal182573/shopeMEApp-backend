@@ -351,7 +351,7 @@ class ChatProvider with ChangeNotifier {
   }
 
   void initSocket() {
-    socket = IO.io('https://shopemeapp-backend.onrender.com', <String, dynamic>{
+    socket = IO.io('http://192.168.0.107:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });

@@ -6,6 +6,8 @@ part of 'chat_message_model.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
+
+
 class ChatPreviewAdapter extends TypeAdapter<ChatPreview> {
   @override
   final int typeId = 1;
