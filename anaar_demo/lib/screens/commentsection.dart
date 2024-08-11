@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:anaar_demo/model/postcard_model.dart';
 import 'package:anaar_demo/providers/commentProvider.dart';
 //import 'package:anaar_demo/providers/postcard_provider.dart';
-
 class CommentScreen extends StatefulWidget {
   final Postcard postcard;
   final String? loggedinuserid;
@@ -19,40 +18,50 @@ class CommentScreen extends StatefulWidget {
 class _CommentScreenState extends State<CommentScreen> {
   final TextEditingController _commentController = TextEditingController();
   late List<Comments> _comments;
+    final ScrollController _scrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
+
 
   @override
   void initState() {
     super.initState();
     _comments = List.from(widget.postcard.comments ?? []);
+  
+  
+  
+     _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        _scrollToBottom();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final postcardProvider =
-        Provider.of<PostcardProvider>(context, listen: false);
+    final postcardProvider = Provider.of<PostcardProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Comments'),
       ),
-      body:
-               
-       Column(
+      body: Column(
         children: [
           Expanded(
             child: _comments.isEmpty
                 ? Center(child: Text("No comments"))
-                : ListView.builder(
+                : ListView.separated(
+                    separatorBuilder: (context, index) {
+                      return Divider(indent: 25, endIndent: 25);
+                    },
+                    controller: _scrollController,
                     itemCount: _comments.length,
                     itemBuilder: (ctx, index) {
                       final comment = _comments[index];
                       return Commenttile(
-                     userid:    comment.userId ?? '',
+                        userid: comment.userId ?? '',
                         Comment: comment.comment ?? '',
-                        commentdate: DateTime.parse(comment.createdAt??''),
-                        userType:comment.userType??'',
-                      
-
+                        commentdate: DateTime.parse(comment.createdAt ?? ''),
+                        userType: comment.userType ?? '',
                       );
                     },
                   ),
@@ -63,8 +72,10 @@ class _CommentScreenState extends State<CommentScreen> {
               children: [
                 Expanded(
                   child: TextField(
+                    focusNode: _focusNode,
                     controller: _commentController,
                     decoration: InputDecoration(
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                       hintText: 'Add a comment...',
                     ),
                   ),
@@ -86,10 +97,24 @@ class _CommentScreenState extends State<CommentScreen> {
                       });
 
                       // Update the provider state
-                      await postcardProvider.addComment(
-                          widget.postcard.sId!, newComment);
+                      try {
+                         _commentController.clear();
+                         _scrollToBottom();
+                        await postcardProvider.addComment(widget.postcard.sId!, newComment);
 
-                      _commentController.clear();
+                        setState(() {
+                        
+                          _comments = List.from(postcardProvider.postcards
+                              .firstWhere((post) => post.sId == widget.postcard.sId)
+                              .comments ?? []);
+                        
+                        });
+                      } catch (error) {
+                        print('Error adding comment: $error');
+                      }
+                       
+
+                    //  _commentController.clear();
                     }
                   },
                 ),
@@ -100,4 +125,30 @@ class _CommentScreenState extends State<CommentScreen> {
       ),
     );
   }
+
+
+void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 100),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _commentController.dispose();
+    _focusNode.dispose();
+    Provider.of<PostcardProvider>(context, listen: false).dispose();
+    super.dispose();
+  }
+
+
+
+
 }

@@ -145,6 +145,7 @@ class LikeButton extends StatefulWidget {
   final String postId;
   final List<Likes>? likes;
 
+
   LikeButton({required this.postId, required this.likes});
 
   @override
@@ -195,20 +196,7 @@ class _LikeButtonState extends State<LikeButton> {
             });
 
             // Send like/unlike request to the server
-            final provider = Provider.of<PostcardProvider>(context, listen: false);
-            try {
-              await provider.likePost(widget.postId, loggedinuser!);
-            } catch (error) {
-              // Revert the optimistic update on failure
-              setState(() {
-                if (isLiked) {
-                  likeCount--;
-                } else {
-                  likeCount++;
-                }
-                isLiked = !isLiked;
-              });
-            }
+            await Provider.of<PostcardProvider>(context, listen: false).likePost(widget.postId, loggedInUserId!);
           },
         ),
         Text('$likeCount'),
