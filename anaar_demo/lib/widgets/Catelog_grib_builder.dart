@@ -9,6 +9,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
 class Catelog_Grid extends StatefulWidget {
@@ -65,18 +66,30 @@ class _Post_GridState extends State<Catelog_Grid> {
                   height: 20,
                   width: 20,
                   //color: Colors.amber,
-                  child: Stack(children: [
-                    Expanded(
-                      child: Container(
-                        color: Colors.red,
-                        child: Image(
-                          image: NetworkImage(imageUrls[index] ?? ''),
-                          fit: BoxFit.cover,
+                  child: Expanded(
+                    child: Stack(children: [
+                      Expanded(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                       
+                          
+                          child: Image(
+                            image: NetworkImage(imageUrls[index] ?? ''),
+                            fit: BoxFit.cover,
+                          ),
+                          //color: Colors.blue,
                         ),
-                        //color: Colors.blue,
                       ),
-                    ),
-                  ]),
+
+         Positioned(
+                          bottom: 0,
+                           right: 8,
+                          child: Icon(Iconsax.category,size: 20,color: Colors.white,))
+                    
+
+                    ]),
+                  ),
                 ),
               ),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

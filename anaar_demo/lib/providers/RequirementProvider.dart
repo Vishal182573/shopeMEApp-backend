@@ -179,11 +179,8 @@ class RequirementcardProvider with ChangeNotifier {
     notifyListeners();
     try{
     final token = prefs.getString('token');
-    final url = 'https://shopemeapp-backend.onrender.com/api/requirement/deleteRequirement?id=$postId';
+    final url = 'http://shopemeapp-backend.onrender.com/api/requirement/deleteRequirement?id=$postId';
     final response = await http.get(Uri.parse(url),
-                  headers: {
-          'Authorization': 'Bearer $token',
-        },
     );
 
      _isLoading=false;
@@ -197,6 +194,7 @@ class RequirementcardProvider with ChangeNotifier {
 
     } else {
       print(response.body);
+      print('Failed to delete requirement..............');
       throw('................Failed to delete post');
       // return false;
     }}catch(erro){

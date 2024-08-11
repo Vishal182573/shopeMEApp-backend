@@ -476,7 +476,8 @@ final userProvider = Provider.of<UserProvider>(context);
 
 
     return Card(
-      elevation: 10,
+      color: Colors.white,
+      elevation: 15,
       margin: EdgeInsets.all(8.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -137,29 +137,34 @@ import 'package:provider/provider.dart';
 class LikeButton extends StatefulWidget {
   final String postId;
   final List<Likes>? likes;
+
   LikeButton({required this.postId, required this.likes});
 
   @override
-  State<LikeButton> createState() => _LikeButtonState();
+  _LikeButtonState createState() => _LikeButtonState();
 }
 
 class _LikeButtonState extends State<LikeButton> {
-  String? loggedinuser;
+  String? loggedInUserId;
   bool isLiked = false;
   int likeCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadUserId();
+    _initializeState();
   }
 
-  void _loadUserId() async {
-    loggedinuser = await Helperfunction.getUserId();
-    setState(() {
-      isLiked = widget.likes?.any((like) => like.userId == loggedinuser) ?? false;
-      likeCount = widget.likes?.length ?? 0;
-    });
+  Future<void> _initializeState() async {
+    loggedInUserId = await Helperfunction.getUserId();
+
+    // Ensure setState is only called if the widget is still mounted
+    if (mounted) {
+      setState(() {
+        isLiked = widget.likes?.any((like) => like.userId == loggedInUserId) ?? false;
+        likeCount = widget.likes?.length ?? 0;
+      });
+    }
   }
 
   @override
@@ -183,11 +188,17 @@ class _LikeButtonState extends State<LikeButton> {
             });
 
             // Send like/unlike request to the server
-            await Provider.of<PostcardProvider>(context, listen: false).likePost(widget.postId, loggedinuser!);
+            await Provider.of<PostcardProvider>(context, listen: false).likePost(widget.postId, loggedInUserId!);
           },
         ),
         Text('$likeCount'),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    // If there are any subscriptions or controllers, dispose of them here
+    super.dispose();
   }
 }

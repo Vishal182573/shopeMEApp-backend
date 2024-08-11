@@ -223,6 +223,7 @@ import 'package:provider/provider.dart';
 //     );
 //   }
 // }
+
 class MessageListScreen extends StatefulWidget {
   @override
   State<MessageListScreen> createState() => _MessageListScreenState();
@@ -257,6 +258,8 @@ class _MessageListScreenState extends State<MessageListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
+      //backgroundColor: LinearGradient(colors: colors),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text('Messages', style: TextStyle(color: Colors.white)),
@@ -272,59 +275,67 @@ class _MessageListScreenState extends State<MessageListScreen> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No messages'));
           } else {
-            return ListView.builder(
+            return ListView.separated(
+              separatorBuilder: (context,builder){
+                return Divider();
+              },
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final chatPreview = snapshot.data![index];
 
-                return ListTile(
-                  dense: true,
-                  leading: CircleAvatar(
-                    backgroundImage: chatPreview.image != null
-                        ? NetworkImage(chatPreview.image)
-                        : NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsyA44JdhHChP6kGqx36BolQq4Hn7z2yGekw&s"),
-                  ),
-                  title: Text(chatPreview.otherUserName),
-                  subtitle: Text(chatPreview.lastMessage),
-                  trailing: chatPreview.unreadCount > 0
-                      ? Badge(
-                          label: Text(
-                            chatPreview.unreadCount.toString(),
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          child: Text(
+                return Card(
+                  color: Colors.white,
+                  elevation: 8,
+                  child: ListTile(
+                    
+                    dense: true,
+                    leading: CircleAvatar(
+                      backgroundImage: chatPreview.image != ''
+                          ? NetworkImage(chatPreview.image)
+                          : AssetImage('assets/images/profileavtar.jpg'),
+                    ),
+                    title: Text(chatPreview.otherUserName),
+                    subtitle: Text(chatPreview.lastMessage),
+                    trailing: chatPreview.unreadCount > 0
+                        ? Badge(
+                            label: Text(
+                              chatPreview.unreadCount.toString(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            child: Text(
+                              chatPreview.timestamp == ''
+                                  ? "time"
+                                  : '${DateTime.parse(chatPreview.timestamp).hour}:${DateTime.parse(chatPreview.timestamp).minute}',
+                              style: TextStyle(color: const Color.fromARGB(255, 3, 2, 2)),
+                            ),
+                          )
+                        : Text(
                             chatPreview.timestamp == ''
                                 ? "time"
                                 : '${DateTime.parse(chatPreview.timestamp).hour}:${DateTime.parse(chatPreview.timestamp).minute}',
                             style: TextStyle(color: const Color.fromARGB(255, 3, 2, 2)),
                           ),
-                        )
-                      : Text(
-                          chatPreview.timestamp == ''
-                              ? "time"
-                              : '${DateTime.parse(chatPreview.timestamp).hour}:${DateTime.parse(chatPreview.timestamp).minute}',
-                          style: TextStyle(color: const Color.fromARGB(255, 3, 2, 2)),
-                        ),
-                  onTap: () async {
-                    await _markMessagesAsRead(chatPreview.chatId);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatScreen(
-                          loggedInUserId: loggedInUserId,
-                          postOwnerId: chatPreview.otherUserId,
-                          user: Usermodel(
-                            id: chatPreview.otherUserId,
-                            businessName: chatPreview.otherUserName,
-                            connections: [],
-                            image: chatPreview.image,
+                    onTap: () async {
+                      await _markMessagesAsRead(chatPreview.chatId);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            loggedInUserId: loggedInUserId,
+                            postOwnerId: chatPreview.otherUserId,
+                            user: Usermodel(
+                              id: chatPreview.otherUserId,
+                              businessName: chatPreview.otherUserName,
+                              connections: [],
+                              image: chatPreview.image,
+                            ),
                           ),
                         ),
-                      ),
-                    ).then((_) {
-                      _loadChatPreviews(); // Refresh the chat previews after returning from the chat screen
-                    });
-                  },
+                      ).then((_) {
+                        _loadChatPreviews(); // Refresh the chat previews after returning from the chat screen
+                      });
+                    },
+                  ),
                 );
               },
             );

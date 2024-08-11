@@ -71,9 +71,13 @@ void getuserid()async{
       title: Text(widget.ProfileName),
       subtitle: Row(
         children: [
-          Text('Manufacturers'),
-          SizedBox(width: 10),
-          Text(widget.Location),
+          Text('Manufacturer'),
+          SizedBox(width:2),
+          Text('Delhi',
+      overflow: TextOverflow.ellipsis,
+        
+          
+          ),
         ],
       ),
       trailing: isSameUser

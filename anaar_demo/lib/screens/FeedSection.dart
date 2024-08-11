@@ -380,6 +380,7 @@ class _FeedsectionState extends State<Feedsection> with AutomaticKeepAliveClient
                 itemCount: provider.postcards.length,
                 itemBuilder: (context, index) {
                   return BuilpostCard(
+                    key: ValueKey(provider.postcards[provider.postcards.length - index - 1].sId),
                     postcar: provider.postcards[provider.postcards.length - index - 1]);
                 },
               );
@@ -391,16 +392,134 @@ class _FeedsectionState extends State<Feedsection> with AutomaticKeepAliveClient
   }
 }
 
+// class BuilpostCard extends StatefulWidget {
+//   final Postcard postcar;
+
+//   BuilpostCard({required this.postcar});
+
+//   @override
+//   State<BuilpostCard> createState() => _BuilpostCardState();
+// }
+
+// class _BuilpostCardState extends State<BuilpostCard> {
+//   String? logedinuserId;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     getuserid();
+//   }
+
+//   void getuserid() async {
+//     logedinuserId = await Helperfunction.getUserId();
+//     if (mounted) {
+//       setState(() {});
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return FutureBuilder<Reseller?>(
+//       future: Provider.of<UserProvider>(context, listen: false).
+//       fetchResellerinfo_post( widget.postcar.userid),
+//       builder: (context, userSnapshot) {
+//         if (userSnapshot.connectionState == ConnectionState.waiting) {
+//           return buildShimmer();
+//         } else if (userSnapshot.hasError || !userSnapshot.hasData) {
+//           return SizedBox.shrink();
+//         } else {
+//           final userModel = userSnapshot.data!;
+//           return Card(
+//             color: Colors.white,
+//             margin: EdgeInsets.all(8.0),
+//             elevation: 10,
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Profiletile(
+//                   usermodel: userModel,
+//                   Location: userModel.city ?? '',
+//                   ProfileName: userModel.businessName ?? '',
+//                   Imagepath: userModel.image ?? '',
+//                   loggedInUserId: logedinuserId,
+//                 ),
+//                 Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+//                   child: Text(
+//                     widget.postcar.description ?? 'description',
+//                     style: TextStyle(fontSize: 16),
+//                   ),
+//                 ),
+//                 SizedBox(height: 8),
+//                 Container(
+//                   decoration: BoxDecoration(color: const Color.fromARGB(255, 232, 232, 232)),
+//                   height: 250,
+//                   child: PhotoGrid(
+//                     imageUrls: widget.postcar.images ?? [],
+//                     onImageClicked: (i) => print('Image $i was clicked!'),
+//                   ),
+//                 ),
+//                 Padding(
+//                   padding: const EdgeInsets.all(16.0),
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceAround,
+//                     children: [
+//                       LikeButton(
+//                         postId: widget.postcar.sId!,
+//                         likes: widget.postcar.likes,
+//                       ),
+//                       TextButton(
+//                         onPressed: () => Get.to(() => CommentScreen(
+//                               postcard: widget.postcar,
+//                               loggedinuserid: logedinuserId,
+//                             )),
+//                         iconAlignment: IconAlignment.start, 
+//                         child: Text('Comments'),
+//                       ),
+//                       TextButton(
+//                         onPressed: () => Get.to(() => ChatScreen(
+//                               loggedInUserId: logedinuserId ?? '',
+//                               postOwnerId: widget.postcar.userid ?? '',
+//                               reseller: userModel,
+//                             )),
+//                         child: Row(
+//                           children: [
+//                             Icon(Iconsax.message, color: Colors.blue),
+//                             SizedBox(width: 10),
+//                             Text(
+//                               "Chat",
+//                               style: TextStyle(color: Colors.blue, fontSize: 15),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           );
+//         }
+//       },
+//     );
+//   }
+// }
+
+
 class BuilpostCard extends StatefulWidget {
   final Postcard postcar;
 
-  BuilpostCard({required this.postcar});
+  BuilpostCard({required this.postcar, Key? key}) : super(key: key);
 
   @override
   State<BuilpostCard> createState() => _BuilpostCardState();
 }
 
 class _BuilpostCardState extends State<BuilpostCard> {
+
+
+
+
   String? logedinuserId;
 
   @override
@@ -416,89 +535,101 @@ class _BuilpostCardState extends State<BuilpostCard> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Reseller?>(
-      future: Provider.of<UserProvider>(context, listen: false).
-      fetchResellerinfo_post( widget.postcar.userid),
-      builder: (context, userSnapshot) {
-        if (userSnapshot.connectionState == ConnectionState.waiting) {
-          return buildShimmer();
-        } else if (userSnapshot.hasError || !userSnapshot.hasData) {
-          return SizedBox.shrink();
-        } else {
-          final userModel = userSnapshot.data!;
-          return Card(
-            color: Colors.white,
-            margin: EdgeInsets.all(8.0),
-            elevation: 10,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Profiletile(
-                  usermodel: userModel,
-                  Location: userModel.city ?? '',
-                  ProfileName: userModel.businessName ?? '',
-                  Imagepath: userModel.image ?? '',
-                  loggedInUserId: logedinuserId,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    widget.postcar.description ?? 'description',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-                SizedBox(height: 8),
-                Container(
-                  decoration: BoxDecoration(color: const Color.fromARGB(255, 232, 232, 232)),
-                  height: 250,
-                  child: PhotoGrid(
-                    imageUrls: widget.postcar.images ?? [],
-                    onImageClicked: (i) => print('Image $i was clicked!'),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      LikeButton(
-                        postId: widget.postcar.sId!,
-                        likes: widget.postcar.likes,
+    return Consumer<PostcardProvider>(
+      builder: (context, provider, child) {
+        final updatedPost = provider.postcards.firstWhere(
+          (post) => post.sId == widget.postcar.sId,
+          orElse: () => widget.postcar,
+        );
+
+        return FutureBuilder<Reseller?>(
+          future: Provider.of<UserProvider>(context, listen: false)
+              .fetchResellerinfo_post(updatedPost.userid),
+          builder: (context, userSnapshot) {
+            if (userSnapshot.connectionState == ConnectionState.waiting) {
+              return buildShimmer();
+            } else if (userSnapshot.hasError || !userSnapshot.hasData) {
+              return SizedBox.shrink();
+            } else {
+              final userModel = userSnapshot.data!;
+              return Card(
+                color: Colors.white,
+                margin: EdgeInsets.all(8.0),
+                elevation: 10,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Profiletile(
+                      usermodel: userModel,
+                      Location: userModel.city ?? '',
+                      ProfileName: userModel.businessName ?? '',
+                      Imagepath: userModel.image ?? '',
+                      loggedInUserId: logedinuserId,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        updatedPost.description ?? 'description',
+                        style: TextStyle(fontSize: 16),
                       ),
-                      TextButton(
-                        onPressed: () => Get.to(() => CommentScreen(
-                              postcard: widget.postcar,
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(color: const Color.fromARGB(255, 232, 232, 232)),
+                      height: 250,
+                      child: PhotoGrid(
+                        imageUrls: updatedPost.images ?? [],
+                        onImageClicked: (i) => print('Image $i was clicked!'),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          LikeButton(
+                            postId: updatedPost.sId!,
+                            likes: updatedPost.likes,
+                            //post: updatedPost,
+                          ),
+                          TextButton(
+                            onPressed: () => Get.to(() => CommentScreen(
+                              postcard: updatedPost,
                               loggedinuserid: logedinuserId,
                             )),
-                        iconAlignment: IconAlignment.start, 
-                        child: Text('Comments'),
-                      ),
-                      TextButton(
-                        onPressed: () => Get.to(() => ChatScreen(
+                            iconAlignment: IconAlignment.start, 
+                            child: Text('Comments'),
+                          ),
+                          TextButton(
+                            onPressed: () => Get.to(() => ChatScreen(
                               loggedInUserId: logedinuserId ?? '',
-                              postOwnerId: widget.postcar.userid ?? '',
+                              postOwnerId: updatedPost.userid ?? '',
                               reseller: userModel,
                             )),
-                        child: Row(
-                          children: [
-                            Icon(Iconsax.message, color: Colors.blue),
-                            SizedBox(width: 10),
-                            Text(
-                              "Chat",
-                              style: TextStyle(color: Colors.blue, fontSize: 15),
+                            child: Row(
+                              children: [
+                                Icon(Iconsax.message, color: Colors.blue),
+                                SizedBox(width: 10),
+                                Text(
+                                  "Chat",
+                                  style: TextStyle(color: Colors.blue, fontSize: 15),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }
+              );
+            }
+          },
+        );
       },
     );
   }

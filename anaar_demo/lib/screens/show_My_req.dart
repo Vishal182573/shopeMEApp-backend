@@ -7,9 +7,8 @@ import 'package:provider/provider.dart';
 
 class MY_requirements extends StatefulWidget {
   final String? loggedInUserId;
-  MY_requirements({
-    required this.loggedInUserId,
-  });
+
+  MY_requirements({required this.loggedInUserId});
 
   @override
   State<MY_requirements> createState() => _MY_requirementsState();
@@ -49,7 +48,10 @@ class _MY_requirementsState extends State<MY_requirements> {
                 physics: AlwaysScrollableScrollPhysics(),
                 itemCount: req.length,
                 itemBuilder: (context, index) {
-                  return _buildCard(requirement: req[index]);
+                  return _RequirementCard(
+                    requirement: req[index],
+                    onDelete: () => _refresh(), // Trigger refresh after deletion
+                  );
                 },
               );
             }
@@ -58,39 +60,31 @@ class _MY_requirementsState extends State<MY_requirements> {
       ),
     );
   }
-
-  // Widget _buildCard(BuildContext context, Requirement? requirement) {
-//     void _openPhotoViewer(BuildContext context, int initialIndex) {
-//       Get.to(() => PhotoViewer(
-//             imageUrls: requirement!.images,
-//             initialIndex: initialIndex,
-//           ));
-//     }
-
-   
-// }
 }
-class _buildCard extends StatefulWidget{
-  Requirement requirement;
-  _buildCard({required this.requirement});
+
+class _RequirementCard extends StatefulWidget {
+  final Requirement requirement;
+  final VoidCallback onDelete;
+
+  _RequirementCard({required this.requirement, required this.onDelete});
+
   @override
-  State<_buildCard> createState() => _buildCardState();
+  State<_RequirementCard> createState() => _RequirementCardState();
 }
 
-class _buildCardState extends State<_buildCard> {
-   void _openPhotoViewer(BuildContext context, int initialIndex) {
-      Get.to(() => PhotoViewer(
-            imageUrls: widget.requirement!.images,
-            initialIndex: initialIndex,
-          ));
-    }
+class _RequirementCardState extends State<_RequirementCard> {
+  void _openPhotoViewer(BuildContext context, int initialIndex) {
+    Get.to(() => PhotoViewer(
+          imageUrls: widget.requirement.images,
+          initialIndex: initialIndex,
+        ));
+  }
 
-@override
+  @override
   Widget build(BuildContext context) {
-     final requiremcard =
+    final requiremcard =
         Provider.of<RequirementcardProvider>(context, listen: false);
-    // TODO: implement build
-    
+
     return Card(
       elevation: 10,
       margin: EdgeInsets.all(8.0),
@@ -119,14 +113,14 @@ class _buildCardState extends State<_buildCard> {
                         TextButton(
                           onPressed: () async {
                             Navigator.pop(context, 'OK');
-                             await requiremcard
-                                .deleteRequirement(widget.requirement?.sId ?? '').then((_){
-                                  Navigator.of(context).pop();
-                                }).catchError((error){
-                                   ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error.toString())));
-                                });
-                           
+                            await requiremcard
+                                .deleteRequirement(widget.requirement.sId!)
+                                .then((_) {
+                              widget.onDelete(); // Trigger the refresh after successful deletion
+                            }).catchError((error) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(error.toString())));
+                            });
                           },
                           child: const Text('OK'),
                         ),
@@ -141,14 +135,14 @@ class _buildCardState extends State<_buildCard> {
               ],
             ),
             SizedBox(height: 8.0),
-            Text("Product Name: ${widget.requirement?.productName}"),
-            Text('Category: ${widget.requirement?.category}'),
-            Text('QTY: ${widget.requirement?.quantity}'),
-            Text('Total Price: ${widget.requirement?.totalPrice}'),
+            Text("Product Name: ${widget.requirement.productName}"),
+            Text('Category: ${widget.requirement.category}'),
+            Text('QTY: ${widget.requirement.quantity}'),
+            Text('Total Price: ${widget.requirement.totalPrice}'),
             SizedBox(height: 8.0),
             Text('More Details:', style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 8.0),
-            Text(widget.requirement?.details ?? ''),
+            Text(widget.requirement.details ?? ''),
             SizedBox(height: 8.0),
             Text('Attached Images:',
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -156,22 +150,21 @@ class _buildCardState extends State<_buildCard> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: widget.requirement?.images?.map((image) {
+                children: widget.requirement.images.map((image) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: GestureDetector(
                           onTap: () => _openPhotoViewer(
                               context, widget.requirement.images.indexOf(image)),
                           child: Image.network(
-                            image!,
+                            image??'',
                             width: 100,
                             height: 100,
                             fit: BoxFit.cover,
                           ),
                         ),
                       );
-                    }).toList() ??
-                    [],
+                    }).toList(),
               ),
             ),
           ],

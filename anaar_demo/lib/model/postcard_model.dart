@@ -181,6 +181,23 @@ class Postcard {
 
     return data;
   }
+
+
+@override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Postcard &&
+          runtimeType == other.runtimeType &&
+          sId == other.sId;
+
+  @override
+  int get hashCode => sId.hashCode;
+
+
+
+
+
+
 }
 
 class Likes {
