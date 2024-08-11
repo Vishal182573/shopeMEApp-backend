@@ -195,9 +195,6 @@ class _LikeButtonState extends State<LikeButton> {
             });
 
             // Send like/unlike request to the server
-<<<<<<< HEAD
-            await Provider.of<PostcardProvider>(context, listen: false).likePost(widget.postId, loggedInUserId!);
-=======
             final provider = Provider.of<PostcardProvider>(context, listen: false);
             try {
               await provider.likePost(widget.postId, loggedinuser!);
@@ -212,7 +209,6 @@ class _LikeButtonState extends State<LikeButton> {
                 isLiked = !isLiked;
               });
             }
->>>>>>> 02b72ab12c2d074b1f76e447584f925e833dccd8
           },
         ),
         Text('$likeCount'),
