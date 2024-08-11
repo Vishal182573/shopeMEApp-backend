@@ -295,7 +295,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
                           : AssetImage('assets/images/profileavtar.jpg'),
                     ),
                     title: Text(chatPreview.otherUserName),
-                    subtitle: Text(chatPreview.lastMessage),
+                    subtitle: Text(chatPreview.lastMessage,maxLines: 2,overflow: TextOverflow.ellipsis,),
                     trailing: chatPreview.unreadCount > 0
                         ? Badge(
                             label: Text(

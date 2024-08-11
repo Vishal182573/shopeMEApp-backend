@@ -442,14 +442,6 @@ class ChatProvider with ChangeNotifier {
       });
 
 //.............add message directly to the steram .............when user is in the screen..
-
-
-
-
-
-
-
-
     } else {
       print('Cannot send message: Chat not initialized');
     }
