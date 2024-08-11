@@ -214,6 +214,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
@@ -249,37 +250,103 @@ class _UserProfilePageState extends State<Consumerprofilepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit Profile'),
-        backgroundColor: Colors.red,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () => showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                title: const Text('Log out'),
-                content: const Text('Do you want to logout?'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, 'Cancel'),
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      await Provider.of<AuthProvider>(context, listen: false).logout();
-                      Get.offAll(() => onboardingLoginPage());
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
+      // appBar: AppBar(
+      //   title: Text('Edit Profile'),
+      //   backgroundColor: Colors.red,
+      //   foregroundColor: Colors.white,
+      //   elevation: 0,
+      //   actions: [
+      //     IconButton(
+      //       onPressed: () => showDialog<String>(
+      //         context: context,
+      //         builder: (BuildContext context) => AlertDialog(
+      //           title: const Text('Log out'),
+      //           content: const Text('Do you want to logout?'),
+      //           actions: <Widget>[
+      //             TextButton(
+      //               onPressed: () => Navigator.pop(context, 'Cancel'),
+      //               child: const Text('Cancel'),
+      //             ),
+      //             TextButton(
+      //               onPressed: () async {
+      //                 await Provider.of<AuthProvider>(context, listen: false).logout();
+      //                 Get.offAll(() => onboardingLoginPage());
+      //               },
+      //               child: const Text('OK'),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //       icon: Icon(Icons.logout, color: Colors.white),
+      //     ),
+      //   ],
+      // ),
+      appBar:  AppBar(
+      automaticallyImplyLeading: false,
+      // iconTheme: IconThemeData(color: Colors.white),
+      backgroundColor: Colors.red,
+        title: Text("Profile", style: TextStyle(color: Colors.white)),
+  actions: <Widget>[
+    IconButton(
+      icon: Icon(Icons.more_vert_sharp, color: Colors.white),
+      onPressed: () => showMenu(
+        context: context,
+        position: RelativeRect.fromLTRB(
+          MediaQuery.of(context).size.width - 50,
+          kToolbarHeight,
+          0.0,
+          0.0,
+        ),
+        items: [
+          PopupMenuItem(
+            value: 'customer_support',
+            child: Row(
+              children: [
+                Icon(Iconsax.call, color: Colors.black),
+                SizedBox(width: 8),
+                Text('Customer Support'),
+              ],
             ),
-            icon: Icon(Icons.logout, color: Colors.white),
+          ),
+          PopupMenuItem(
+            value: 'logout',
+            child: Row(
+              children: [
+                Icon(Iconsax.logout, color: Colors.black),
+                SizedBox(width: 8),
+                Text('Logout'),
+              ],
+            ),
           ),
         ],
-      ),
+        elevation: 8.0,
+      ).then((value) {
+        if (value == 'logout') {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Log out'),
+              content: const Text('Do you want to logout?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    await Provider.of<AuthProvider>(context, listen: false).logout();
+                    Get.offAll(() => onboardingLoginPage());
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      }),
+    ),
+  ],
+),
       body: RefreshIndicator(
         onRefresh: _refreshData,
         child: Consumer<UserProvider>(

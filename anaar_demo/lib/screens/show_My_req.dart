@@ -24,10 +24,15 @@ class _MY_requirementsState extends State<MY_requirements> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: true,
+        
         backgroundColor: Colors.red,
-        title: Text(
+        title: const Text(
           "My Requirements",
           style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(
+        color: Colors.white, // Change this to the color you want for the leading icon
         ),
       ),
       body: RefreshIndicator(
@@ -37,15 +42,15 @@ class _MY_requirementsState extends State<MY_requirements> {
               .fetchrequirementByuserid(widget.loggedInUserId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text("An error occurred"));
+              return const Center(child: Text("An error occurred"));
             } else if (snapshot.data == null || snapshot.data!.isEmpty) {
-              return Center(child: Text("No requirement available"));
+              return const Center(child: Text("No requirement available"));
             } else {
               final req = snapshot.data!;
               return ListView.builder(
-                physics: AlwaysScrollableScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: req.length,
                 itemBuilder: (context, index) {
                   return _RequirementCard(
@@ -87,17 +92,17 @@ class _RequirementCardState extends State<_RequirementCard> {
 
     return Card(
       elevation: 10,
-      margin: EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(8.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Product Details:',
+                const Text('Product Details:',
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 TextButton(
                   onPressed: () => showDialog<String>(
@@ -127,13 +132,14 @@ class _RequirementCardState extends State<_RequirementCard> {
                       ],
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     "Delete",
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
               ],
             ),
+<<<<<<< HEAD
             SizedBox(height: 8.0),
             Text("Product Name: ${widget.requirement.productName}"),
             Text('Category: ${widget.requirement.category}'),
@@ -145,8 +151,21 @@ class _RequirementCardState extends State<_RequirementCard> {
             Text(widget.requirement.details ?? ''),
             SizedBox(height: 8.0),
             Text('Attached Images:',
+=======
+            const SizedBox(height: 8.0),
+            Text("Product Name: ${widget.requirement?.productName}"),
+            Text('Category: ${widget.requirement?.category}'),
+            Text('QTY: ${widget.requirement?.quantity}'),
+            Text('Total Price: ${widget.requirement?.totalPrice}'),
+            const SizedBox(height: 8.0),
+            const Text('More Details:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8.0),
+            Text(widget.requirement?.details ?? ''),
+            const SizedBox(height: 8.0),
+            const Text('Attached Images:',
+>>>>>>> 02b72ab12c2d074b1f76e447584f925e833dccd8
                 style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
