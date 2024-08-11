@@ -354,7 +354,7 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Container(
      decoration: BoxDecoration(image: DecorationImage(
       fit: BoxFit.cover,
-      image:AssetImage('assets/images/chatBacgroundimage.webp'))),
+      image:AssetImage('assets/images/chatBg.png'))),
         child: Column(
           children: [
             Expanded(

@@ -42,18 +42,18 @@ class _Post_GridState extends State<Post_Grid> {
             .getPostByuserId(widget.userid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
-            return Center(
+            return const Center(
               
               child: Text("Failed to get posts"),
             );
           
           } 
           else if(snapshot.data!.isEmpty){
-              return Center(child: Text('No post found '),);
+              return const Center(child: Text('No post found '),);
           }
           
           else {
@@ -88,10 +88,10 @@ class _Post_GridState extends State<Post_Grid> {
                           //color: Colors.blue,
                         ),
                       ),
-                        Positioned(
-                          bottom: 0,
-                           right: 10,
-                          child: Icon(Iconsax.gallery,color: Colors.white,))
+                        const Positioned(
+                          bottom: 5,
+                           right: 5,
+                          child: Icon(Icons.photo,color: Color.fromARGB(255, 207, 207, 207),))
                     
                                     
                                     

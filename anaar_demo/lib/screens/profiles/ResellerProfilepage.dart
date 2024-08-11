@@ -1,6 +1,7 @@
 import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/providers/authProvider.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
+import 'package:anaar_demo/screens/Contact%20Us/contactUs.dart';
 import 'package:anaar_demo/screens/onboardingScreens.dart';
 import 'package:anaar_demo/screens/reseller/edit_resellerProfile.dart';
 import 'package:anaar_demo/screens/reseller/uploadCatelogScreen.dart';
@@ -91,6 +92,9 @@ class _ResellerProfilePageState extends State<ResellerProfilePage> {
         ),
         items: [
           PopupMenuItem(
+            onTap: () {
+              Get.to(() => ContactUsScreen());
+            },
             value: 'customer_support',
             child: Row(
               children: [
@@ -311,12 +315,12 @@ class _ResellerProfilePageState extends State<ResellerProfilePage> {
                           TabBar(
                             tabs: [
                               Tab(text: 'Post'),
-                              Tab(text: 'Catalog'),
+                              Tab(text: 'Catalogue'),
                               Tab(text: 'About us'),
                             ],
                           ),
                           Container(
-                            height: 200, // Adjust as needed
+                            height: 300, // Adjust as needed
                             child: TabBarView(
                               children: [
                                 Post_Grid(

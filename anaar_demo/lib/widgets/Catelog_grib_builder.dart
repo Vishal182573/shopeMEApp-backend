@@ -40,16 +40,16 @@ class _Post_GridState extends State<Catelog_Grid> {
             .getPostByuserId(widget.userid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
-            return Center(
+            return const Center(
               child: Text("Error in fetching catelog"),
             );
           } 
           else if(snapshot.data!.isEmpty){
-              return Center(child: Text('No Catelog Product found'),);
+              return const Center(child: Text('No Catelog Product found'),);
           }
           
           else {
@@ -82,10 +82,10 @@ class _Post_GridState extends State<Catelog_Grid> {
                         ),
                       ),
 
-         Positioned(
-                          bottom: 0,
-                           right: 8,
-                          child: Icon(Iconsax.category,size: 20,color: Colors.white,))
+         const Positioned(
+                          bottom: 5,
+                           right: 5,
+                          child: Icon(Icons.my_library_books_rounded,size: 20,color: Color.fromARGB(255, 207, 207, 207),))
                     
 
                     ]),
@@ -141,6 +141,13 @@ Future<void> _dialogBuilder(BuildContext context,Catelogmodel catelogmodel) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                    Container(
+                height: MediaQuery.of(context).size.height / 3,
+                width: MediaQuery.of(context).size.width / 1.1,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(
+                      color: Colors.grey, width: 2, style: BorderStyle.solid),
+                ),
                 child: 
                 catelogmodel.images.isNotEmpty
                     ? Swiper(
@@ -155,38 +162,109 @@ Future<void> _dialogBuilder(BuildContext context,Catelogmodel catelogmodel) {
                         
                         },
                         itemCount: catelogmodel.images.length,
-                        pagination: SwiperPagination(),
-                        control: SwiperControl(),
+                        pagination: const SwiperPagination(),
+                        control: const SwiperControl(),
                       )
-                    : Center(child: Text("No images selected")),
-                height: MediaQuery.of(context).size.height / 3,
-                width: MediaQuery.of(context).size.width / 1.1,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  border: Border.all(
-                      color: Colors.grey, width: 2, style: BorderStyle.solid),
-                ),
+                    : const Center(child: Text("No images selected")),
               ),
-              SizedBox(height: 5,),
-              Divider(thickness: 2,),
-              SizedBox(height: 5,),
-               Text("Details:",style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),),
-               SizedBox(height: 10,),
-               Text("ProductName",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)),
-               SizedBox(height: 10,),
-               Text(catelogmodel.productName??''),
-               SizedBox(height: 10,),
-               Text("Category",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)),
-               SizedBox(height: 5,),
-               Text(catelogmodel.category??''),
-               SizedBox(height: 10,)
-              ,Text("Price",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)),
-              SizedBox(height: 5,)
-              ,Text(catelogmodel.price??''),
-              SizedBox(height: 10,),
-              Text("Description",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)),
-              SizedBox(height: 5,),
-              Text(catelogmodel.description??'')
+              const SizedBox(height: 5,),
+              const Divider(thickness: 2,),
+              const SizedBox(height: 5,),
+              const Text("Details:",style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),),
+              const SizedBox(height: 15),
+               Column(
+  children: [
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            "ProductName :",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            catelogmodel.productName ?? '',
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 15),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            "Category :",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            catelogmodel.category ?? '',
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 15),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            "Price :",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            catelogmodel.price ?? '',
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 15),
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              "Description :",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Text(
+          catelogmodel.description ?? '',
+          style: TextStyle(fontSize: 15),
+        ),
+      ],
+    ),
+  ],
+)
+
+               
+              //  const SizedBox(height: 10,),
+              //  const Text("Category",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)),
+              //  const SizedBox(height: 5,),
+              //  Text(catelogmodel.category??''),
+              //  const SizedBox(height: 10,)
+              // ,const Text("Price",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)),
+              // const SizedBox(height: 5,)
+              // ,Text(catelogmodel.price??''),
+              // const SizedBox(height: 10,),
+              // const Text("Description",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)),
+              // const SizedBox(height: 5,),
+              // Text(catelogmodel.description??'')
               
                
 
