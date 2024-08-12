@@ -351,103 +351,108 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.red,
         leadingWidth: 50,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<List<ChatMessage>>(
-              stream: chatProvider.messageStream, // The message stream
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text("No messages yet."));
-                }
-
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _scrollToBottom();
-                });
-
-                final messages = snapshot.data!;
-                return ListView.builder(
-                  controller: _scrollController,
-                  
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    return message.userId == widget.loggedInUserId
-                        ? Align(
-                            alignment: Alignment.centerRight,
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: SenderMessageCard(message: message.message),
-                            ),
-                          )
-                        : Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ReceiverMessageCard(message: message.message),
-                            ),
-                          );
-                  },
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                 //   scrollController: _scrollController,
-                  // maxLines: 44,
-                    keyboardType: TextInputType.multiline,
-                   // expands: true,
-                    focusNode: _focusNode,
-                    controller: _messageController,
+      body: Container(
+     decoration: BoxDecoration(image: DecorationImage(
+      fit: BoxFit.cover,
+      image:AssetImage('assets/images/chatBg.png'))),
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<List<ChatMessage>>(
+                stream: chatProvider.messageStream, // The message stream
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+        
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text("No messages yet."));
+                  }
+        
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _scrollToBottom();
+                  });
+        
+                  final messages = snapshot.data!;
+                  return ListView.builder(
+                    controller: _scrollController,
                     
-                    decoration: InputDecoration(
-                      
-                      hintText: 'Type a message',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                  child: Center(
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.send,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        if (_messageController.text.isNotEmpty) {
-                          chatProvider.sendMessage(
-                            widget.loggedInUserId,
-                            _messageController.text,
-                          );
-                          _messageController.clear();
-                          _scrollToBottom();
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      return message.userId == widget.loggedInUserId
+                          ? Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: SenderMessageCard(message: message.message),
+                              ),
+                            )
+                          : Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ReceiverMessageCard(message: message.message),
+                              ),
+                            );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                   //   scrollController: _scrollController,
+                    // maxLines: 44,
+                      keyboardType: TextInputType.multiline,
+                     // expands: true,
+                      focusNode: _focusNode,
+                      controller: _messageController,
+                      
+                      decoration: InputDecoration(
+                        
+                        hintText: 'Type a message',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(color: Colors.red),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red,
+                    ),
+                    child: Center(
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.send,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          if (_messageController.text.isNotEmpty) {
+                            chatProvider.sendMessage(
+                              widget.loggedInUserId,
+                              _messageController.text,
+                            );
+                            _messageController.clear();
+                            _scrollToBottom();
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:anaar_demo/backend/notification_services.dart';
 import 'package:anaar_demo/backend/permissionhandleer.dart';
+import 'package:anaar_demo/model/chat_message_model.dart';
 import 'package:anaar_demo/providers/RequirementProvider.dart';
 import 'package:anaar_demo/providers/TrendingProvider.dart';
 import 'package:anaar_demo/providers/authProvider.dart';
@@ -25,7 +26,10 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
   // Import notification service
 void main()async{
- await Hive.initFlutter();
+    await Hive.initFlutter();
+  Hive.registerAdapter(ChatPreviewAdapter()); // Register the adapter
+  await Hive.openBox<ChatPreview>('chat_previews');
+ 
   runApp(MyApp());
 }
 

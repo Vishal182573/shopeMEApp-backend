@@ -219,7 +219,7 @@ class _CatelogUploadScreenState extends State<CatelogUploadScreen> {
     
      Scaffold(
       appBar: AppBar(
-        title: Text("Upload Catalog"),
+        title: Text("Upload Catalogue"),
       ),
       body:
       
@@ -358,7 +358,7 @@ class _CatelogUploadScreenState extends State<CatelogUploadScreen> {
           color: Colors.blue,
           child: Center(
             child: Text(
-              "Upload Catelog",
+              "Upload Catelogue",
               style: TextStyle(color: Colors.white),
             ),
           ),

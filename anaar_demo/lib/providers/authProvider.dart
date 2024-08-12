@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:anaar_demo/model/chat_message_model.dart';
 import 'package:anaar_demo/model/reseller_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -204,16 +206,28 @@ class AuthProvider with ChangeNotifier {
 
     notifyListeners();
   }
-
+  Box<ChatPreview>? chatPreviewBox;
   Future<void> logout() async {
     _token = null;
     _userId = null;
+     _clearCacheOnLogout();
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    //_clearCacheOnLogout();
     notifyListeners();
     //return true;
   }
+  
+void _clearCacheOnLogout() async {
+  if (chatPreviewBox != null) {
+    await chatPreviewBox!.clear();
+    await chatPreviewBox!.close();
+  }
+}
 
+
+
+  
   Future<bool> Consumer_Login(
     String email,
     String password,

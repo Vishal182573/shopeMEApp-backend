@@ -7,7 +7,7 @@ import {
     searchrequirement,
     getRequirementByUserId
 } from "../controllers/requirementsControllers.js"
-import auth from "../middleware/authMiddleware.js"
+//import auth from "../middleware/authMiddleware.js"
 
 const router = Router();
 

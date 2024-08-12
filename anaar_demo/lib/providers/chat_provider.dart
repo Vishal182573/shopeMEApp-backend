@@ -351,7 +351,7 @@ class ChatProvider with ChangeNotifier {
   }
 
   void initSocket() {
-    socket = IO.io('https://shopemeapp-backend.onrender.com', <String, dynamic>{
+    socket = IO.io('http://192.168.0.107:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
@@ -377,7 +377,7 @@ class ChatProvider with ChangeNotifier {
         notifyListeners();
 
         // Show a notification if the current chat is not active
-        if (_currentChatId != data['chatId']) {
+        if (_currentChatId != data['_id']) {
           NotificationService.showNotification(
             id: data['chatId'].hashCode,
             title: 'New message from ${data['userName']}',
@@ -410,6 +410,7 @@ class ChatProvider with ChangeNotifier {
               ))
           .toList();
 
+
       _messageStreamController.add(_messages);
       socket.emit('join chat', _currentChatId);
       print('Chat initialized with ID: $_currentChatId');
@@ -424,13 +425,23 @@ class ChatProvider with ChangeNotifier {
   void sendMessage(String? userId, String message) {
     if (_currentChatId != null) {
       print("Sending message from user $userId: $message");
+ // Optimistically add the message to the list
 
+       final chatMessage = ChatMessage(
+            userId: userId!,
+            message: message,
+        );
+        _messages.add(chatMessage);
+        _messageStreamController.add(_messages);
+        notifyListeners();
+// Send the message to the server
       socket.emit('send message', {
         'chatId': _currentChatId,
         'userId': userId,
         'message': message,
       });
 
+//.............add message directly to the steram .............when user is in the screen..
     } else {
       print('Cannot send message: Chat not initialized');
     }

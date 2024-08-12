@@ -36,7 +36,7 @@ const ChatSchema = new Schema({
   messages: [{
     userId: String,
     message: String,
-    unread:Boolean,
+    read: { type: Boolean, default: false },
     timestamp: { type: Date, default: Date.now }
   }]
 }, { timestamps: true });

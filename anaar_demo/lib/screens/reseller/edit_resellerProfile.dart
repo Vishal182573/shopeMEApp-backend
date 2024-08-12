@@ -117,6 +117,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
         backgroundColor: Colors.red,
         title: Text(
           "Profile Changes",
@@ -144,7 +145,7 @@ class _EditResellerprofileState extends State<EditResellerprofile> {
                               fit: BoxFit.cover,
                             ))
                           : 
-                          widget.bgImage!=null?
+                          widget.bgImage!=''?
                           Image(image: NetworkImage(widget.bgImage??'')):null,
                     ),
                     Positioned(

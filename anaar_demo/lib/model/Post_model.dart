@@ -40,6 +40,20 @@ class Post {
       images: List<String>.from(json['images']),
     );
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 }
 
 // class ImageUploadResponse {

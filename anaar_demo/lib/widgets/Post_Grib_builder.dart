@@ -7,6 +7,7 @@ import 'package:anaar_demo/screens/TrendingPage.dart';
 import 'package:anaar_demo/screens/reseller/ViewPost.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
 class Post_Grid extends StatefulWidget {
@@ -41,18 +42,18 @@ class _Post_GridState extends State<Post_Grid> {
             .getPostByuserId(widget.userid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
-            return Center(
+            return const Center(
               
               child: Text("Failed to get posts"),
             );
           
           } 
           else if(snapshot.data!.isEmpty){
-              return Center(child: Text('No post found '),);
+              return const Center(child: Text('No post found '),);
           }
           
           else {
@@ -71,26 +72,31 @@ class _Post_GridState extends State<Post_Grid> {
                 child: Container(
                   height: 20,
                   width: 20,
-                 // color: Colors.amber,
-                  child: Stack(children: [
-                    Expanded(
-                      child: Container(
-                        color: Colors.red,
-                        child: Image(
-                          image: NetworkImage(imageUrls[index] ?? ''),
-                          fit: BoxFit.cover,
-                        ),
-                        //color: Colors.blue,
-                      ),
-                    ),
-                      Positioned(
-                        bottom: 0,
-                         right: 10,
-                        child: Icon(Icons.image_outlined,color: Colors.black,))
                   
-                
-                
-                  ]),
+               //  color: Colors.amber,
+                  child: Expanded(
+                    child: Stack(children: [
+                      Expanded(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          color: Colors.red,
+                          child: Image(
+                            image: NetworkImage(imageUrls[index] ?? ''),
+                            fit: BoxFit.cover,
+                          ),
+                          //color: Colors.blue,
+                        ),
+                      ),
+                        const Positioned(
+                          bottom: 5,
+                           right: 5,
+                          child: Icon(Icons.photo,color: Color.fromARGB(255, 207, 207, 207),))
+                    
+                                    
+                                    
+                    ]),
+                  ),
                 ),
               ),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

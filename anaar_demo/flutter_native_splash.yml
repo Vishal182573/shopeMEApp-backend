@@ -1,4 +1,4 @@
   flutter_native_splash:
     android:true
     image:"assets/images/welcome.png"
-    color:"#2596be"
+    color:"#f81414"

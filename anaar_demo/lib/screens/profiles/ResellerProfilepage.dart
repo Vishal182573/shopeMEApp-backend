@@ -1,6 +1,7 @@
 import 'package:anaar_demo/helperfunction/helperfunction.dart';
 import 'package:anaar_demo/providers/authProvider.dart';
 import 'package:anaar_demo/providers/userProvider.dart';
+import 'package:anaar_demo/screens/Contact%20Us/contactUs.dart';
 import 'package:anaar_demo/screens/onboardingScreens.dart';
 import 'package:anaar_demo/screens/reseller/edit_resellerProfile.dart';
 import 'package:anaar_demo/screens/reseller/uploadCatelogScreen.dart';
@@ -9,6 +10,7 @@ import 'package:anaar_demo/widgets/Catelog_grib_builder.dart';
 import 'package:anaar_demo/widgets/Post_Grib_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -41,35 +43,107 @@ class _ResellerProfilePageState extends State<ResellerProfilePage> {
     final userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.red,
+      // appBar: AppBar(
+      //   backgroundColor: Colors.red,
+      //   title: Text("Profile", style: TextStyle(color: Colors.white)),
+      //   actions: [
+      //     // IconButton(
+      //     //   icon: Icon(Icons.logout, color: Colors.white),
+      //     //   onPressed: () => showDialog<String>(
+      //     //     context: context,
+      //     //     builder: (BuildContext context) => AlertDialog(
+      //     //       title: const Text('Log out'),
+      //     //       content: const Text('Do you want to logout?'),
+      //     //       actions: <Widget>[
+      //     //         TextButton(
+      //     //           onPressed: () => Navigator.pop(context, 'Cancel'),
+      //     //           child: const Text('Cancel'),
+      //     //         ),
+      //     //         TextButton(
+      //     //           onPressed: () async {
+      //     //             authProvider.logout();
+      //     //             Get.offAll(() => onboardingLoginPage());
+      //     //           },
+      //     //           child: const Text('OK'),
+      //     //         ),
+      //     //       ],
+      //     //     ),
+      //     //   ),
+      //     // ),
+      //     IconButton(
+      //       icon: Icon(Icons.more_vert_sharp, color: Colors.white),
+      //       onPressed: () => DropdownButton.new,
+      //     ),
+      //   ],
+      // ),
+     appBar:  AppBar(
+      backgroundColor: Colors.red,
         title: Text("Profile", style: TextStyle(color: Colors.white)),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout, color: Colors.white),
-            onPressed: () => showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                title: const Text('Log out'),
-                content: const Text('Do you want to logout?'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, 'Cancel'),
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      authProvider.logout();
-                      Get.offAll(() => onboardingLoginPage());
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
+  actions: <Widget>[
+    IconButton(
+      icon: Icon(Icons.more_vert_sharp, color: Colors.white),
+      onPressed: () => showMenu(
+        context: context,
+        position: RelativeRect.fromLTRB(
+          MediaQuery.of(context).size.width - 50,
+          kToolbarHeight,
+          0.0,
+          0.0,
+        ),
+        items: [
+          PopupMenuItem(
+            onTap: () {
+              Get.to(() => ContactUsScreen());
+            },
+            value: 'customer_support',
+            child: Row(
+              children: [
+                Icon(Iconsax.call, color: Colors.black),
+                SizedBox(width: 8),
+                Text('Customer Support'),
+              ],
+            ),
+          ),
+          PopupMenuItem(
+            value: 'logout',
+            child: Row(
+              children: [
+                Icon(Iconsax.logout, color: Colors.black),
+                SizedBox(width: 8),
+                Text('Logout'),
+              ],
             ),
           ),
         ],
-      ),
+        elevation: 8.0,
+      ).then((value) {
+        if (value == 'logout') {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Log out'),
+              content: const Text('Do you want to logout?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    authProvider.logout();
+                    Get.offAll(() => onboardingLoginPage());
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      }),
+    ),
+  ],
+),
+
       body: RefreshIndicator(
         onRefresh: () async {
           await Provider.of<UserProvider>(context, listen: false).fetchUserData();
@@ -217,7 +291,7 @@ class _ResellerProfilePageState extends State<ResellerProfilePage> {
                                 WidgetStateProperty.all(Colors.blue),
                           ),
                           child: Text(
-                            'Add Catelog',
+                            'Add Catalogue',
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () => Get.to(
@@ -226,7 +300,7 @@ class _ResellerProfilePageState extends State<ResellerProfilePage> {
                         ElevatedButton(
                           style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all(Colors.red),
+                                WidgetStateProperty.all(Colors.red),
                           ),
                           child: Text('Add Post',
                               style: TextStyle(color: Colors.white)),
@@ -241,12 +315,12 @@ class _ResellerProfilePageState extends State<ResellerProfilePage> {
                           TabBar(
                             tabs: [
                               Tab(text: 'Post'),
-                              Tab(text: 'Catalog'),
+                              Tab(text: 'Catalogue'),
                               Tab(text: 'About us'),
                             ],
                           ),
                           Container(
-                            height: 200, // Adjust as needed
+                            height: 300, // Adjust as needed
                             child: TabBarView(
                               children: [
                                 Post_Grid(

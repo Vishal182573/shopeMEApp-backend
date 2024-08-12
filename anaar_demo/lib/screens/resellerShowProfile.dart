@@ -169,7 +169,7 @@ class _ResellerShowprofileState extends State<ResellerShowprofile> {
           ),
 
           Container(
-          height: 200,
+          height: 300,
           child: TabBarView(children: [
                    Post_Grid(
                     userid: widget.usermodel?.id,

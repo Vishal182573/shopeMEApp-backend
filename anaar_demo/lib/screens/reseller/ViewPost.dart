@@ -133,6 +133,7 @@ void _loggedinuserid()async{
                             LikeButton(
                               postId: widget.postcard.sId!,
                               likes: widget.postcard.likes,
+                              
                              // loggedinuser: widget.loggedInUserId,
                             ),
                             TextButton(
