@@ -51,12 +51,31 @@ io.on('connection', (socket) => {
         userId: userId,
         message: message,
       });
+      // const updatedPreview = {
+      //   chatId: chatId,
+      //   otherUserId: otherUserId,
+      //   lastMessage: message.content,
+      //   timestamp: message.timestamp,
+      //   image: message.senderImage, // or receiver's image
+      //   unreadCount: 1, // or calculate based on the unread messages
+      // };
+  
 
       await chat.save();
       console.log('Message saved to database');
+    //  io.to(otherUserId).emit('chat-preview-updated', updatedPreview);
+
+
+
 
       io.to(chatId).emit('new message', { userId, message });
       console.log('Message broadcasted to chat room');
+
+
+      const otherUserId = chat.userId1 === userId ? chat.userId2 : chat.userId1;
+
+     
+
     } catch (error) {
       console.error('Error sending message:', error);
     }

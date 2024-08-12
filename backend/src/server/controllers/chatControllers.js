@@ -298,7 +298,7 @@ const markMessagesAsRead = asyncHandler(async (req, res) => {
         message.read = true;
       }
     });
-
+    console.log('successfuly')
     await chat.save();
     res.status(200).json({ message: "Messages marked as read" });
   } catch (err) {
