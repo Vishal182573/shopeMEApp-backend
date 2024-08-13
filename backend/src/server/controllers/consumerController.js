@@ -102,7 +102,7 @@ const getConsumer = asyncHandler(async (req, res) => {
 
 const getConsumers = asyncHandler(async (req, res) => {
   try {
-    const reseller = await Reseller.find({});
+    const reseller = await Consumer.find({});
     return res.status(200).json(reseller);
   } catch (err) {
     return res.status(500).json({ message: "Internal server error" });
