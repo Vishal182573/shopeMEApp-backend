@@ -104,6 +104,16 @@ const getReseller = asyncHandler(async (req, res) => {
   }
 });
 
+const getResellers = asyncHandler(async (req, res) => {
+  try {
+    const reseller = await Reseller.find({});
+    return res.status(200).json(reseller);
+  } catch (err) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 const updateReseller = asyncHandler(async (req, res) => {
   try {
     const { ownerName, businessName, email, password, address, contact, city, image, bgImage,aboutUs,catalogueCount,connections } = req.body;
@@ -211,4 +221,4 @@ const resellerToReseller = asyncHandler(async (req, res) => {
   }
 });
 
-export { resellerRegistration, resellerLogin, getReseller, resellerToReseller,consumerToReseller,updateReseller };
+export { resellerRegistration, resellerLogin, getReseller, resellerToReseller,consumerToReseller,updateReseller,getResellers };
