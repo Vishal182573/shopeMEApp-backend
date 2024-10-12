@@ -12,5 +12,6 @@ first one is consumer who will purchase the product and second one is Seller who
 ![order info-1](https://github.com/user-attachments/assets/25c8abaa-98b5-4de6-8d77-e71ba82e37a5)
 ![found results](https://github.com/user-attachments/assets/02abf96b-a36f-4876-918b-3ffe7dd950c2)
  home page
- ![homeepage](https://github.com/user-attachments/assets/569f2da5-24ad-4c4b-9f2d-485ea772af81)   
+
  is this
+<img src="https://github.com/user-attachments/assets/569f2da5-24ad-4c4b-9f2d-485ea772af81" data-canonical-src="https://gyazo.com/eb5c5741b6a9a16c692170a41a49c858.png" width="200" height="400" />
