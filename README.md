@@ -12,4 +12,5 @@ first one is consumer who will purchase the product and second one is Seller who
 ![order info-1](https://github.com/user-attachments/assets/25c8abaa-98b5-4de6-8d77-e71ba82e37a5)
 ![found results](https://github.com/user-attachments/assets/02abf96b-a36f-4876-918b-3ffe7dd950c2)
  home page
- ![homepage](https://github.com/user-attachments/assets/569f2da5-24ad-4c4b-9f2d-485ea772af81)    is this
+ ![homeepage](https://github.com/user-attachments/assets/569f2da5-24ad-4c4b-9f2d-485ea772af81)   
+ is this
