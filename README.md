@@ -7,7 +7,6 @@ first one is consumer who will purchase the product and second one is Seller who
 ![sign up](https://github.com/user-attachments/assets/aa265eb3-714a-431f-a3a3-a3dcd040eb19)
 ![verification code](https://github.com/user-attachments/assets/73f200c5-5d8d-4e76-afc0-427b16b8ca87)
 ![Password changed](https://github.com/user-attachments/assets/35dca28a-7878-4dad-8064-47ba0f401b46)
-![homepage](https://github.com/user-attachments/assets/5fe70b71-e57e-495f-bf85-250d398f51dd)
 ![reseller profile](https://github.com/user-attachments/assets/32a7fda1-9239-4ff7-996a-e17254773973)
 
 ![order info-1](https://github.com/user-attachments/assets/25c8abaa-98b5-4de6-8d77-e71ba82e37a5)
